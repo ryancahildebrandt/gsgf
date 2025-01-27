@@ -1,0 +1,8 @@
+{
+   "type" : "JJSGF",
+   "grammar" : "tea_extras",
+   "public" : {
+	"with" : "(with|wit|w) [a (little|lot of)]",
+	"extras" : "milk|sugar|ice|cream|lemon|honey",
+   }
+}

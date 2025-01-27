@@ -1,0 +1,6 @@
+#JSGF V1.0 ISO8859-1 en;
+
+grammar tea_extras;
+
+public <with> = (with|wit|w) [a (little|lot of)];
+public <extras> = milk|sugar|ice|cream|lemon|honey;

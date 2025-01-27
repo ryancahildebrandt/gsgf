@@ -1,0 +1,94 @@
+// empty
+public <test> = ;
+
+// terminals
+public <test> = one two three;
+
+// terminals + |
+public <test> = four|five|six;
+
+// terminals + []
+public <test> = six[ seven][ eight];
+
+// terminals + ()
+public <test> = eight( nine)( ten);
+
+// terminals + [|]
+public <test> = 11[12|13|14];
+
+// terminals + (|)
+public <test> = 11(12|13|14);
+
+// terminals + (())
+public <test> = 11(((12)));
+
+// terminals + (()())
+public <test> = 11((12)(13)(14));
+
+// terminals + (()|())
+public <test> = 11((12)|(13)|(14));
+
+// terminals + ([])
+public <test> = 11([[12]]);
+
+// terminals + ([][])
+public <test> = 11([12][13][14]);
+
+// terminals + ([]|[])
+public <test> = 11([12]|[13]|[14]);
+
+// terminals + [()]
+public <test> = 11[((12))];
+
+// terminals + [()()]
+public <test> = 11[(12)(13)(14)];
+
+// terminals + [()|()]
+public <test> = 11[(12)|(13)|(14)];
+
+// terminals + [[]]
+public <test> = 11[[[12]]];
+
+// terminals + [[][]]
+public <test> = 11[[12][13][14]];
+
+// terminals + [[]|[]]
+public <test> = 11[[12]|[13]|[14]];
+
+// terminals + (()|()[]) + terminals
+public <test> = 11((12)|(13)[14])15;
+
+// terminals + [()|[]terminals] + []
+public <test> = 11[(12)|[13]14][15];
+
+// [()terminals[terminals]()] terminals
+public <test> = [(11)12[13](14)]15;
+
+// empty + <>
+public <test> = <test1>;
+<test1> = ;
+
+// terminals + <>
+public <test> = one two three <test1>;
+<test1> = abc|def;
+
+// terminals + | + <>
+public <test> = <test1> four|five|six;
+<test1> = abc|def;
+
+// terminals + [] + <>
+public <test> = six[ seven]<test1>[ eight];
+<test1> = abc|def;
+
+// terminals + () + <>
+public <test> = eight( nine)( ten)<test1>;
+<test1> = abc|def;
+
+// terminals + [|] + <>
+public <test> = 11[12|13|14]<test1>;
+<test1> = abc|def;
+
+// terminals + (|) + <>
+public <test> = 11<test1>(12|13|14);
+<test1> = abc|def;
+
