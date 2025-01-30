@@ -105,22 +105,23 @@ func BuildEdgeList(arr []Expression) (edges EdgeList) {
 	for i, token := range arr {
 		switch token {
 		case "<EOS>":
-			continue
+			edges = append(edges, Edge{f, i, 1.0})
 		case "<SOS>":
 			f = i
 			groupStack = groupStack.Push(i)
 			groupMap[i] = []int{}
 		case ";":
-			edges = append(edges, Edge{f, i, 0.0})
+			edges = append(edges, Edge{f, i, 1.0})
 			for _, values := range groupMap {
 				for _, v := range values {
-					edges = append(edges, Edge{v, i, 0.0})
+					edges = append(edges, Edge{v, i, 1.0})
 				}
 			}
+			f = i
 		case "(", "[":
 			groupStack = groupStack.Push(i)
 			groupMap[i] = []int{}
-			edges = append(edges, Edge{f, i, 0.0})
+			edges = append(edges, Edge{f, i, 1.0})
 			f = i
 		case ")":
 			g, err = groupStack.Peek()
@@ -128,11 +129,11 @@ func BuildEdgeList(arr []Expression) (edges EdgeList) {
 				log.Fatal(err)
 			}
 			for _, v := range groupMap[g] {
-				edges = append(edges, Edge{v, i, 0.0})
+				edges = append(edges, Edge{v, i, 1.0})
 			}
 			groupStack = groupStack.Drop(g)
 			delete(groupMap, g)
-			edges = append(edges, Edge{f, i, 0.0})
+			edges = append(edges, Edge{f, i, 1.0})
 			f = i
 		case "]":
 			g, err := groupStack.Peek()
@@ -140,12 +141,12 @@ func BuildEdgeList(arr []Expression) (edges EdgeList) {
 				log.Fatal(err)
 			}
 			for _, v := range groupMap[g] {
-				edges = append(edges, Edge{v, i, 0.0})
+				edges = append(edges, Edge{v, i, 1.0})
 			}
 			groupStack = groupStack.Drop(g)
 			delete(groupMap, g)
-			edges = append(edges, Edge{f, i, 0.0})
-			edges = append(edges, Edge{g, i, 0.0})
+			edges = append(edges, Edge{f, i, 1.0})
+			edges = append(edges, Edge{g, i, 1.0})
 			f = i
 		case "|":
 			g, groupStack, err = groupStack.Pop()
@@ -156,7 +157,7 @@ func BuildEdgeList(arr []Expression) (edges EdgeList) {
 			groupMap[g] = append(groupMap[g], f)
 			f = g
 		default:
-			edges = append(edges, Edge{f, i, 0.0})
+			edges = append(edges, Edge{f, i, 1.0})
 			f = i
 		}
 	}

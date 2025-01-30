@@ -6,36 +6,38 @@
 package main
 
 import (
+	"bufio"
 	"errors"
+	"fmt"
 	"strings"
 )
 
-func ParseImport(s string) ([]string, error) {
-	var rule string
-	var gram string
-	var root string
-
-	split := strings.Split(s, ".")
-	if len(split) < 2 {
-		return []string{}, errors.New("rule address is too short to contain the required grammar and rule specifications")
+func ParseImportPath(s string) (string, string, error) {
+	ind := strings.LastIndex(s, ".")
+	if ind == -1 {
+		return "", "", errors.New("rule specification is too short to contain the required grammar and rule")
 	}
-	rule = split[len(split)-1]
-	gram = split[len(split)-2]
-	root = strings.Join(split[0:len(split)-2], "/")
-	root = ExpandRoot(root)
-	out := []string{root, gram, rule}
-	return out, nil
+	return s[:ind], s[ind+1:], nil
 }
 
-func ExpandRoot(s string) string {
-	if s == "" {
-		return ""
+func ReadRule(s *bufio.Scanner, r string) (string, error) {
+	target := fmt.Sprint("public <", r, ">")
+	for s.Scan() {
+		line := s.Text()
+		if strings.HasPrefix(line, target) {
+			return line, nil
+		}
 	}
-	var b strings.Builder
-	split := strings.Split(s, "/")
-	for i := 0; i < len(split); i++ {
-		b.WriteString("../")
+	return "", errors.New("target rule does not exist in grammar or is not public")
+}
+
+func ReadAllRules(s *bufio.Scanner) []string {
+	out := []string{}
+	for s.Scan() {
+		line := s.Text()
+		if strings.HasPrefix(line, "public <") {
+			out = append(out, line)
+		}
 	}
-	b.WriteString(s)
-	return b.String()
+	return out
 }

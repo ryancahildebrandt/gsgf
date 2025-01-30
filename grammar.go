@@ -35,12 +35,13 @@ func (g Grammar) CompositionOrder() []string {
 }
 
 func (g Grammar) Productions() []string {
+	out := []string{}
 	for _, v := range g.Rules {
 		if v.is_public {
-			g.productions = append(g.productions, v.Productions()...)
+			out = append(out, v.Productions()...)
 		}
 	}
-	return g.productions
+	return out
 }
 
 func (g Grammar) Resolve() (Grammar, error) {

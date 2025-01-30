@@ -47,17 +47,17 @@ func TestGrammarProductions(t *testing.T) {
 	lexer := NewJSGFLexer()
 	m := map[string]Rule{
 		"<_>": {"", false, []string{}, NewGraph(EdgeList{}, []Expression{}), []Expression{}, []Expression{}},
-		"<a>": {"123;", false, []string{}, NewGraph(EdgeList{{0, 1, 0.0}, {1, 2, 0.0}}, []Expression{"<SOS>", "123", ";", "<EOS>"}), []Expression{"<SOS>", "123", ";", "<EOS>"}, []Expression{}},
-		"<b>": {"1|2|3;", false, []string{}, NewGraph(EdgeList{{0, 1, 0.0}, {0, 3, 0.0}, {0, 5, 0.0}, {1, 6, 0.0}, {3, 6, 0.0}, {5, 6, 0.0}, {6, 7, 0.0}}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}, []Expression{}},
-		"<c>": {"1[2]3;", false, []string{}, NewGraph(EdgeList{{0, 1, 0.0}, {1, 2, 0.0}, {2, 3, 0.0}, {2, 4, 0.0}, {3, 4, 0.0}, {4, 5, 0.0}, {5, 6, 0.0}, {6, 7, 0.0}}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}, []Expression{}},
-		"<d>": {"1(2)3;", false, []string{}, NewGraph(EdgeList{{0, 1, 0.0}, {1, 2, 0.0}, {2, 3, 0.0}, {3, 4, 0.0}, {4, 5, 0.0}, {5, 6, 0.0}, {6, 7, 0.0}}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}, []Expression{}},
-		"<e>": {"1(2[3]);", false, []string{}, NewGraph(EdgeList{{0, 1, 0.0}, {1, 2, 0.0}, {2, 3, 0.0}, {3, 4, 0.0}, {4, 5, 0.0}, {4, 6, 0.0}, {5, 6, 0.0}, {6, 7, 0.0}, {7, 8, 0.0}, {8, 9, 0.0}}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}), []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}, []Expression{}},
-		"<f>": {"<l>;", false, []string{"<f>"}, NewGraph(EdgeList{{0, 1, 0.0}, {1, 2, 0.0}}, []Expression{"<SOS>", "<f>", ";", "<EOS>"}), []Expression{"<SOS>", "<f>", ";", "<EOS>"}, []Expression{}},
-		"<g>": {"abc;", false, []string{""}, NewGraph(EdgeList{{0, 1, 0.0}, {1, 2, 0.0}}, []Expression{"<SOS>", "abc", ";", "<EOS>"}), []Expression{"<SOS>", "abc", ";", "<EOS>"}, []Expression{}},
-		"<h>": {"<a>bc;", false, []string{"<a>"}, NewGraph(EdgeList{{0, 1, 0.0}, {1, 2, 0.0}}, []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}), []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}, []Expression{}},
-		"<i>": {"a<b>c;", false, []string{"<b>"}, NewGraph(EdgeList{{0, 1, 0.0}, {1, 2, 0.0}, {2, 3, 0.0}, {3, 4, 0.0}}, []Expression{"<SOS>", "a", "<b>", "c", ";", "<EOS>"}), []Expression{"<SOS>", "a", "<b>", "c", ";", "<EOS>"}, []Expression{}},
-		"<j>": {"a<b><c><d><e>;", false, []string{"<b>", "<c>", "<d>", "<e>"}, NewGraph(EdgeList{{0, 1, 0.0}, {1, 2, 0.0}, {2, 3, 0.0}, {3, 4, 0.0}, {4, 5, 0.0}, {5, 6, 0.0}, {6, 7, 0.0}}, []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}), []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}, []Expression{}},
-		"<k>": {"a<b><b><b>;", false, []string{"<b>"}, NewGraph(EdgeList{{0, 1, 0.0}, {1, 2, 0.0}, {2, 3, 0.0}, {3, 4, 0.0}, {4, 5, 0.0}, {5, 6, 0.0}}, []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}), []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}, []Expression{}},
+		"<a>": {"123;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, []Expression{"<SOS>", "123", ";", "<EOS>"}), []Expression{"<SOS>", "123", ";", "<EOS>"}, []Expression{}},
+		"<b>": {"1|2|3;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}, []Expression{}},
+		"<c>": {"1[2]3;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}, []Expression{}},
+		"<d>": {"1(2)3;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}, []Expression{}},
+		"<e>": {"1(2[3]);", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {4, 6, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}), []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}, []Expression{}},
+		"<f>": {"<l>;", false, []string{"<f>"}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, []Expression{"<SOS>", "<f>", ";", "<EOS>"}), []Expression{"<SOS>", "<f>", ";", "<EOS>"}, []Expression{}},
+		"<g>": {"abc;", false, []string{""}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, []Expression{"<SOS>", "abc", ";", "<EOS>"}), []Expression{"<SOS>", "abc", ";", "<EOS>"}, []Expression{}},
+		"<h>": {"<a>bc;", false, []string{"<a>"}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}), []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}, []Expression{}},
+		"<i>": {"a<b>c;", false, []string{"<b>"}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}}, []Expression{"<SOS>", "a", "<b>", "c", ";", "<EOS>"}), []Expression{"<SOS>", "a", "<b>", "c", ";", "<EOS>"}, []Expression{}},
+		"<j>": {"a<b><c><d><e>;", false, []string{"<b>", "<c>", "<d>", "<e>"}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}), []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}, []Expression{}},
+		"<k>": {"a<b><b><b>;", false, []string{"<b>"}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}}, []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}), []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}, []Expression{}},
 	}
 	table := []struct {
 		pubs []string
@@ -66,21 +66,21 @@ func TestGrammarProductions(t *testing.T) {
 	}{
 		{[]string{""}, []string{""}, nil},
 		{[]string{";"}, []string{""}, nil},
+		{[]string{"", ""}, []string{"", ""}, nil},
+		{[]string{";", ";", ";"}, []string{"", "", ""}, nil},
 		{[]string{"abc;"}, []string{"abc"}, nil},
 		{[]string{"a{}b//c/0.1/;"}, []string{"a{}b//c/0.1/"}, nil},
 		{[]string{"a{}/0.1/b/0.1/{}c;"}, []string{"a{}/0.1/b/0.1/{}c"}, nil},
 		{[]string{"abc<a>;"}, []string{"abc123"}, nil},
 		{[]string{"abc<l>;"}, []string{"abc<l>"}, dummy_error},
-		{[]string{"abc<a><b><c>;"}, []string{"abc12313123", "abc1231323", "abc12323123", "abc1232323", "abc1233123", "abc123323"}, nil},
-		{[]string{"abc(<g>|<h>|<i>);"}, []string{"abca1", "abcc1", "abc1"}, nil},
-		{[]string{"abc<g><g><g>;"}, []string{"abcabcabc"}, nil},
-		{[]string{"", ""}, []string{"", ""}, nil},
-		{[]string{";", ";", ";"}, []string{"", "", ""}, nil},
+		{[]string{"abc<a><b><c>;"}, []string{"abc1231123", "abc123113", "abc1232123", "abc123213", "abc1233123", "abc123313"}, nil},
+		{[]string{"abc(<g>|<h>|<i>);"}, []string{"abcabc", "abc123bc", "abca1c", "abca2c", "abca3c"}, nil},
+		{[]string{"abc<g><g><g>;"}, []string{"abcabcabcabc"}, nil},
 		{[]string{"abc;", "def;", "ghi;"}, []string{"abc", "def", "ghi"}, nil},
-		{[]string{"abc<a>;", "def<h>;", "<b>;"}, []string{"3", "3", "3", "123", "abc123"}, nil},
-		{[]string{"abc<a><b><c>;", "def[<h>];", "g(hi)|(jk);"}, []string{"abc12313123", "abc1231323", "abc12323123", "abc1232323", "abc1233123", "abc123323", "ghi", "jk"}, nil},
-		{[]string{"abc(<g>|<h>|<i>);", "def[<g>|<h>|<i>];", "ghi<b><b><b>;"}, []string{"ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333", "ghi333"}, nil},
-		{[]string{"abc<g><g><g>;", "<h><i>;", "<j>|<k>;"}, []string{"3", "3", "3", "3123123123", "3123123123", "3123123123", "3123123123", "3123123123", "3123123123", "3123123123", "3123123123", "3123123123", "3123123123", "3123123123", "3123123123", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "333", "abcabcabc"}, nil},
+		{[]string{"abc<a>;", "def<h>;", "<b>;"}, []string{"abc123", "def1", "def2", "def3", "1", "2", "3"}, nil},
+		{[]string{"abc<a><b><c>;", "def[<h>];", "g(hi)|(jk);"}, []string{"abc1231123", "abc123113", "abc1232123", "abc123213", "abc1233123", "abc123313", "def", "def123bc", "ghi", "gjk"}, nil},
+		{[]string{"abc(<g>|<h>|<i>);", "def[<g>|<h>|<i>];", "ghi<b><b><b>;"}, []string{"abcabc", "abc123bc", "abca1c", "abca2c", "abca3c", "def", "defabc", "def123bc", "defa1c", "defa2c", "defa3c", "ghi111", "ghi112", "ghi113", "ghi121", "ghi122", "ghi123", "ghi131", "ghi132", "ghi133", "ghi211", "ghi212", "ghi213", "ghi221", "ghi222", "ghi223", "ghi231", "ghi232", "ghi233", "ghi311", "ghi312", "ghi313", "ghi321", "ghi322", "ghi323", "ghi331", "ghi332", "ghi333"}, nil},
+		{[]string{"abc<g><g><g>;", "<h><i>;", "<j>|<k>;"}, []string{"123bca1c", "123bca2c", "123bca3c", "ghi111", "ghi112", "ghi113", "ghi121", "ghi122", "ghi123", "ghi131", "ghi132", "ghi133", "ghi211", "ghi212", "ghi213", "ghi221", "ghi222", "ghi223", "ghi231", "ghi232", "ghi233", "ghi311", "ghi312", "ghi313", "ghi321", "ghi322", "ghi323", "ghi331", "ghi332", "ghi333", "a112312312", "a1123123123", "a11312312", "a113123123", "a212312312", "a2123123123", "a21312312", "a213123123", "a312312312", "a3123123123", "a31312312", "a313123123"}, nil},
 	}
 	for _, test := range table {
 		g := NewGrammar()
@@ -92,12 +92,13 @@ func TestGrammarProductions(t *testing.T) {
 			rule.productions = FilterTerminals(rule.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[fmt.Sprintf("<%v>", j)] = rule
 		}
+		fmt.Println(g.Productions())
 		g, err := g.Resolve()
 		res := g.Productions()
 		sort.Strings(test.exp)
 		sort.Strings(res)
 		if fmt.Sprint(res) != fmt.Sprint(test.exp) {
-			t.Errorf("%v.Productions()\nGOT %v\nEXP %v", test.pubs, res, test.exp)
+			t.Errorf("%v.Productions()\nGOT len %v %v\nEXP len %v %v", test.pubs, len(res), res, len(test.exp), test.exp)
 		}
 		if test.err != nil && err == nil {
 			t.Errorf("%v.ResolveReferences().err\nGOT %v\nEXP %v", test.pubs, err, test.err)
