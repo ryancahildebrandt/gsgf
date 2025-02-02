@@ -46,6 +46,10 @@ func (g Grammar) Productions() []string {
 
 func (g Grammar) Resolve() (Grammar, error) {
 	rs := g.CompositionOrder()
+	rules := make(map[string]Rule)
+	for k, v := range g.Rules {
+		rules[k] = v
+	}
 	seen := make(map[string]struct{})
 	for i := len(rs) - 1; i >= 0; i-- {
 		rname := rs[i]
@@ -58,7 +62,7 @@ func (g Grammar) Resolve() (Grammar, error) {
 				return g, err
 			}
 			r2.productions = FilterTerminals(r2.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
-			g.Rules[rname] = r2.Copy()
+			g.Rules[rname] = r2
 		}
 	}
 	return g, nil

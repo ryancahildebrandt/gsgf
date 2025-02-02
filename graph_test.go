@@ -110,6 +110,7 @@ func TestGraphEndPoints(t *testing.T) {
 		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, 0, 2},
 		{EdgeList{{10, 0, 1.0}, {0, 1, 1.0}, {1, 2, 1.0}, {2, 20, 1.0}}, 10, 20},
 		{EdgeList{{1, 11, 1.0}, {11, 62, 1.0}, {62, 2, 1.0}, {2, 3, 1.0}, {3, 2, 1.0}, {2, 4, 1.0}, {4, 8, 1.0}, {8, 44, 1.0}}, 1, 44},
+		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 11, 1.0}, {2, 15, 1.0}, {2, 24, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 8, 1.0}, {15, 20, 1.0}, {17, 18, 1.0}, {18, 19, 1.0}, {19, 8, 1.0}, {20, 21, 1.0}, {21, 22, 1.0}, {22, 23, 1.0}, {23, 17, 1.0}, {24, 25, 1.0}, {25, 30, 1.0}, {27, 28, 1.0}, {28, 29, 1.0}, {29, 8, 1.0}, {30, 31, 1.0}, {30, 33, 1.0}, {30, 35, 1.0}, {31, 36, 1.0}, {33, 36, 1.0}, {35, 36, 1.0}, {36, 37, 1.0}, {37, 27, 1.0}}, 0, 10},
 	}
 	for _, test := range table {
 		g := NewGraph(test.e, []Expression{})
@@ -247,7 +248,7 @@ func TestGraphCompose(t *testing.T) {
 	}
 }
 
-func TestChoosePath(t *testing.T) {
+func TestChooseNext(t *testing.T) {
 	dummy_error := errors.New("")
 	table := []struct {
 		c    []int
@@ -272,7 +273,7 @@ func TestChoosePath(t *testing.T) {
 		if test.prob {
 			choices := make(map[int]float64)
 			for n := 0; n < 1000; n++ {
-				c, _ := ChoosePath(test.c, test.w)
+				c, _ := ChooseNext(test.c, test.w)
 				choices[c]++
 			}
 			res = test.c[0]
@@ -282,16 +283,16 @@ func TestChoosePath(t *testing.T) {
 				}
 			}
 		} else {
-			res, err = ChoosePath(test.c, test.w)
+			res, err = ChooseNext(test.c, test.w)
 		}
 		if res != test.exp {
-			t.Errorf("test %v: ChoosePath(%v, %v)\nGOT %v\nEXP %v", i, test.c, test.w, res, test.exp)
+			t.Errorf("test %v: ChooseNext(%v, %v)\nGOT %v\nEXP %v", i, test.c, test.w, res, test.exp)
 		}
 		if test.err != nil && err == nil {
-			t.Errorf("test %v: ChoosePath(%v, %v)\nGOT %v\nEXP %v", i, test.c, test.w, err, test.err)
+			t.Errorf("test %v: ChooseNext(%v, %v)\nGOT %v\nEXP %v", i, test.c, test.w, err, test.err)
 		}
 		if test.err == nil && err != nil {
-			t.Errorf("test %v: ChoosePath(%v, %v)\nGOT %v\nEXP %v", i, test.c, test.w, err, test.err)
+			t.Errorf("test %v: ChooseNext(%v, %v)\nGOT %v\nEXP %v", i, test.c, test.w, err, test.err)
 		}
 	}
 }

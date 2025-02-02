@@ -128,25 +128,24 @@ func ComposeGraphs(g Graph, h Graph, i int) (Graph, error) {
 
 	h1 := h.Copy()
 	g1 := g.Copy()
-	g_min := g1.Edges.Max() + 1
-	h1.Edges = h1.Edges.Increment(g_min)
-	h_max := h1.Edges.Max()
+	h1.Edges = h1.Edges.Increment(g1.Edges.Max() + 1)
+	h_min, h_max := h1.EndPoints()
 	exp := append(g1.Nodes, h1.Nodes...)
-	edg := h1.Edges
+	edg := h1.Edges.Copy()
 	for _, edge := range g1.Edges {
 		e := edge.Copy()
 		if e.from == i {
 			e.from = h_max
 		}
 		if e.to == i {
-			e.to = g_min
+			e.to = h_min
 		}
 		edg = append(edg, e)
 	}
 	return NewGraph(edg, exp), nil
 }
 
-func ChoosePath(c []int, w []float64) (int, error) {
+func ChooseNext(c []int, w []float64) (int, error) {
 	if len(c) == 0 || len(w) == 0 {
 		return -1, errors.New("length of choices c and/or weights w is 0")
 	}
@@ -183,7 +182,7 @@ func (g Graph) RandomPath() (Path, error) {
 			for i, dest := range n {
 				w[i] = g.Weight(f, dest)
 			}
-			choice, err := ChoosePath(g.From(p), w)
+			choice, err := ChooseNext(g.From(p), w)
 			if err != nil {
 				return Path{}, err
 			}

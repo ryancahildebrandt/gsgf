@@ -38,27 +38,24 @@ func NewRule(e Expression, is_public bool) Rule {
 }
 
 func (r Rule) Copy() Rule {
-	references := make([]string, len(r.references))
-	copy(references, r.references)
-	tokens := make([]Expression, len(r.tokens))
-	copy(tokens, r.tokens)
-	productions := make([]Expression, len(r.productions))
-	copy(productions, r.productions)
-
-	s := Rule{}
-	s.exp = r.exp
-	s.is_public = r.is_public
-	s.references = references
-	s.graph = r.graph
-	s.tokens = tokens
-	s.productions = productions
+	s := NewRule(r.exp, r.is_public)
+	s.references = make([]string, len(r.references))
+	copy(s.references, r.references)
+	s.tokens = make([]Expression, len(r.tokens))
+	copy(s.tokens, r.tokens)
+	s.productions = make([]Expression, len(r.productions))
+	copy(s.productions, r.productions)
+	s.graph = r.graph.Copy()
 
 	return s
 }
 
 func (r Rule) Productions() (out []string) {
 	for _, path := range r.graph.AllPaths() {
-		out = append(out, singleProduction(path, r.productions))
+		prod := singleProduction(path, r.productions)
+		if prod != "" {
+			out = append(out, prod)
+		}
 	}
 	return out
 }
@@ -67,7 +64,6 @@ func singleProduction(p Path, a []Expression) string {
 	if len(p) == 0 || len(a) == 0 {
 		return ""
 	}
-
 	var b strings.Builder
 	for _, i := range p {
 		b.WriteString(a[i].str())
@@ -95,15 +91,19 @@ func (r Rule) ResolveReferences(m map[string]Rule) (Rule, error) {
 	if len(r.references) == 0 {
 		return r, nil
 	}
-	r1 := r.Copy()
+	r1 := r
+	rules := make(map[string]Rule)
+	for k, v := range m {
+		rules[k] = v
+	}
 	for _, ref := range r1.references {
 		for i, t := range r1.tokens {
 			if t.str() == ref {
-				m_rule, ok := m[ref]
+				r2, ok := rules[ref]
 				if !ok {
 					return r, errors.New("referenced rule does not exist in grammar")
 				}
-				g, err := ComposeGraphs(r1.graph, m_rule.graph, i)
+				g, err := ComposeGraphs(r1.graph, r2.graph, i)
 				if err != nil {
 					return r, err
 				}

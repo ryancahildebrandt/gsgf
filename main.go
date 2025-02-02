@@ -39,9 +39,9 @@ func main() {
 			rule.graph = NewGraph(BuildEdgeList(rule.tokens), rule.tokens)
 			rule.productions = FilterTerminals(rule.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			grammar.Rules[name] = rule
-			// for _, p := range rule.Productions() {
-			// 	fmt.Println(p)
-			// }
+			for _, p := range rule.Productions() {
+				fmt.Println(p)
+			}
 		default:
 			continue
 		}
@@ -55,19 +55,8 @@ func main() {
 		fmt.Println(p)
 	}
 	fmt.Println("")
-
-	r1, _ = r1.ResolveReferences(grammar.Rules)
-	r1.productions = FilterTerminals(r1.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
-
-	fmt.Println(r1.tokens)
-	fmt.Println(r1.graph.Nodes)
-	fmt.Println(r1.graph.Edges)
-	fmt.Println(r1.graph.AllPaths())
-	fmt.Println(r1.Productions())
-	for _, p := range r1.Productions() {
-		fmt.Println(p)
-	}
-
+	
+	
 	// grammar, err = grammar.Resolve()
 	// fmt.Println(err)
 	// // grammar.Productions()
