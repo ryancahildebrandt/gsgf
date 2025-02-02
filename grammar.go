@@ -6,8 +6,8 @@
 package main
 
 type Grammar struct {
-	Rules       map[string]Rule
-	productions []string
+	Rules map[string]Rule
+	// productions []string
 }
 
 func NewGrammar() Grammar {
