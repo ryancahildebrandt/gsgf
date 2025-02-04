@@ -14,6 +14,7 @@ import (
 
 func TestRuleResolveReferences(t *testing.T) {
 	dummy_error := errors.New("")
+	lexer := NewJSGFLexer()
 	m := map[string]Rule{
 		"<a>": {"123;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, []Expression{"<SOS>", "123", ";", "<EOS>"}), []Expression{"<SOS>", "123", ";", "<EOS>"}, []Expression{}},
 		"<b>": {"1|2|3;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}, []Expression{}},
@@ -98,7 +99,7 @@ func TestRuleResolveReferences(t *testing.T) {
 		},
 	}
 	for _, test := range table {
-		res, err := test.r.ResolveReferences(m)
+		res, err := test.r.ResolveReferences(m, lexer)
 		if test.exp.is_public != res.is_public {
 			t.Errorf("%v.ResolveReferences().is_public\nGOT %v\nEXP %v", test.r, res.is_public, test.exp.is_public)
 		}

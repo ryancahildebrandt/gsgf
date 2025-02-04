@@ -87,29 +87,43 @@ func FilterTerminals(a []Expression, f []string) []Expression {
 	return a1
 }
 
-func (r Rule) ResolveReferences(m map[string]Rule) (Rule, error) {
+func (r Rule) ResolveReferences(m map[string]Rule, lex *tokenizer.Tokenizer) (Rule, error) {
+	var r1 Rule
+	var err error
 	if len(r.references) == 0 {
 		return r, nil
 	}
-	r1 := r
+	r1 = r
 	rules := make(map[string]Rule)
 	for k, v := range m {
 		rules[k] = v
 	}
-	for _, ref := range r1.references {
-		for i, t := range r1.tokens {
-			if t.str() == ref {
-				r2, ok := rules[ref]
-				if !ok {
-					return r, errors.New("referenced rule does not exist in grammar")
-				}
-				g, err := ComposeGraphs(r1.graph, r2.graph, i)
-				if err != nil {
-					return r, err
-				}
-				r1.graph = g
-				r1.tokens = g.Nodes
+	for _, ref := range r.references {
+		if ref == "" {
+			continue
+		}
+		r2, ok := rules[ref]
+		if !ok {
+			return r, errors.New("referenced rule does not exist in grammar")
+		}
+		r1, err = r1.SingleResolveReference(ref, r2, lex)
+		if err != nil {
+			return r1, err
+		}
+	}
+	return r1, nil
+}
+
+func (r Rule) SingleResolveReference(ref string, rule Rule, lex *tokenizer.Tokenizer) (Rule, error) {
+	r1 := r
+	for i, t := range r1.exp.ToTokens(lex) {
+		if t.str() == ref {
+			g, err := ComposeGraphs(r1.graph, rule.graph, i)
+			if err != nil {
+				return r, err
 			}
+			r1.graph = g
+			r1.tokens = g.Nodes
 		}
 	}
 	return r1, nil

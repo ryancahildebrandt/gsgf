@@ -5,9 +5,12 @@
 
 package main
 
+import (
+	"github.com/bzick/tokenizer"
+)
+
 type Grammar struct {
 	Rules map[string]Rule
-	// productions []string
 }
 
 func NewGrammar() Grammar {
@@ -44,20 +47,16 @@ func (g Grammar) Productions() []string {
 	return out
 }
 
-func (g Grammar) Resolve() (Grammar, error) {
-	rs := g.CompositionOrder()
-	rules := make(map[string]Rule)
-	for k, v := range g.Rules {
-		rules[k] = v
-	}
+func (g Grammar) Resolve(lex *tokenizer.Tokenizer) (Grammar, error) {
+	ord := g.CompositionOrder()
 	seen := make(map[string]struct{})
-	for i := len(rs) - 1; i >= 0; i-- {
-		rname := rs[i]
+	for i := len(ord) - 1; i >= 0; i-- {
+		rname := ord[i]
 		r1 := g.Rules[rname]
 		_, ok := seen[rname]
 		if !ok {
 			seen[rname] = struct{}{}
-			r2, err := r1.ResolveReferences(g.Rules)
+			r2, err := r1.ResolveReferences(g.Rules, lex)
 			if err != nil {
 				return g, err
 			}

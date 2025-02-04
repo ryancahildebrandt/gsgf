@@ -97,7 +97,7 @@ func TestGrammarProductions(t *testing.T) {
 			rule.productions = FilterTerminals(rule.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[fmt.Sprintf("<pub_%v>", j)] = rule
 		}
-		g, err := g.Resolve()
+		g, err := g.Resolve(lexer)
 		res := g.Productions()
 		sort.Strings(test.exp)
 		sort.Strings(res)

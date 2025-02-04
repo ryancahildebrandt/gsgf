@@ -126,19 +126,17 @@ func ComposeGraphs(g Graph, h Graph, i int) (Graph, error) {
 		return Graph{}, errors.New("cannot insert EdgeList a at index greater than EdgeList g.Max()")
 	}
 
-	h1 := h.Copy()
-	g1 := g.Copy()
-	h1.Edges = h1.Edges.Increment(g1.Edges.Max() + 1)
-	h_min, h_max := h1.EndPoints()
-	exp := append(g1.Nodes, h1.Nodes...)
-	edg := h1.Edges.Copy()
-	for _, edge := range g1.Edges {
+	h.Edges = h.Edges.Increment(g.Edges.Max() + 1)
+	h_from, h_to := h.EndPoints()
+	exp := append(g.Nodes, h.Nodes...)
+	edg := h.Edges
+	for _, edge := range g.Edges {
 		e := edge.Copy()
-		if e.from == i {
-			e.from = h_max
+		if edge.from == i {
+			e.from = h_to
 		}
-		if e.to == i {
-			e.to = h_min
+		if edge.to == i {
+			e.to = h_from
 		}
 		edg = append(edg, e)
 	}
