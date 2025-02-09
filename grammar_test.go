@@ -17,20 +17,20 @@ func TestGrammarCompositionOrder(t *testing.T) {
 		g   Grammar
 		exp []string
 	}{
-		{Grammar{map[string]Rule{}}, []string{}},
-		{Grammar{map[string]Rule{"<a>": NewRule("", false)}}, []string{}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<b><c>", false)}}, []string{}},
-		{Grammar{map[string]Rule{"<a>": NewRule("", true)}}, []string{"<a>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<b><c>", true)}}, []string{"<a>", "<b>", "<c>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("", true), "<b>": NewRule("", true)}}, []string{"<a>", "<b>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("", true), "<b>": NewRule("", false)}}, []string{"<a>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<b>", true), "<c>": NewRule("", true)}}, []string{"<a>", "<b>", "<c>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<b>", true), "<c>": NewRule("", false)}}, []string{"<a>", "<b>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", true), "<d>": NewRule("", true)}}, []string{"<a>", "<b>", "<c>", "<c>", "<c>", "<d>", "<d>", "<d>", "<d>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", true), "<d>": NewRule("", false)}}, []string{"<a>", "<b>", "<c>", "<c>", "<c>", "<d>", "<d>", "<d>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}}, []string{"<a>", "<b>", "<c>", "<c>", "<d>", "<d>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", false), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}}, []string{"<a>", "<c>", "<d>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<c>", false), "<b>": NewRule("<c>", false), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}}, []string{}},
+		{Grammar{map[string]Rule{}, []string{}}, []string{}},
+		{Grammar{map[string]Rule{"<a>": NewRule("", false)}, []string{}}, []string{}},
+		{Grammar{map[string]Rule{"<a>": NewRule("<b><c>", false)}, []string{}}, []string{}},
+		{Grammar{map[string]Rule{"<a>": NewRule("", true)}, []string{}}, []string{"<a>"}},
+		{Grammar{map[string]Rule{"<a>": NewRule("<b><c>", true)}, []string{}}, []string{"<a>", "<b>", "<c>"}},
+		{Grammar{map[string]Rule{"<a>": NewRule("", true), "<b>": NewRule("", true)}, []string{}}, []string{"<a>", "<b>"}},
+		{Grammar{map[string]Rule{"<a>": NewRule("", true), "<b>": NewRule("", false)}, []string{}}, []string{"<a>"}},
+		{Grammar{map[string]Rule{"<a>": NewRule("<b>", true), "<c>": NewRule("", true)}, []string{}}, []string{"<a>", "<b>", "<c>"}},
+		{Grammar{map[string]Rule{"<a>": NewRule("<b>", true), "<c>": NewRule("", false)}, []string{}}, []string{"<a>", "<b>"}},
+		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", true), "<d>": NewRule("", true)}, []string{}}, []string{"<a>", "<b>", "<c>", "<c>", "<c>", "<d>", "<d>", "<d>", "<d>"}},
+		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", true), "<d>": NewRule("", false)}, []string{}}, []string{"<a>", "<b>", "<c>", "<c>", "<c>", "<d>", "<d>", "<d>"}},
+		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{"<a>", "<b>", "<c>", "<c>", "<d>", "<d>"}},
+		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", false), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{"<a>", "<c>", "<d>"}},
+		{Grammar{map[string]Rule{"<a>": NewRule("<c>", false), "<b>": NewRule("<c>", false), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{}},
 	}
 	for _, test := range table {
 		res := test.g.CompositionOrder()

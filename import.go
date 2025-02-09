@@ -9,15 +9,28 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"path"
 	"strings"
 )
 
-func ParseImportPath(s string) (string, string, error) {
+func CleanImportStatement(s string) (string, error) {
+	if s == "import <>" {
+		return "", errors.New("empty import statement")
+	}
+	s = strings.TrimPrefix(s, "import <")
+	s = strings.TrimPrefix(s, ">")
+	return s, nil
+}
+
+func SplitImportPath(s string) (string, string, string, error) {
 	ind := strings.LastIndex(s, ".")
 	if ind == -1 {
-		return "", "", errors.New("rule specification is too short to contain the required grammar and rule")
+		return "", "", "", errors.New("rule specification is too short to contain the required grammar and rule")
 	}
-	return s[:ind], s[ind+1:], nil
+	dir, fname := path.Split(s)
+	ext := path.Ext(fname)
+	gram := s[0:ind]
+	return dir, gram, ext, nil
 }
 
 func ReadRule(s *bufio.Scanner, r string) (string, error) {

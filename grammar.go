@@ -10,7 +10,8 @@ import (
 )
 
 type Grammar struct {
-	Rules map[string]Rule
+	Rules   map[string]Rule
+	Imports []string
 }
 
 func NewGrammar() Grammar {

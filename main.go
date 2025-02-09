@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 	"strings"
 	"time"
 )
@@ -17,8 +18,9 @@ import (
 func main() {
 	start := time.Now()
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	f, err := os.Open("./data/tea_base.jsgf")
-	// f, err := os.Open("./data/test.jsgf")
+	basepath := "./data/tests/dir2/dir1/dir0/test.jsgf"
+	// path := "./data/test.jsgf"
+	f, err := os.Open(basepath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,7 +31,10 @@ func main() {
 		line := scanner.Text()
 		switch {
 		case strings.HasPrefix(line, "import"):
-			fmt.Println(line)
+			s := line
+			s = strings.TrimPrefix(s, "import <")
+			s = strings.TrimSuffix(s, ">")
+			grammar.Imports = append(grammar.Imports, s)
 		case strings.HasPrefix(line, "public"), strings.HasPrefix(line, "<"):
 			name, rule, err := ParseRule(lexer, line)
 			if err != nil {
@@ -39,7 +44,8 @@ func main() {
 			rule.graph = NewGraph(BuildEdgeList(rule.tokens), rule.tokens)
 			rule.productions = FilterTerminals(rule.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			grammar.Rules[name] = rule
-			// fmt.Println(name)
+			// s, e := rule.graph.EndPoints()
+			// fmt.Println(name, s, e)
 			// for _, p := range rule.Productions() {
 			// 	fmt.Println(p)
 			// }
@@ -47,83 +53,54 @@ func main() {
 			continue
 		}
 	}
-	// for k, v := range grammar.Rules {
-	// 	s, e := v.graph.EndPoints()
-	// 	fmt.Println(k, s, e)
-	// 	fmt.Println(v.Productions())
-	// }
 
-	//
-	// ord := grammar.CompositionOrder()
-	// fmt.Println(ord)
-	// seen := make(map[string]struct{})
-	// for i := len(ord) - 1; i >= 0; i-- {
-	// 	rname := ord[i]
-	// 	r1 := grammar.Rules[rname]
-	// 	if r1.is_public {
-	// 		continue
-	// 	}
-	// 	_, ok := seen[rname]
-	// 	if !ok {
-	// 		// fmt.Println(rname)
-	// 		seen[rname] = struct{}{}
-	// 		fmt.Println(r1.tokens)
-	// 		fmt.Println(r1.exp.ToTokens(lexer))
-	// 		r2, err := r1.ResolveReferences(grammar.Rules, lexer)
-	// 		if err != nil {
-	// 			log.Fatal(err)
-	// 		}
-	// 		r2.productions = FilterTerminals(r2.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
-	// 		grammar.Rules[rname] = r2
-	// 		// fmt.Println(r2.graph.EndPoints())
-	// 	}
+	// grammar, err = grammar.Resolve(lexer)
+	// if err != nil {
+	// 	log.Fatal(err)
 	// }
-	//grammar, err = grammar.Resolve(lexer)
-
-	// for _, e := range g.Rules["<main>"].graph.Edges.Sort() {
-	// 	fmt.Println(e)
+	// for _, p := range grammar.Productions() {
+	// 	fmt.Println(p)
 	// }
-	// for k, v := range grammar.Rules {
-	// 	fmt.Println(k, v.graph.Edges)
-	// 	fmt.Println(v.Productions())
-	// }
-	s, e := grammar.Rules["<main>"].graph.EndPoints()
-	fmt.Println(s, e, grammar.Rules["<main>"].graph.AllPaths())
-	for _, p := range grammar.Productions() {
-		fmt.Println(p)
+	fmt.Println(basepath)             // ./dir/file.ext
+	fmt.Println(path.Base(basepath))  // file.ext
+	fmt.Println(path.Clean(basepath)) // dir/file.ext
+	// Replace multiple slashes with a single slash.
+	// Eliminate each . path name element (the current directory).
+	// Eliminate each inner .. path name element (the parent directory) along with the non-.. element that precedes it.
+	// Eliminate .. elements that begin a rooted path: that is, replace "/.." by "/" at the beginning of a path.
+	fmt.Println(path.Dir(basepath))   // dir
+	fmt.Println(path.Ext(basepath))   // .ext
+	fmt.Println(path.Split(basepath)) // [./dir, file.ext]
+	p := strings.LastIndex(basepath, "/")
+	pp := basepath[0 : p+1]
+	for _, i := range grammar.Imports {
+		if i == "" {
+			continue
+		}
+		// if i == filename {continue}
+		//fmt.Println(i)
+		ppp := fmt.Sprint(pp, i)
+		_, gram, _, err := SplitImportPath(ppp)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pppp := fmt.Sprint(gram, ".jsgf")
+		f, err = os.Open(pppp)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("--------", pppp)
+		scanner = bufio.NewScanner(f)
+		for scanner.Scan() {
+			fmt.Println(scanner.Text())
+		}
 	}
-
-	// for i, path := range []string{
-	// 	"dir0/dir1/dir2/gram.rule",
-	// 	"dir0/dir1/dir2/gram.*",
-	// 	"dir1/dir2/gram.rule",
-	// 	"dir1/dir2/gram.*",
-	// 	"dir2/gram.rule",
-	// 	"dir2/gram.*",
-	// 	"gram.rule",
-	// 	"gram.*",
-	// 	"../dir2/gram.rule",
-	// 	"../dir2/gram.*",
-	// 	"../../dir1/dir2/gram.rule",
-	// 	"../../dir1/dir2/gram.*",
-	// 	"../../../dir0/dir1/dir2/gram.rule",
-	// 	"../../../dir0/dir1/dir2/gram.*",
-	// } {
-	// 	root, ru, err := ParseImportPath(path)
-	// 	fmt.Println(i, root, ru, err)
-	// 	// f, err = os.Open(fmt.Sprint("data/tests/", root, ".jsgf"))
-	// 	// if err != nil {
-	// 	// 	log.Fatal(err)
-	// 	// }
-	// 	// fmt.Println(f)
-	// }
-
-	// //----
-	// f, err = os.Open("./data/tea.jsgf")
+	//----
+	// f, err = os.Open(path)
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
 	// scanner = bufio.NewScanner(f)
-	// fmt.Println(ReadRule(scanner, "main"))
+	// fmt.Println(ReadAllRules(scanner))
 	fmt.Printf("Took %s", time.Since(start))
 }
