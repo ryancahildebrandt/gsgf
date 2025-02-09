@@ -5,8 +5,5 @@ import <tea_extras.*>;
 
 public <main> = (<request>|<order>) <quant> <teatype> [<with> <extras>];
 
-<request> = [(could|will|would) you] please <brew>;
 <order> = i'd like [to order|a|<quant>];
-<quant> = some|a (cup|glass) of;
-<teatype> = red|sweet|green|jasmine|milk;
 <brew> = make|brew|whip up <quant>;

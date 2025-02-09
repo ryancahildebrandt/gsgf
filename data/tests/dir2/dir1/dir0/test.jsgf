@@ -1,7 +1,16 @@
 #JSGF V1.0 ISO8859-1 en;
 
 grammar tea;
-import <tea_extras.*>
+import <>
+import <e.*>
+import <dir0/f.*>
+import <dir0/g.*>
+import <dir0/dir1/h.*>
+import <dir0/dir1/dir2/i.*>
+import <../../../a.*>
+import <../../b.*>
+import <../c.*>
+import <../d.*>
 
 public <main> = (<request>|<order>) <quant> <teatype> tea;
 

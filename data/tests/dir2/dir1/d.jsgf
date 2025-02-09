@@ -1,0 +1,8 @@
+#JSGF V1.0 ISO8859-1 en;
+
+grammar tea;
+import <tea_extras.*>;
+
+public <main> = (<request>|<order>) <quant> <teatype> [<with> <extras>];
+
+<quant> = some|a (cup|glass) of;
