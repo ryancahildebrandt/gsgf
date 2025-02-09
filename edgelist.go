@@ -25,12 +25,6 @@ func (e Edge) IsEmpty() bool {
 	return e.from == 0 && e.to == 0
 }
 
-func (e Edge) Increment(n int) Edge {
-	e.from = e.from + n
-	e.to = e.to + n
-	return e
-}
-
 type EdgeList []Edge
 
 func (e EdgeList) Sort() EdgeList {
