@@ -6,6 +6,9 @@
 package main
 
 import (
+	"bufio"
+	"strings"
+
 	"github.com/bzick/tokenizer"
 )
 
@@ -67,3 +70,46 @@ func (g Grammar) Resolve(lex *tokenizer.Tokenizer) (Grammar, error) {
 	}
 	return g, nil
 }
+
+func (g Grammar) ReadLines(s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar, error) {
+	for s.Scan() {
+		line := s.Text()
+		switch {
+		case strings.HasPrefix(line, "import <"):
+			s := line
+			s = strings.TrimPrefix(s, "import <")
+			s = strings.TrimSuffix(s, ">")
+			g.Imports = append(g.Imports, CleanImportStatement(s))
+		case strings.HasPrefix(line, "public <"), strings.HasPrefix(line, "<"):
+			name, rule, err := ParseRule(lex, line)
+			if err != nil {
+				return NewGrammar(), err
+			}
+			rule.tokens = rule.exp.ToTokens(lex)
+			rule.graph = NewGraph(BuildEdgeList(rule.tokens), rule.tokens)
+			rule.productions = FilterTerminals(rule.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
+			g.Rules[name] = rule
+		default:
+			continue
+		}
+	}
+	return g, nil
+}
+
+// basepath := "./data/tests/dir2/dir1/dir0/test.jsgf"
+// 	// path := "./data/test.jsgf"
+// 	f, err := os.Open(basepath)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	scanner := bufio.NewScanner(f)
+// 	lexer := NewJSGFLexer()
+// 	grammar := NewGrammar()
+// 	grammar, err = grammar.ReadLines(scanner, lexer)
+// 	// if err != nil {
+// 	// 	log.Fatal(err)
+// 	// }
+// 	// grammar, err = grammar.Resolve(lexer)
+// 	// if err != nil {
+// 	// 	log.Fatal(err)
+// 	// }
