@@ -25,7 +25,7 @@ func main() {
 	fmt.Println(rs)
 
 	fmt.Println("----")
-	grammar, imports, _, err := Peek(basepath)
+	grammar, imports, _, err := NewGrammar(basepath).Peek()
 	if err != nil {
 		log.Fatal(err)
 	}

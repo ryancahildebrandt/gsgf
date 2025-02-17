@@ -7,20 +7,56 @@ package main
 
 import (
 	"bufio"
+	"errors"
+	"fmt"
+	"os"
+	"regexp"
 	"strings"
 
 	"github.com/bzick/tokenizer"
 )
 
 type Grammar struct {
+	Path    string
 	Rules   map[string]Rule
 	Imports []string
 }
 
-func NewGrammar() Grammar {
+func NewGrammar(p string) Grammar {
 	g := Grammar{}
+	g.Path = p
 	g.Rules = make(map[string]Rule)
 	return g
+}
+
+func (g Grammar) Peek() (string, []string, map[string][]string, error) {
+	name := ""
+	imports := []string{}
+	rules := make(map[string][]string)
+
+	f, err := os.Open(g.Path)
+	if err != nil {
+		return name, imports, rules, errors.New(fmt.Sprint("unable to open grammar from import: ", g.Path))
+	}
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		line := s.Text()
+		switch {
+		case strings.HasPrefix(line, "grammar "):
+			name = CleanGrammarStatement(line)
+		case strings.HasPrefix(line, "import <"):
+			imports = append(imports, line)
+		case strings.HasPrefix(line, "<") || strings.HasPrefix(line, "public <"):
+			name, rule, _ := strings.Cut(line, "=")
+			for _, ref := range regexp.MustCompile(`<.*?>`).FindAllString(rule, -1) {
+				name = UnwrapRule(name)
+				ref = UnwrapRule(ref)
+				rules[name] = append(rules[name], ref)
+			}
+		default:
+		}
+	}
+	return name, imports, rules, nil
 }
 
 func (g Grammar) CompositionOrder() []string {
@@ -83,7 +119,7 @@ func (g Grammar) ReadLines(s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar,
 		case strings.HasPrefix(line, "public <"), strings.HasPrefix(line, "<"):
 			name, rule, err := ParseRule(lex, line)
 			if err != nil {
-				return NewGrammar(), err
+				return NewGrammar(""), err
 			}
 			rule.tokens = rule.exp.ToTokens(lex)
 			rule.graph = NewGraph(BuildEdgeList(rule.tokens), rule.tokens)

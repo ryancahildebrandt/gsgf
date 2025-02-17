@@ -17,20 +17,20 @@ func TestGrammarCompositionOrder(t *testing.T) {
 		g   Grammar
 		exp []string
 	}{
-		{Grammar{map[string]Rule{}, []string{}}, []string{}},
-		{Grammar{map[string]Rule{"<a>": NewRule("", false)}, []string{}}, []string{}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<b><c>", false)}, []string{}}, []string{}},
-		{Grammar{map[string]Rule{"<a>": NewRule("", true)}, []string{}}, []string{"<a>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<b><c>", true)}, []string{}}, []string{"<a>", "<b>", "<c>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("", true), "<b>": NewRule("", true)}, []string{}}, []string{"<a>", "<b>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("", true), "<b>": NewRule("", false)}, []string{}}, []string{"<a>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<b>", true), "<c>": NewRule("", true)}, []string{}}, []string{"<a>", "<b>", "<c>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<b>", true), "<c>": NewRule("", false)}, []string{}}, []string{"<a>", "<b>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", true), "<d>": NewRule("", true)}, []string{}}, []string{"<a>", "<b>", "<c>", "<c>", "<c>", "<d>", "<d>", "<d>", "<d>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", true), "<d>": NewRule("", false)}, []string{}}, []string{"<a>", "<b>", "<c>", "<c>", "<c>", "<d>", "<d>", "<d>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{"<a>", "<b>", "<c>", "<c>", "<d>", "<d>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", false), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{"<a>", "<c>", "<d>"}},
-		{Grammar{map[string]Rule{"<a>": NewRule("<c>", false), "<b>": NewRule("<c>", false), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{}},
+		{Grammar{"", map[string]Rule{}, []string{}}, []string{}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("", false)}, []string{}}, []string{}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("<b><c>", false)}, []string{}}, []string{}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("", true)}, []string{}}, []string{"<a>"}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("<b><c>", true)}, []string{}}, []string{"<a>", "<b>", "<c>"}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("", true), "<b>": NewRule("", true)}, []string{}}, []string{"<a>", "<b>"}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("", true), "<b>": NewRule("", false)}, []string{}}, []string{"<a>"}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("<b>", true), "<c>": NewRule("", true)}, []string{}}, []string{"<a>", "<b>", "<c>"}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("<b>", true), "<c>": NewRule("", false)}, []string{}}, []string{"<a>", "<b>"}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", true), "<d>": NewRule("", true)}, []string{}}, []string{"<a>", "<b>", "<c>", "<c>", "<c>", "<d>", "<d>", "<d>", "<d>"}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", true), "<d>": NewRule("", false)}, []string{}}, []string{"<a>", "<b>", "<c>", "<c>", "<c>", "<d>", "<d>", "<d>"}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", true), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{"<a>", "<b>", "<c>", "<c>", "<d>", "<d>"}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", false), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{"<a>", "<c>", "<d>"}},
+		{Grammar{"", map[string]Rule{"<a>": NewRule("<c>", false), "<b>": NewRule("<c>", false), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{}},
 	}
 	for _, test := range table {
 		res := test.g.CompositionOrder()
@@ -75,7 +75,7 @@ func TestGrammarProductions(t *testing.T) {
 		{[]string{"abc<g><g><g>;", "<h><i>;", "<j>|<k>;"}, []string{"abcabcabcabc", "123bca1c", "123bca2c", "123bca3c", "a11312312", "a21312312", "a31312312", "a112312312", "a212312312", "a312312312", "a113123123", "a213123123", "a313123123", "a1123123123", "a2123123123", "a3123123123", "a111", "a112", "a113", "a121", "a122", "a123", "a131", "a132", "a133", "a211", "a212", "a213", "a221", "a222", "a223", "a231", "a232", "a233", "a311", "a312", "a313", "a321", "a322", "a323", "a331", "a332", "a333"}, nil},
 	}
 	for _, test := range table {
-		g := NewGrammar()
+		g := NewGrammar("")
 		g.Rules = map[string]Rule{
 			"<_>": {"", false, []string{}, NewGraph(EdgeList{}, []Expression{}), []Expression{}, []Expression{}},
 			"<a>": {"123;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}}, []Expression{"<SOS>", "123", ";", "<EOS>"}), []Expression{"<SOS>", "123", ";", "<EOS>"}, []Expression{}},
