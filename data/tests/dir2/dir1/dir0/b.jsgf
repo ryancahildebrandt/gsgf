@@ -1,0 +1,8 @@
+#JSGF V1.0 ISO8859-1 en;
+
+grammar b;
+import <c.brew>
+
+<request> = [(could|will|would) you] please <brew>;
+<order> = i'd like [to order|a|<quant>];
+<quant> = some|a (cup|glass) of;

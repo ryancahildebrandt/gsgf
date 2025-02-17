@@ -1,0 +1,6 @@
+#JSGF V1.0 ISO8859-1 en;
+
+grammar c;
+
+<teatype> = red|sweet|green|jasmine|milk;
+<brew> = (make|brew|whip up) <quant>;

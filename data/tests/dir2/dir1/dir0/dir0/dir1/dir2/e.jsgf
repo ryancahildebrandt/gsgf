@@ -1,7 +1,6 @@
 #JSGF V1.0 ISO8859-1 en;
 
-grammar test;
-import <a.*>
+grammar e;
 
 public <main> = (<request>|<order>) <quant> <teatype> tea;
 
@@ -10,16 +9,3 @@ public <main> = (<request>|<order>) <quant> <teatype> tea;
 <quant> = some|a (cup|glass) of;
 <teatype> = red|sweet|green|jasmine|milk;
 <brew> = (make|brew|whip up) <quant>;
-
-// tests for:
-// g
-// a, b
-// c
-// d
-
-// g imports a*
-// g imports c.
-// g imports b. imports c.
-// g imports d imports a, c
-// g imports e(dne)
-// g imports a.(dne)
