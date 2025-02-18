@@ -1,11 +1,11 @@
 #JSGF V1.0 ISO8859-1 en;
 
-grammar test5;
-import <b.request>
+grammar test0;
+
+import <a.*>
 
 public <main> = (<request>|<order>) <quant> <teatype> tea;
 
-<order> = i'd like [to order|a|<quant>];
 <quant> = some|a (cup|glass) of;
 <teatype> = red|sweet|green|jasmine|milk;
 <brew> = (make|brew|whip up) <quant>;

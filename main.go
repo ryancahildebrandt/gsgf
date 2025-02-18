@@ -15,7 +15,7 @@ import (
 func main() {
 	start := time.Now()
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	basepath := "./data/tests/dir2/dir1/dir0/test0.jsgf"
+	basepath := "./data/tests/test0.jsgf"
 
 	is, rs, err := CreateNameSpace(basepath, ".jsgf")
 	if err != nil {
@@ -33,7 +33,8 @@ func main() {
 	for _, imp := range imports {
 		imp = CleanImportStatement(imp)
 		gram, rule, _ := strings.Cut(imp, ".")
-		fmt.Println(gram, rule)
+		fmt.Println("GRAM", gram)
+		fmt.Println("RULE", rule)
 		v, ok := rs[gram]
 		if !ok {
 			fmt.Println("gram not ok")

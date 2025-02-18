@@ -1,6 +1,7 @@
 #JSGF V1.0 ISO8859-1 en;
 
 grammar b;
+
 import <c.brew>
 
 <request> = [(could|will|would) you] please <brew>;

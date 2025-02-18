@@ -48,8 +48,9 @@ func (g Grammar) Peek() (string, []string, map[string][]string, error) {
 			imports = append(imports, line)
 		case strings.HasPrefix(line, "<") || strings.HasPrefix(line, "public <"):
 			name, rule, _ := strings.Cut(line, "=")
+			name = UnwrapRule(name)
+			rules[name] = []string{}
 			for _, ref := range regexp.MustCompile(`<.*?>`).FindAllString(rule, -1) {
-				name = UnwrapRule(name)
 				ref = UnwrapRule(ref)
 				rules[name] = append(rules[name], ref)
 			}

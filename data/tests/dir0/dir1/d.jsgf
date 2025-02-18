@@ -1,0 +1,7 @@
+#JSGF V1.0 ISO8859-1 en;
+
+grammar d;
+
+import <a.order>
+import <c.teatype>
+
