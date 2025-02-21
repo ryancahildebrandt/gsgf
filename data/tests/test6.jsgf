@@ -1,9 +1,12 @@
 #JSGF V1.0 ISO8859-1 en;
 
-grammar a;
+grammar test6;
 
-<request> = [(could|will|would) you] please <brew>;
+import <b>
+
+public <main> = (<request>|<order>) <quant> <teatype> tea;
+
 <order> = i'd like [to order|a|<quant>];
 <quant> = some|a (cup|glass) of;
+<teatype> = red|sweet|green|jasmine|milk;
 <brew> = (make|brew|whip up) <quant>;
-

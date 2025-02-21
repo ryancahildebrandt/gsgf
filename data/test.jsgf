@@ -1,3 +1,5 @@
+grammar test;
+
 // empty
 public <test> = ;
 

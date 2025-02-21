@@ -6,39 +6,14 @@
 package main
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 )
-
-// type Import struct {
-// 	path string
-// ext    string
-// file   string
-// target string
-// gram   string
-// rule   string
-// dir    string
-// }
-
-// func NewImport(s string) Import {
-// if strings.HasPrefix(s, "import <") {
-// 	s = CleanImportStatement(s)
-// }
-// if s == "" {
-// 	return Import{}
-// }
-// i := Import{}
-// i.path = s
-// i.ext = e
-// i.dir = filepath.Dir(s)
-// i.target = filepath.Base(s)
-// i.rule = strings.TrimPrefix(filepath.Ext(i.target), ".")
-// i.gram = strings.TrimSuffix(i.target, fmt.Sprint(".", i.rule))
-// i.file = fmt.Sprint(i.gram, i.ext)
-// return i
-// }
 
 func WrapRule(s string) string {
 	return fmt.Sprint("<", s, ">")
@@ -67,23 +42,150 @@ func CleanGrammarStatement(s string) string {
 	return s
 }
 
-func CreateNameSpace(p string, e string) (map[string][]string, map[string]map[string][]string, error) {
-	var rs = make(map[string]map[string][]string)
-	var is = make(map[string][]string)
+func CreateNameSpace(p string, e string) (map[string]string, error) {
+	var rs = make(map[string]string)
+
+	imports, err := ImportOrder(p, e)
+	if err != nil {
+		return make(map[string]string), err
+	}
+	for _, t := range imports {
+		gram, _, _ := strings.Cut(CleanImportStatement(t), ".")
+		path, err := FindGrammar(p, gram, e)
+		if err != nil {
+			return make(map[string]string), err
+		}
+		rules, err := PeekRules(path)
+		if err != nil {
+			return make(map[string]string), err
+		}
+		for k, v := range rules {
+			rs[k] = v
+		}
+	}
+	return rs, nil
+}
+
+func PeekName(p string) (string, error) {
+	f, err := os.Open(p)
+	if err != nil {
+		return "", errors.New("file does not exist")
+	}
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		line := s.Text()
+		switch {
+		case strings.HasPrefix(line, "grammar "):
+			return CleanGrammarStatement(line), nil
+		default:
+			continue
+		}
+	}
+	return "", errors.New("grammar does not contain name declaration")
+}
+
+func PeekImports(p string) ([]string, error) {
+	var imports []string
+
+	if !strings.HasSuffix(p, ".jsgf") {
+		return []string{}, errors.New("not a grammar file")
+	}
+	f, err := os.Open(p)
+	if err != nil {
+		return []string{}, errors.New("file does not exist")
+	}
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		line := s.Text()
+		switch {
+		case strings.HasPrefix(line, "import <"):
+			imports = append(imports, CleanGrammarStatement(line))
+		default:
+			continue
+		}
+	}
+	return imports, nil
+}
+
+func PeekRules(p string) (map[string]string, error) {
+	var rules = make(map[string]string)
+
+	if !strings.HasSuffix(p, ".jsgf") {
+		return make(map[string]string), errors.New("not a grammar file")
+	}
+	f, err := os.Open(p)
+	if err != nil {
+		return make(map[string]string), errors.New("file does not exist")
+	}
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		line := s.Text()
+		switch {
+		case strings.HasPrefix(line, "<") || strings.HasPrefix(line, "public <"):
+			name, rule, _ := strings.Cut(line, "=")
+			name = strings.TrimSpace(name)
+			name = strings.TrimPrefix(name, "public ")
+			rules[name] = strings.TrimSpace(rule)
+		default:
+			continue
+		}
+	}
+	return rules, nil
+}
+
+func FindGrammar(p string, t string, e string) (string, error) {
+	var target string
+	var found bool
 
 	err := filepath.Walk(filepath.Dir(p), func(path string, info os.FileInfo, err error) error {
 		if filepath.Ext(path) == e {
-			grammar, imports, rules, err := NewGrammar(path).Peek()
+			name, err := PeekName(path)
 			if err != nil {
 				return err
 			}
-			rs[grammar] = rules
-			is[grammar] = imports
+			if name == t {
+				found = true
+				target = path
+				return io.EOF
+			}
 		}
 		return nil
 	})
-	if err != nil {
-		return is, rs, err
+	if err == io.EOF {
+		err = nil
 	}
-	return is, rs, nil
+	if err != nil {
+		return "", err
+	}
+	if !found {
+		return "", errors.New(fmt.Sprint("grammar ", target, " not declared in available directories"))
+	}
+	return target, nil
+}
+
+func ImportOrder(p string, e string) ([]string, error) {
+	var imports []string
+	var imp string
+	var res []string
+
+	imports, err := PeekImports(p)
+	if err != nil {
+		return imports, err
+	}
+
+	for len(imports) > 0 {
+		imp, imports = imports[0], imports[1:]
+		gram, _, _ := strings.Cut(CleanImportStatement(imp), ".")
+		path, err := FindGrammar(p, gram, e)
+		if err != nil {
+			return []string{}, err
+		}
+		imps, err := PeekImports(path)
+		if err != nil {
+			return []string{}, err
+		}
+		imports = append(imports, imps...)
+		res = append(res, imp)
+	}
+	return res, nil
 }

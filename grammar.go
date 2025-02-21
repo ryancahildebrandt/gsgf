@@ -133,6 +133,18 @@ func (g Grammar) ReadLines(s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar,
 	return g, nil
 }
 
+func (g Grammar) IsComplete() bool {
+	for _, v := range g.Rules {
+		for _, ref := range v.references {
+			_, ok := g.Rules[ref]
+			if !ok {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 // basepath := "./data/tests/dir2/dir1/dir0/test.jsgf"
 // 	// path := "./data/test.jsgf"
 // 	f, err := os.Open(basepath)
