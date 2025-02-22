@@ -151,7 +151,6 @@ func TestCreateNameSpace(t *testing.T) {
 		if test.err == nil && err != nil {
 			t.Errorf("CreateNameSpace(%v, %v).err\nGOT %v\nEXP %v", test.d, test.e, err, test.err)
 		}
-
 	}
 }
 

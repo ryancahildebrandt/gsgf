@@ -6,8 +6,10 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
+	"os"
 	"sort"
 	"testing"
 )
@@ -159,5 +161,64 @@ func TestGrammarPeek(t *testing.T) {
 				t.Errorf("Grammar(%v).Peek().rules\nGOT %v\nEXP %v", test.p, res_rules, test.exp_rules)
 			}
 		}
+	}
+}
+
+func TestGrammarProductionsE2E(t *testing.T) {
+	dummy_error := errors.New("")
+	lexer := NewJSGFLexer()
+	productions := []string{}
+	f, _ := os.Open("data/tests/productions.txt")
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		productions = append(productions, scanner.Text())
+	}
+	table := []struct {
+		p   string
+		exp []string
+		err error
+	}{
+		{"data/tests/test0.jsgf", productions, nil},
+		{"data/tests/test1.jsgf", productions, nil},
+		{"data/tests/test2.jsgf", productions, dummy_error}, // returns error but is still resolvable, figure out how to validate completness before imports
+		{"data/tests/test3.jsgf", productions, nil},
+		{"data/tests/test4.jsgf", productions, nil},
+		{"data/tests/test5.jsgf", productions, nil},
+		{"data/tests/a.jsgf", []string{}, nil},
+		{"data/tests/b.jsgf", []string{}, nil},
+		{"data/tests/dir0/c.jsgf", []string{}, nil},
+		{"data/tests/dir0/dir1/d.jsgf", []string{}, dummy_error},
+		{"data/tests/dir0/dir1/dir2/e.jsgf", productions, nil},
+	}
+	for _, test := range table {
+		var err error
+		grammar := NewGrammar(test.p)
+		f, err1 := os.Open(test.p)
+		scanner := bufio.NewScanner(f)
+		grammar, err2 := grammar.ReadLines(scanner, lexer)
+		namespace, err3 := CreateNameSpace(grammar.Path, ".jsgf")
+		grammar = grammar.ReadNameSpace(namespace, lexer)
+		grammar, err4 := grammar.Resolve(lexer)
+		res := grammar.Productions()
+		for _, e := range []error{err1, err2, err3, err4} {
+			if e != nil {
+				err = e
+			}
+		}
+
+		sort.Strings(test.exp)
+		sort.Strings(res)
+		if fmt.Sprint(res) != fmt.Sprint(test.exp) {
+			t.Errorf("%v.Productions()\nGOT %v\nEXP %v", test.p, res, test.exp)
+			fmt.Println(len(res), len(test.exp))
+		}
+
+		if test.err != nil && err == nil {
+			t.Errorf("%v.Productions().err\nGOT %v\nEXP %v", test.p, err, test.err)
+		}
+		if test.err == nil && err != nil {
+			t.Errorf("%v.Productions().err\nGOT %v\nEXP %v", test.p, err, test.err)
+		}
+
 	}
 }

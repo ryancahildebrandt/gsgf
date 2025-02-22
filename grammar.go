@@ -133,6 +133,20 @@ func (g Grammar) ReadLines(s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar,
 	return g, nil
 }
 
+func (g Grammar) ReadNameSpace(r map[string]string, lex *tokenizer.Tokenizer) Grammar {
+	for k, v := range r {
+		rule := NewRule(Expression(v), false)
+		rule.tokens = rule.exp.ToTokens(lex)
+		rule.graph = NewGraph(BuildEdgeList(rule.tokens), rule.tokens)
+		rule.productions = FilterTerminals(rule.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
+		_, ok := g.Rules[k]
+		if !ok {
+			g.Rules[k] = rule
+		}
+	}
+	return g
+}
+
 func (g Grammar) IsComplete() bool {
 	for _, v := range g.Rules {
 		for _, ref := range v.references {
