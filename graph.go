@@ -7,6 +7,7 @@ package main
 
 import (
 	"errors"
+	"slices"
 
 	"gonum.org/v1/gonum/stat/sampleuv"
 )
@@ -189,4 +190,45 @@ func (g Graph) RandomPath() (Path, error) {
 		}
 	}
 	return res, nil
+}
+
+func (g Graph) Minimize() Graph {
+	var g1 Graph
+	f := []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}
+	g1 = g
+	for i, t := range g1.Nodes {
+		if slices.Contains(f, t.str()) {
+			g1 = g1.DropNode(i)
+		}
+	}
+	return g1
+}
+
+func (g Graph) DropNode(i int) Graph {
+	var from []int
+	var to []int
+	var edg EdgeList
+	var start int
+	var end int
+
+	start, end = g.EndPoints()
+	for _, edge := range g.Edges {
+		switch i {
+		case start, end:
+			edg = append(edg, edge)
+		case edge.from:
+			to = append(to, edge.to)
+		case edge.to:
+			from = append(from, edge.from)
+		default:
+			edg = append(edg, edge)
+		}
+	}
+
+	for _, f := range from {
+		for _, t := range to {
+			edg = append(edg, Edge{f, t, 1.0})
+		}
+	}
+	return NewGraph(edg.Unique(), g.Nodes)
 }

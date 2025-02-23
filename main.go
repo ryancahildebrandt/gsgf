@@ -43,17 +43,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// o, err := os.Create("./data/tests/productions.txt")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// w := bufio.NewWriter(o)
+	prod := make(map[string]struct{})
 	for _, p := range grammar.Productions() {
-		fmt.Println(p)
-		// w.WriteString(p)
-		// w.WriteString("\n")
+		prod[p] = struct{}{}
 	}
-	// w.Flush()
+	fmt.Println(len(grammar.Productions()))
+	fmt.Println(len(prod))
+
+	fmt.Println(len(grammar.Rules["<main>"].graph.Minimize().AllPaths()))
+	fmt.Println(len(grammar.Rules["<main>"].graph.AllPaths()))
 
 	fmt.Printf("Took %s", time.Since(start))
 }
