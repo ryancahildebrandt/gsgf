@@ -70,17 +70,17 @@ func TestParseRule(t *testing.T) {
 		if n != test.name {
 			t.Errorf("ParseRule(jsgflexer, %v)\nGOT %v\nEXP %v", test.line, n, test.name)
 		}
-		if r.exp != test.rule.exp {
+		if r.Exp != test.rule.Exp {
 			t.Errorf("ParseRule(jsgflexer, %v)\nGOT %v\nEXP %v", test.line, r, test.rule)
 		}
-		if r.is_public != test.rule.is_public {
-			t.Errorf("ParseRule(jsgflexer, %v).is_public\nGOT %v\nEXP %v", test.line, r, test.rule)
+		if r.Is_public != test.rule.Is_public {
+			t.Errorf("ParseRule(jsgflexer, %v).Is_public\nGOT %v\nEXP %v", test.line, r, test.rule)
 		}
-		if fmt.Sprint(r.references) != fmt.Sprint(test.rule.references) {
-			t.Errorf("ParseRule(jsgflexer, %v).references\nGOT %v\nEXP %v", test.line, r.references, test.rule.references)
+		if fmt.Sprint(r.References) != fmt.Sprint(test.rule.References) {
+			t.Errorf("ParseRule(jsgflexer, %v).References\nGOT %v\nEXP %v", test.line, r.References, test.rule.References)
 		}
-		if reflect.DeepEqual(r.tokens, test.rule.tokens) {
-			t.Errorf("ParseRule(jsgflexer, %v).tokens\nGOT %v\nEXP %v", test.line, r.tokens, test.rule.tokens)
+		if reflect.DeepEqual(r.Tokens, test.rule.Tokens) {
+			t.Errorf("ParseRule(jsgflexer, %v).Tokens\nGOT %v\nEXP %v", test.line, r.Tokens, test.rule.Tokens)
 		}
 	}
 }

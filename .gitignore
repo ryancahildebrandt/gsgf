@@ -24,4 +24,7 @@ go.work.sum
 # env file
 .env
 
-*.txt
+*scratch*
+*backup*
+*test_arrays*
+

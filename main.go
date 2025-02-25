@@ -7,6 +7,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -19,8 +20,6 @@ func main() {
 	basepath := "./data/tests/test0.jsgf"
 	ext := ".jsgf"
 	fmt.Println(basepath)
-
-	fmt.Println("----")
 	grammar := NewGrammar(basepath)
 	f, err := os.Open(basepath)
 	if err != nil {
@@ -43,15 +42,30 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	prod := make(map[string]struct{})
-	for _, p := range grammar.Productions() {
-		prod[p] = struct{}{}
-	}
-	fmt.Println(len(grammar.Productions()))
-	fmt.Println(len(prod))
 
-	fmt.Println(len(grammar.Rules["<main>"].graph.Minimize().AllPaths()))
-	fmt.Println(len(grammar.Rules["<main>"].graph.AllPaths()))
+	ns, es := GraphToTxt(grammar.Rules["<main>"].Graph)
+	WriteToFile([]byte(ns), "outputs/nodes.txt")
+	WriteToFile([]byte(es), "outputs/edges.txt")
+
+	var j []byte
+	j, err = json.MarshalIndent(GraphToJson(grammar.Rules["<main>"].Graph), "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+	WriteToFile(j, "outputs/graph.json")
+
+	j, err = json.MarshalIndent(GrammarToJson(grammar), "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+	WriteToFile(j, "outputs/grammar.json")
+
+	j = []byte(GraphToDot(grammar.Rules["<main>"].Graph))
+	WriteToFile(j, "outputs/full_graph.dot")
+	j = []byte(GraphToDot(grammar.Rules["<main>"].Graph.Minimize()))
+	WriteToFile(j, "outputs/minimized_graph.dot")
+	j = []byte(ReferencesToDot(grammar))
+	WriteToFile(j, "outputs/references.dot")
 
 	fmt.Printf("Took %s", time.Since(start))
 }

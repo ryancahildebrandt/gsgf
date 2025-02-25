@@ -66,13 +66,13 @@ func (g Grammar) CompositionOrder() []string {
 	var res []string
 
 	for k, v := range g.Rules {
-		if v.is_public {
+		if v.Is_public {
 			rules = append(rules, k)
 		}
 	}
 	for len(rules) > 0 {
 		rule, rules = rules[0], rules[1:]
-		rules = append(rules, g.Rules[rule].references...)
+		rules = append(rules, g.Rules[rule].References...)
 		res = append(res, rule)
 	}
 	return res
@@ -81,7 +81,7 @@ func (g Grammar) CompositionOrder() []string {
 func (g Grammar) Productions() []string {
 	out := []string{}
 	for _, v := range g.Rules {
-		if v.is_public {
+		if v.Is_public {
 			out = append(out, v.Productions()...)
 		}
 	}
@@ -101,7 +101,7 @@ func (g Grammar) Resolve(lex *tokenizer.Tokenizer) (Grammar, error) {
 			if err != nil {
 				return g, err
 			}
-			r2.productions = FilterTerminals(r2.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
+			r2.productions = FilterTerminals(r2.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[rname] = r2
 		}
 	}
@@ -122,9 +122,9 @@ func (g Grammar) ReadLines(s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar,
 			if err != nil {
 				return NewGrammar(""), err
 			}
-			rule.tokens = rule.exp.ToTokens(lex)
-			rule.graph = NewGraph(BuildEdgeList(rule.tokens), rule.tokens)
-			rule.productions = FilterTerminals(rule.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
+			rule.Tokens = rule.Exp.ToTokens(lex)
+			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
+			rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[name] = rule
 		default:
 			continue
@@ -136,9 +136,9 @@ func (g Grammar) ReadLines(s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar,
 func (g Grammar) ReadNameSpace(r map[string]string, lex *tokenizer.Tokenizer) Grammar {
 	for k, v := range r {
 		rule := NewRule(Expression(v), false)
-		rule.tokens = rule.exp.ToTokens(lex)
-		rule.graph = NewGraph(BuildEdgeList(rule.tokens), rule.tokens)
-		rule.productions = FilterTerminals(rule.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
+		rule.Tokens = rule.Exp.ToTokens(lex)
+		rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
+		rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 		_, ok := g.Rules[k]
 		if !ok {
 			g.Rules[k] = rule
@@ -149,7 +149,7 @@ func (g Grammar) ReadNameSpace(r map[string]string, lex *tokenizer.Tokenizer) Gr
 
 func (g Grammar) IsComplete() bool {
 	for _, v := range g.Rules {
-		for _, ref := range v.references {
+		for _, ref := range v.References {
 			_, ok := g.Rules[ref]
 			if !ok {
 				return false

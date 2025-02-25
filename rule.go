@@ -14,44 +14,44 @@ import (
 )
 
 type Rule struct {
-	exp         Expression
-	is_public   bool
-	references  []string
-	graph       Graph
-	tokens      []Expression
+	Exp         Expression
+	Is_public   bool
+	References  []string
+	Graph       Graph
+	Tokens      []Expression
 	productions []Expression
 }
 
 func NewRule(e Expression, is_public bool) Rule {
 	r := Rule{}
-	r.exp = e
-	r.is_public = is_public
+	r.Exp = e
+	r.Is_public = is_public
 	seen := make(map[string]struct{})
 	for _, ref := range regexp.MustCompile(`<.*?>`).FindAllString(e.str(), -1) {
 		_, ok := seen[ref]
 		if !ok {
 			seen[ref] = struct{}{}
-			r.references = append(r.references, ref)
+			r.References = append(r.References, ref)
 		}
 	}
 	return r
 }
 
 func (r Rule) Copy() Rule {
-	s := NewRule(r.exp, r.is_public)
-	s.references = make([]string, len(r.references))
-	copy(s.references, r.references)
-	s.tokens = make([]Expression, len(r.tokens))
-	copy(s.tokens, r.tokens)
+	s := NewRule(r.Exp, r.Is_public)
+	s.References = make([]string, len(r.References))
+	copy(s.References, r.References)
+	s.Tokens = make([]Expression, len(r.Tokens))
+	copy(s.Tokens, r.Tokens)
 	s.productions = make([]Expression, len(r.productions))
 	copy(s.productions, r.productions)
-	s.graph = r.graph.Copy()
+	s.Graph = r.Graph.Copy()
 
 	return s
 }
 
 func (r Rule) Productions() (out []string) {
-	for _, path := range r.graph.AllPaths() {
+	for _, path := range r.Graph.AllPaths() {
 		prod := singleProduction(path, r.productions)
 		if prod != "" {
 			out = append(out, prod)
@@ -90,7 +90,7 @@ func FilterTerminals(a []Expression, f []string) []Expression {
 func (r Rule) ResolveReferences(m map[string]Rule, lex *tokenizer.Tokenizer) (Rule, error) {
 	var r1 Rule
 	var err error
-	if len(r.references) == 0 {
+	if len(r.References) == 0 {
 		return r, nil
 	}
 	r1 = r
@@ -98,7 +98,7 @@ func (r Rule) ResolveReferences(m map[string]Rule, lex *tokenizer.Tokenizer) (Ru
 	for k, v := range m {
 		rules[k] = v
 	}
-	for _, ref := range r.references {
+	for _, ref := range r.References {
 		if ref == "" {
 			continue
 		}
@@ -116,31 +116,31 @@ func (r Rule) ResolveReferences(m map[string]Rule, lex *tokenizer.Tokenizer) (Ru
 
 func (r Rule) SingleResolveReference(ref string, rule Rule, lex *tokenizer.Tokenizer) (Rule, error) {
 	r1 := r
-	for i, t := range r1.exp.ToTokens(lex) {
+	for i, t := range r1.Exp.ToTokens(lex) {
 		if t.str() == ref {
-			g, err := ComposeGraphs(r1.graph, rule.graph, i)
+			g, err := ComposeGraphs(r1.Graph, rule.Graph, i)
 			if err != nil {
 				return r, err
 			}
-			r1.graph = g
-			r1.tokens = g.Nodes
+			r1.Graph = g
+			r1.Tokens = g.Nodes
 		}
 	}
 	return r1, nil
 }
 
 func (r Rule) WeightEdges() (Rule, error) {
-	for i, t := range r.tokens {
+	for i, t := range r.Tokens {
 		if t.IsWeighted() {
 			e, w, err := t.ParseWeight()
 			if err != nil {
 				return r, err
 			}
-			r.tokens[i] = e
-			r.graph.Nodes[i] = e
-			for j, edge := range r.graph.Edges {
-				if edge.to == i {
-					r.graph.Edges[j].weight = w
+			r.Tokens[i] = e
+			r.Graph.Nodes[i] = e
+			for j, edge := range r.Graph.Edges {
+				if edge.To == i {
+					r.Graph.Edges[j].Weight = w
 				}
 			}
 		}

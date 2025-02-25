@@ -12,17 +12,17 @@ import (
 )
 
 type Edge struct {
-	from   int
-	to     int
-	weight float64
+	From   int
+	To     int
+	Weight float64
 }
 
 func (e Edge) Copy() Edge {
-	return Edge{e.from, e.to, e.weight}
+	return Edge{e.From, e.To, e.Weight}
 }
 
 func (e Edge) IsEmpty() bool {
-	return e.from == 0 && e.to == 0
+	return e.From == 0 && e.To == 0
 }
 
 type EdgeList []Edge
@@ -30,9 +30,9 @@ type EdgeList []Edge
 func (e EdgeList) Sort() EdgeList {
 	sort.Slice(e, func(i, j int) bool {
 		switch {
-		case e[i].from < e[j].from:
+		case e[i].From < e[j].From:
 			return true
-		case e[i].from == e[j].from && e[i].to < e[j].to:
+		case e[i].From == e[j].From && e[i].To < e[j].To:
 			return true
 		default:
 			return false
@@ -52,8 +52,8 @@ func (e EdgeList) Copy() EdgeList {
 func (e EdgeList) Increment(n int) EdgeList {
 	e1 := e.Copy()
 	for i := range e1 {
-		e1[i].from = e1[i].from + n
-		e1[i].to = e1[i].to + n
+		e1[i].From = e1[i].From + n
+		e1[i].To = e1[i].To + n
 	}
 	return e1
 }
@@ -68,8 +68,8 @@ func (e EdgeList) Max() int {
 	}
 	var arr []int
 	for _, i := range e {
-		arr = append(arr, i.from)
-		arr = append(arr, i.to)
+		arr = append(arr, i.From)
+		arr = append(arr, i.To)
 	}
 	sort.Slice(arr, func(i, j int) bool { return arr[i] < arr[j] })
 	return arr[len(arr)-1]

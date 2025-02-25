@@ -94,9 +94,9 @@ func TestGrammarProductions(t *testing.T) {
 		}
 		for j, p := range test.pubs {
 			rule := NewRule(Expression(p), true)
-			rule.tokens = rule.exp.ToTokens(lexer)
-			rule.graph = NewGraph(BuildEdgeList(rule.tokens), rule.tokens)
-			rule.productions = FilterTerminals(rule.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
+			rule.Tokens = rule.Exp.ToTokens(lexer)
+			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
+			rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[fmt.Sprintf("<pub_%v>", j)] = rule
 		}
 		g, err := g.Resolve(lexer)
@@ -165,9 +165,9 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 		}
 		for j, p := range test.pubs {
 			rule := NewRule(Expression(p), true)
-			rule.tokens = rule.exp.ToTokens(lexer)
-			rule.graph = NewGraph(BuildEdgeList(rule.tokens), rule.tokens)
-			rule.productions = FilterTerminals(rule.tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""})
+			rule.Tokens = rule.Exp.ToTokens(lexer)
+			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
+			rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""})
 			g.Rules[fmt.Sprintf("<pub_%v>", j)] = rule
 		}
 		g, err := g.Resolve(lexer)

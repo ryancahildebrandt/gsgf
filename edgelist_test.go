@@ -41,7 +41,7 @@ func TestBuildEdgeList(t *testing.T) {
 	}
 	for _, test := range table {
 		_, v, _ := ParseRule(lexer, test.rule)
-		res := BuildEdgeList(v.exp.ToTokens(lexer))
+		res := BuildEdgeList(v.Exp.ToTokens(lexer))
 		if fmt.Sprint(res.Sort()) != fmt.Sprint(test.exp.Sort()) {
 			t.Errorf("%v.toArray(NewJSGFLexer())\nGOT %v\nEXP %v", test.rule, res, test.exp)
 		}

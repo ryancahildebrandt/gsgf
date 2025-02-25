@@ -58,12 +58,12 @@ func (g Graph) AddEdge(e Edge) Graph {
 		return g
 	}
 	g.Edges = append(g.Edges, e.Copy())
-	g.Children[e.from] = append(g.Children[e.from], e.to)
-	_, ok := g.Weights[e.from]
+	g.Children[e.From] = append(g.Children[e.From], e.To)
+	_, ok := g.Weights[e.From]
 	if !ok {
-		g.Weights[e.from] = make(map[int]float64)
+		g.Weights[e.From] = make(map[int]float64)
 	}
-	g.Weights[e.from][e.to] = e.weight
+	g.Weights[e.From][e.To] = e.Weight
 	return g
 }
 
@@ -72,17 +72,17 @@ func (g Graph) EndPoints() (i, f int) {
 	var e2 = make(map[int]struct{})
 	edges := g.Edges.Copy().Sort()
 	for _, edge := range edges {
-		e1[edge.from] = struct{}{}
-		e2[edge.to] = struct{}{}
+		e1[edge.From] = struct{}{}
+		e2[edge.To] = struct{}{}
 	}
 	for _, edge := range edges {
-		_, ok := e2[edge.from]
+		_, ok := e2[edge.From]
 		if !ok {
-			i = edge.from
+			i = edge.From
 		}
-		_, ok = e1[edge.to]
+		_, ok = e1[edge.To]
 		if !ok {
-			f = edge.to
+			f = edge.To
 		}
 	}
 	return i, f
@@ -133,11 +133,11 @@ func ComposeGraphs(g Graph, h Graph, i int) (Graph, error) {
 	edg := h.Edges
 	for _, edge := range g.Edges {
 		e := edge.Copy()
-		if edge.from == i {
-			e.from = h_to
+		if edge.From == i {
+			e.From = h_to
 		}
-		if edge.to == i {
-			e.to = h_from
+		if edge.To == i {
+			e.To = h_from
 		}
 		edg = append(edg, e)
 	}
@@ -216,10 +216,10 @@ func (g Graph) DropNode(i int) Graph {
 		switch i {
 		case start, end:
 			edg = append(edg, edge)
-		case edge.from:
-			to = append(to, edge.to)
-		case edge.to:
-			from = append(from, edge.from)
+		case edge.From:
+			to = append(to, edge.To)
+		case edge.To:
+			from = append(from, edge.From)
 		default:
 			edg = append(edg, edge)
 		}

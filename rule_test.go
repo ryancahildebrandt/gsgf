@@ -100,20 +100,20 @@ func TestRuleResolveReferences(t *testing.T) {
 	}
 	for _, test := range table {
 		res, err := test.r.ResolveReferences(m, lexer)
-		if test.exp.is_public != res.is_public {
-			t.Errorf("%v.ResolveReferences().is_public\nGOT %v\nEXP %v", test.r, res.is_public, test.exp.is_public)
+		if test.exp.Is_public != res.Is_public {
+			t.Errorf("%v.ResolveReferences().Is_public\nGOT %v\nEXP %v", test.r, res.Is_public, test.exp.Is_public)
 		}
-		if fmt.Sprint(test.exp.references) != fmt.Sprint(res.references) {
-			t.Errorf("%v.ResolveReferences().references\nGOT %v\nEXP %v", test.r, res.references, test.exp.references)
+		if fmt.Sprint(test.exp.References) != fmt.Sprint(res.References) {
+			t.Errorf("%v.ResolveReferences().References\nGOT %v\nEXP %v", test.r, res.References, test.exp.References)
 		}
-		if fmt.Sprint(test.exp.graph.Edges.Sort()) != fmt.Sprint(res.graph.Edges.Sort()) {
-			t.Errorf("%v.ResolveReferences().edges\nGOT %v\nEXP %v", test.r, res.graph.Edges.Sort(), test.exp.graph.Edges.Sort())
+		if fmt.Sprint(test.exp.Graph.Edges.Sort()) != fmt.Sprint(res.Graph.Edges.Sort()) {
+			t.Errorf("%v.ResolveReferences().edges\nGOT %v\nEXP %v", test.r, res.Graph.Edges.Sort(), test.exp.Graph.Edges.Sort())
 		}
-		if fmt.Sprint(test.exp.graph.Nodes) != fmt.Sprint(res.graph.Nodes) {
-			t.Errorf("%v.ResolveReferences().nodes\nGOT %v\nEXP %v", test.r, res.graph.Nodes, test.exp.graph.Nodes)
+		if fmt.Sprint(test.exp.Graph.Nodes) != fmt.Sprint(res.Graph.Nodes) {
+			t.Errorf("%v.ResolveReferences().nodes\nGOT %v\nEXP %v", test.r, res.Graph.Nodes, test.exp.Graph.Nodes)
 		}
-		if fmt.Sprint(test.exp.tokens) != fmt.Sprint(res.tokens) {
-			t.Errorf("%v.ResolveReferences().tokens\nGOT %v\nEXP %v", test.r, res.tokens, test.exp.tokens)
+		if fmt.Sprint(test.exp.Tokens) != fmt.Sprint(res.Tokens) {
+			t.Errorf("%v.ResolveReferences().Tokens\nGOT %v\nEXP %v", test.r, res.Tokens, test.exp.Tokens)
 		}
 		if test.err != nil && err == nil {
 			t.Errorf("%v.ResolveReferences().err\nGOT %v\nEXP %v", test.r, err, test.err)
@@ -202,20 +202,20 @@ func TestRuleWeightEdges(t *testing.T) {
 	}
 	for _, test := range table {
 		res, err := test.r.WeightEdges()
-		if test.exp.is_public != res.is_public {
-			t.Errorf("%v.WeightEdges().is_public\nGOT %v\nEXP %v", test.r, res.is_public, test.exp.is_public)
+		if test.exp.Is_public != res.Is_public {
+			t.Errorf("%v.WeightEdges().Is_public\nGOT %v\nEXP %v", test.r, res.Is_public, test.exp.Is_public)
 		}
-		if fmt.Sprint(test.exp.references) != fmt.Sprint(res.references) {
-			t.Errorf("%v.WeightEdges().references\nGOT %v\nEXP %v", test.r, res.references, test.exp.references)
+		if fmt.Sprint(test.exp.References) != fmt.Sprint(res.References) {
+			t.Errorf("%v.WeightEdges().References\nGOT %v\nEXP %v", test.r, res.References, test.exp.References)
 		}
-		if fmt.Sprint(test.exp.graph.Edges.Sort()) != fmt.Sprint(res.graph.Edges.Sort()) {
-			t.Errorf("%v.WeightEdges().edges\nGOT %v\nEXP %v", test.r, res.graph.Edges.Sort(), test.exp.graph.Edges.Sort())
+		if fmt.Sprint(test.exp.Graph.Edges.Sort()) != fmt.Sprint(res.Graph.Edges.Sort()) {
+			t.Errorf("%v.WeightEdges().edges\nGOT %v\nEXP %v", test.r, res.Graph.Edges.Sort(), test.exp.Graph.Edges.Sort())
 		}
-		if fmt.Sprint(test.exp.graph.Nodes) != fmt.Sprint(res.graph.Nodes) {
-			t.Errorf("%v.WeightEdges().nodes\nGOT %v\nEXP %v", test.r, res.graph.Nodes, test.exp.graph.Nodes)
+		if fmt.Sprint(test.exp.Graph.Nodes) != fmt.Sprint(res.Graph.Nodes) {
+			t.Errorf("%v.WeightEdges().nodes\nGOT %v\nEXP %v", test.r, res.Graph.Nodes, test.exp.Graph.Nodes)
 		}
-		if fmt.Sprint(test.exp.tokens) != fmt.Sprint(res.tokens) {
-			t.Errorf("%v.WeightEdges().tokens\nGOT %v\nEXP %v", test.r, res.tokens, test.exp.tokens)
+		if fmt.Sprint(test.exp.Tokens) != fmt.Sprint(res.Tokens) {
+			t.Errorf("%v.WeightEdges().Tokens\nGOT %v\nEXP %v", test.r, res.Tokens, test.exp.Tokens)
 		}
 		if test.err != nil && err == nil {
 			t.Errorf("%v.WeightEdges().err\nGOT %v\nEXP %v", test.r, err, test.err)
