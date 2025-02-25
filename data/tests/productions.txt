@@ -1,0 +1,630 @@
+i'd like  some red tea
+i'd like  some sweet tea
+i'd like  some green tea
+i'd like  some jasmine tea
+i'd like  some milk tea
+i'd like to order some red tea
+i'd like to order some sweet tea
+i'd like to order some green tea
+i'd like to order some jasmine tea
+i'd like to order some milk tea
+i'd like a some red tea
+i'd like a some sweet tea
+i'd like a some green tea
+i'd like a some jasmine tea
+i'd like a some milk tea
+i'd like some some red tea
+i'd like some some sweet tea
+i'd like some some green tea
+i'd like some some jasmine tea
+i'd like some some milk tea
+i'd like  a cup of red tea
+i'd like  a cup of sweet tea
+i'd like  a cup of green tea
+i'd like  a cup of jasmine tea
+i'd like  a cup of milk tea
+i'd like  a glass of red tea
+i'd like  a glass of sweet tea
+i'd like  a glass of green tea
+i'd like  a glass of jasmine tea
+i'd like  a glass of milk tea
+i'd like to order a cup of red tea
+i'd like to order a cup of sweet tea
+i'd like to order a cup of green tea
+i'd like to order a cup of jasmine tea
+i'd like to order a cup of milk tea
+i'd like to order a glass of red tea
+i'd like to order a glass of sweet tea
+i'd like to order a glass of green tea
+i'd like to order a glass of jasmine tea
+i'd like to order a glass of milk tea
+i'd like a a cup of red tea
+i'd like a a cup of sweet tea
+i'd like a a cup of green tea
+i'd like a a cup of jasmine tea
+i'd like a a cup of milk tea
+i'd like a a glass of red tea
+i'd like a a glass of sweet tea
+i'd like a a glass of green tea
+i'd like a a glass of jasmine tea
+i'd like a a glass of milk tea
+i'd like some a cup of red tea
+i'd like some a cup of sweet tea
+i'd like some a cup of green tea
+i'd like some a cup of jasmine tea
+i'd like some a cup of milk tea
+i'd like some a glass of red tea
+i'd like some a glass of sweet tea
+i'd like some a glass of green tea
+i'd like some a glass of jasmine tea
+i'd like some a glass of milk tea
+i'd like a cup of some red tea
+i'd like a cup of some sweet tea
+i'd like a cup of some green tea
+i'd like a cup of some jasmine tea
+i'd like a cup of some milk tea
+i'd like a glass of some red tea
+i'd like a glass of some sweet tea
+i'd like a glass of some green tea
+i'd like a glass of some jasmine tea
+i'd like a glass of some milk tea
+ please make some some red tea
+ please make some some sweet tea
+ please make some some green tea
+ please make some some jasmine tea
+ please make some some milk tea
+ please brew some some red tea
+ please brew some some sweet tea
+ please brew some some green tea
+ please brew some some jasmine tea
+ please brew some some milk tea
+ please whip up some some red tea
+ please whip up some some sweet tea
+ please whip up some some green tea
+ please whip up some some jasmine tea
+ please whip up some some milk tea
+i'd like a cup of a cup of red tea
+i'd like a cup of a cup of sweet tea
+i'd like a cup of a cup of green tea
+i'd like a cup of a cup of jasmine tea
+i'd like a cup of a cup of milk tea
+i'd like a cup of a glass of red tea
+i'd like a cup of a glass of sweet tea
+i'd like a cup of a glass of green tea
+i'd like a cup of a glass of jasmine tea
+i'd like a cup of a glass of milk tea
+i'd like a glass of a cup of red tea
+i'd like a glass of a cup of sweet tea
+i'd like a glass of a cup of green tea
+i'd like a glass of a cup of jasmine tea
+i'd like a glass of a cup of milk tea
+i'd like a glass of a glass of red tea
+i'd like a glass of a glass of sweet tea
+i'd like a glass of a glass of green tea
+i'd like a glass of a glass of jasmine tea
+i'd like a glass of a glass of milk tea
+could you please make some some red tea
+could you please make some some sweet tea
+could you please make some some green tea
+could you please make some some jasmine tea
+could you please make some some milk tea
+could you please brew some some red tea
+could you please brew some some sweet tea
+could you please brew some some green tea
+could you please brew some some jasmine tea
+could you please brew some some milk tea
+could you please whip up some some red tea
+could you please whip up some some sweet tea
+could you please whip up some some green tea
+could you please whip up some some jasmine tea
+could you please whip up some some milk tea
+will you please make some some red tea
+will you please make some some sweet tea
+will you please make some some green tea
+will you please make some some jasmine tea
+will you please make some some milk tea
+will you please brew some some red tea
+will you please brew some some sweet tea
+will you please brew some some green tea
+will you please brew some some jasmine tea
+will you please brew some some milk tea
+will you please whip up some some red tea
+will you please whip up some some sweet tea
+will you please whip up some some green tea
+will you please whip up some some jasmine tea
+will you please whip up some some milk tea
+would you please make some some red tea
+would you please make some some sweet tea
+would you please make some some green tea
+would you please make some some jasmine tea
+would you please make some some milk tea
+would you please brew some some red tea
+would you please brew some some sweet tea
+would you please brew some some green tea
+would you please brew some some jasmine tea
+would you please brew some some milk tea
+would you please whip up some some red tea
+would you please whip up some some sweet tea
+would you please whip up some some green tea
+would you please whip up some some jasmine tea
+would you please whip up some some milk tea
+ please make some a cup of red tea
+ please make some a cup of sweet tea
+ please make some a cup of green tea
+ please make some a cup of jasmine tea
+ please make some a cup of milk tea
+ please make some a glass of red tea
+ please make some a glass of sweet tea
+ please make some a glass of green tea
+ please make some a glass of jasmine tea
+ please make some a glass of milk tea
+ please make a cup of some red tea
+ please make a cup of some sweet tea
+ please make a cup of some green tea
+ please make a cup of some jasmine tea
+ please make a cup of some milk tea
+ please make a glass of some red tea
+ please make a glass of some sweet tea
+ please make a glass of some green tea
+ please make a glass of some jasmine tea
+ please make a glass of some milk tea
+ please brew some a cup of red tea
+ please brew some a cup of sweet tea
+ please brew some a cup of green tea
+ please brew some a cup of jasmine tea
+ please brew some a cup of milk tea
+ please brew some a glass of red tea
+ please brew some a glass of sweet tea
+ please brew some a glass of green tea
+ please brew some a glass of jasmine tea
+ please brew some a glass of milk tea
+ please brew a cup of some red tea
+ please brew a cup of some sweet tea
+ please brew a cup of some green tea
+ please brew a cup of some jasmine tea
+ please brew a cup of some milk tea
+ please brew a glass of some red tea
+ please brew a glass of some sweet tea
+ please brew a glass of some green tea
+ please brew a glass of some jasmine tea
+ please brew a glass of some milk tea
+ please whip up some a cup of red tea
+ please whip up some a cup of sweet tea
+ please whip up some a cup of green tea
+ please whip up some a cup of jasmine tea
+ please whip up some a cup of milk tea
+ please whip up some a glass of red tea
+ please whip up some a glass of sweet tea
+ please whip up some a glass of green tea
+ please whip up some a glass of jasmine tea
+ please whip up some a glass of milk tea
+ please whip up a cup of some red tea
+ please whip up a cup of some sweet tea
+ please whip up a cup of some green tea
+ please whip up a cup of some jasmine tea
+ please whip up a cup of some milk tea
+ please whip up a glass of some red tea
+ please whip up a glass of some sweet tea
+ please whip up a glass of some green tea
+ please whip up a glass of some jasmine tea
+ please whip up a glass of some milk tea
+could you please make some a cup of red tea
+could you please make some a cup of sweet tea
+could you please make some a cup of green tea
+could you please make some a cup of jasmine tea
+could you please make some a cup of milk tea
+could you please make some a glass of red tea
+could you please make some a glass of sweet tea
+could you please make some a glass of green tea
+could you please make some a glass of jasmine tea
+could you please make some a glass of milk tea
+could you please make a cup of some red tea
+could you please make a cup of some sweet tea
+could you please make a cup of some green tea
+could you please make a cup of some jasmine tea
+could you please make a cup of some milk tea
+could you please make a glass of some red tea
+could you please make a glass of some sweet tea
+could you please make a glass of some green tea
+could you please make a glass of some jasmine tea
+could you please make a glass of some milk tea
+could you please brew some a cup of red tea
+could you please brew some a cup of sweet tea
+could you please brew some a cup of green tea
+could you please brew some a cup of jasmine tea
+could you please brew some a cup of milk tea
+could you please brew some a glass of red tea
+could you please brew some a glass of sweet tea
+could you please brew some a glass of green tea
+could you please brew some a glass of jasmine tea
+could you please brew some a glass of milk tea
+could you please brew a cup of some red tea
+could you please brew a cup of some sweet tea
+could you please brew a cup of some green tea
+could you please brew a cup of some jasmine tea
+could you please brew a cup of some milk tea
+could you please brew a glass of some red tea
+could you please brew a glass of some sweet tea
+could you please brew a glass of some green tea
+could you please brew a glass of some jasmine tea
+could you please brew a glass of some milk tea
+could you please whip up some a cup of red tea
+could you please whip up some a cup of sweet tea
+could you please whip up some a cup of green tea
+could you please whip up some a cup of jasmine tea
+could you please whip up some a cup of milk tea
+could you please whip up some a glass of red tea
+could you please whip up some a glass of sweet tea
+could you please whip up some a glass of green tea
+could you please whip up some a glass of jasmine tea
+could you please whip up some a glass of milk tea
+could you please whip up a cup of some red tea
+could you please whip up a cup of some sweet tea
+could you please whip up a cup of some green tea
+could you please whip up a cup of some jasmine tea
+could you please whip up a cup of some milk tea
+could you please whip up a glass of some red tea
+could you please whip up a glass of some sweet tea
+could you please whip up a glass of some green tea
+could you please whip up a glass of some jasmine tea
+could you please whip up a glass of some milk tea
+will you please make some a cup of red tea
+will you please make some a cup of sweet tea
+will you please make some a cup of green tea
+will you please make some a cup of jasmine tea
+will you please make some a cup of milk tea
+will you please make some a glass of red tea
+will you please make some a glass of sweet tea
+will you please make some a glass of green tea
+will you please make some a glass of jasmine tea
+will you please make some a glass of milk tea
+will you please make a cup of some red tea
+will you please make a cup of some sweet tea
+will you please make a cup of some green tea
+will you please make a cup of some jasmine tea
+will you please make a cup of some milk tea
+will you please make a glass of some red tea
+will you please make a glass of some sweet tea
+will you please make a glass of some green tea
+will you please make a glass of some jasmine tea
+will you please make a glass of some milk tea
+will you please brew some a cup of red tea
+will you please brew some a cup of sweet tea
+will you please brew some a cup of green tea
+will you please brew some a cup of jasmine tea
+will you please brew some a cup of milk tea
+will you please brew some a glass of red tea
+will you please brew some a glass of sweet tea
+will you please brew some a glass of green tea
+will you please brew some a glass of jasmine tea
+will you please brew some a glass of milk tea
+will you please brew a cup of some red tea
+will you please brew a cup of some sweet tea
+will you please brew a cup of some green tea
+will you please brew a cup of some jasmine tea
+will you please brew a cup of some milk tea
+will you please brew a glass of some red tea
+will you please brew a glass of some sweet tea
+will you please brew a glass of some green tea
+will you please brew a glass of some jasmine tea
+will you please brew a glass of some milk tea
+will you please whip up some a cup of red tea
+will you please whip up some a cup of sweet tea
+will you please whip up some a cup of green tea
+will you please whip up some a cup of jasmine tea
+will you please whip up some a cup of milk tea
+will you please whip up some a glass of red tea
+will you please whip up some a glass of sweet tea
+will you please whip up some a glass of green tea
+will you please whip up some a glass of jasmine tea
+will you please whip up some a glass of milk tea
+will you please whip up a cup of some red tea
+will you please whip up a cup of some sweet tea
+will you please whip up a cup of some green tea
+will you please whip up a cup of some jasmine tea
+will you please whip up a cup of some milk tea
+will you please whip up a glass of some red tea
+will you please whip up a glass of some sweet tea
+will you please whip up a glass of some green tea
+will you please whip up a glass of some jasmine tea
+will you please whip up a glass of some milk tea
+would you please make some a cup of red tea
+would you please make some a cup of sweet tea
+would you please make some a cup of green tea
+would you please make some a cup of jasmine tea
+would you please make some a cup of milk tea
+would you please make some a glass of red tea
+would you please make some a glass of sweet tea
+would you please make some a glass of green tea
+would you please make some a glass of jasmine tea
+would you please make some a glass of milk tea
+would you please make a cup of some red tea
+would you please make a cup of some sweet tea
+would you please make a cup of some green tea
+would you please make a cup of some jasmine tea
+would you please make a cup of some milk tea
+would you please make a glass of some red tea
+would you please make a glass of some sweet tea
+would you please make a glass of some green tea
+would you please make a glass of some jasmine tea
+would you please make a glass of some milk tea
+would you please brew some a cup of red tea
+would you please brew some a cup of sweet tea
+would you please brew some a cup of green tea
+would you please brew some a cup of jasmine tea
+would you please brew some a cup of milk tea
+would you please brew some a glass of red tea
+would you please brew some a glass of sweet tea
+would you please brew some a glass of green tea
+would you please brew some a glass of jasmine tea
+would you please brew some a glass of milk tea
+would you please brew a cup of some red tea
+would you please brew a cup of some sweet tea
+would you please brew a cup of some green tea
+would you please brew a cup of some jasmine tea
+would you please brew a cup of some milk tea
+would you please brew a glass of some red tea
+would you please brew a glass of some sweet tea
+would you please brew a glass of some green tea
+would you please brew a glass of some jasmine tea
+would you please brew a glass of some milk tea
+would you please whip up some a cup of red tea
+would you please whip up some a cup of sweet tea
+would you please whip up some a cup of green tea
+would you please whip up some a cup of jasmine tea
+would you please whip up some a cup of milk tea
+would you please whip up some a glass of red tea
+would you please whip up some a glass of sweet tea
+would you please whip up some a glass of green tea
+would you please whip up some a glass of jasmine tea
+would you please whip up some a glass of milk tea
+would you please whip up a cup of some red tea
+would you please whip up a cup of some sweet tea
+would you please whip up a cup of some green tea
+would you please whip up a cup of some jasmine tea
+would you please whip up a cup of some milk tea
+would you please whip up a glass of some red tea
+would you please whip up a glass of some sweet tea
+would you please whip up a glass of some green tea
+would you please whip up a glass of some jasmine tea
+would you please whip up a glass of some milk tea
+ please make a cup of a cup of red tea
+ please make a cup of a cup of sweet tea
+ please make a cup of a cup of green tea
+ please make a cup of a cup of jasmine tea
+ please make a cup of a cup of milk tea
+ please make a cup of a glass of red tea
+ please make a cup of a glass of sweet tea
+ please make a cup of a glass of green tea
+ please make a cup of a glass of jasmine tea
+ please make a cup of a glass of milk tea
+ please make a glass of a cup of red tea
+ please make a glass of a cup of sweet tea
+ please make a glass of a cup of green tea
+ please make a glass of a cup of jasmine tea
+ please make a glass of a cup of milk tea
+ please make a glass of a glass of red tea
+ please make a glass of a glass of sweet tea
+ please make a glass of a glass of green tea
+ please make a glass of a glass of jasmine tea
+ please make a glass of a glass of milk tea
+ please brew a cup of a cup of red tea
+ please brew a cup of a cup of sweet tea
+ please brew a cup of a cup of green tea
+ please brew a cup of a cup of jasmine tea
+ please brew a cup of a cup of milk tea
+ please brew a cup of a glass of red tea
+ please brew a cup of a glass of sweet tea
+ please brew a cup of a glass of green tea
+ please brew a cup of a glass of jasmine tea
+ please brew a cup of a glass of milk tea
+ please brew a glass of a cup of red tea
+ please brew a glass of a cup of sweet tea
+ please brew a glass of a cup of green tea
+ please brew a glass of a cup of jasmine tea
+ please brew a glass of a cup of milk tea
+ please brew a glass of a glass of red tea
+ please brew a glass of a glass of sweet tea
+ please brew a glass of a glass of green tea
+ please brew a glass of a glass of jasmine tea
+ please brew a glass of a glass of milk tea
+ please whip up a cup of a cup of red tea
+ please whip up a cup of a cup of sweet tea
+ please whip up a cup of a cup of green tea
+ please whip up a cup of a cup of jasmine tea
+ please whip up a cup of a cup of milk tea
+ please whip up a cup of a glass of red tea
+ please whip up a cup of a glass of sweet tea
+ please whip up a cup of a glass of green tea
+ please whip up a cup of a glass of jasmine tea
+ please whip up a cup of a glass of milk tea
+ please whip up a glass of a cup of red tea
+ please whip up a glass of a cup of sweet tea
+ please whip up a glass of a cup of green tea
+ please whip up a glass of a cup of jasmine tea
+ please whip up a glass of a cup of milk tea
+ please whip up a glass of a glass of red tea
+ please whip up a glass of a glass of sweet tea
+ please whip up a glass of a glass of green tea
+ please whip up a glass of a glass of jasmine tea
+ please whip up a glass of a glass of milk tea
+could you please make a cup of a cup of red tea
+could you please make a cup of a cup of sweet tea
+could you please make a cup of a cup of green tea
+could you please make a cup of a cup of jasmine tea
+could you please make a cup of a cup of milk tea
+could you please make a cup of a glass of red tea
+could you please make a cup of a glass of sweet tea
+could you please make a cup of a glass of green tea
+could you please make a cup of a glass of jasmine tea
+could you please make a cup of a glass of milk tea
+could you please make a glass of a cup of red tea
+could you please make a glass of a cup of sweet tea
+could you please make a glass of a cup of green tea
+could you please make a glass of a cup of jasmine tea
+could you please make a glass of a cup of milk tea
+could you please make a glass of a glass of red tea
+could you please make a glass of a glass of sweet tea
+could you please make a glass of a glass of green tea
+could you please make a glass of a glass of jasmine tea
+could you please make a glass of a glass of milk tea
+could you please brew a cup of a cup of red tea
+could you please brew a cup of a cup of sweet tea
+could you please brew a cup of a cup of green tea
+could you please brew a cup of a cup of jasmine tea
+could you please brew a cup of a cup of milk tea
+could you please brew a cup of a glass of red tea
+could you please brew a cup of a glass of sweet tea
+could you please brew a cup of a glass of green tea
+could you please brew a cup of a glass of jasmine tea
+could you please brew a cup of a glass of milk tea
+could you please brew a glass of a cup of red tea
+could you please brew a glass of a cup of sweet tea
+could you please brew a glass of a cup of green tea
+could you please brew a glass of a cup of jasmine tea
+could you please brew a glass of a cup of milk tea
+could you please brew a glass of a glass of red tea
+could you please brew a glass of a glass of sweet tea
+could you please brew a glass of a glass of green tea
+could you please brew a glass of a glass of jasmine tea
+could you please brew a glass of a glass of milk tea
+could you please whip up a cup of a cup of red tea
+could you please whip up a cup of a cup of sweet tea
+could you please whip up a cup of a cup of green tea
+could you please whip up a cup of a cup of jasmine tea
+could you please whip up a cup of a cup of milk tea
+could you please whip up a cup of a glass of red tea
+could you please whip up a cup of a glass of sweet tea
+could you please whip up a cup of a glass of green tea
+could you please whip up a cup of a glass of jasmine tea
+could you please whip up a cup of a glass of milk tea
+could you please whip up a glass of a cup of red tea
+could you please whip up a glass of a cup of sweet tea
+could you please whip up a glass of a cup of green tea
+could you please whip up a glass of a cup of jasmine tea
+could you please whip up a glass of a cup of milk tea
+could you please whip up a glass of a glass of red tea
+could you please whip up a glass of a glass of sweet tea
+could you please whip up a glass of a glass of green tea
+could you please whip up a glass of a glass of jasmine tea
+could you please whip up a glass of a glass of milk tea
+will you please make a cup of a cup of red tea
+will you please make a cup of a cup of sweet tea
+will you please make a cup of a cup of green tea
+will you please make a cup of a cup of jasmine tea
+will you please make a cup of a cup of milk tea
+will you please make a cup of a glass of red tea
+will you please make a cup of a glass of sweet tea
+will you please make a cup of a glass of green tea
+will you please make a cup of a glass of jasmine tea
+will you please make a cup of a glass of milk tea
+will you please make a glass of a cup of red tea
+will you please make a glass of a cup of sweet tea
+will you please make a glass of a cup of green tea
+will you please make a glass of a cup of jasmine tea
+will you please make a glass of a cup of milk tea
+will you please make a glass of a glass of red tea
+will you please make a glass of a glass of sweet tea
+will you please make a glass of a glass of green tea
+will you please make a glass of a glass of jasmine tea
+will you please make a glass of a glass of milk tea
+will you please brew a cup of a cup of red tea
+will you please brew a cup of a cup of sweet tea
+will you please brew a cup of a cup of green tea
+will you please brew a cup of a cup of jasmine tea
+will you please brew a cup of a cup of milk tea
+will you please brew a cup of a glass of red tea
+will you please brew a cup of a glass of sweet tea
+will you please brew a cup of a glass of green tea
+will you please brew a cup of a glass of jasmine tea
+will you please brew a cup of a glass of milk tea
+will you please brew a glass of a cup of red tea
+will you please brew a glass of a cup of sweet tea
+will you please brew a glass of a cup of green tea
+will you please brew a glass of a cup of jasmine tea
+will you please brew a glass of a cup of milk tea
+will you please brew a glass of a glass of red tea
+will you please brew a glass of a glass of sweet tea
+will you please brew a glass of a glass of green tea
+will you please brew a glass of a glass of jasmine tea
+will you please brew a glass of a glass of milk tea
+will you please whip up a cup of a cup of red tea
+will you please whip up a cup of a cup of sweet tea
+will you please whip up a cup of a cup of green tea
+will you please whip up a cup of a cup of jasmine tea
+will you please whip up a cup of a cup of milk tea
+will you please whip up a cup of a glass of red tea
+will you please whip up a cup of a glass of sweet tea
+will you please whip up a cup of a glass of green tea
+will you please whip up a cup of a glass of jasmine tea
+will you please whip up a cup of a glass of milk tea
+will you please whip up a glass of a cup of red tea
+will you please whip up a glass of a cup of sweet tea
+will you please whip up a glass of a cup of green tea
+will you please whip up a glass of a cup of jasmine tea
+will you please whip up a glass of a cup of milk tea
+will you please whip up a glass of a glass of red tea
+will you please whip up a glass of a glass of sweet tea
+will you please whip up a glass of a glass of green tea
+will you please whip up a glass of a glass of jasmine tea
+will you please whip up a glass of a glass of milk tea
+would you please make a cup of a cup of red tea
+would you please make a cup of a cup of sweet tea
+would you please make a cup of a cup of green tea
+would you please make a cup of a cup of jasmine tea
+would you please make a cup of a cup of milk tea
+would you please make a cup of a glass of red tea
+would you please make a cup of a glass of sweet tea
+would you please make a cup of a glass of green tea
+would you please make a cup of a glass of jasmine tea
+would you please make a cup of a glass of milk tea
+would you please make a glass of a cup of red tea
+would you please make a glass of a cup of sweet tea
+would you please make a glass of a cup of green tea
+would you please make a glass of a cup of jasmine tea
+would you please make a glass of a cup of milk tea
+would you please make a glass of a glass of red tea
+would you please make a glass of a glass of sweet tea
+would you please make a glass of a glass of green tea
+would you please make a glass of a glass of jasmine tea
+would you please make a glass of a glass of milk tea
+would you please brew a cup of a cup of red tea
+would you please brew a cup of a cup of sweet tea
+would you please brew a cup of a cup of green tea
+would you please brew a cup of a cup of jasmine tea
+would you please brew a cup of a cup of milk tea
+would you please brew a cup of a glass of red tea
+would you please brew a cup of a glass of sweet tea
+would you please brew a cup of a glass of green tea
+would you please brew a cup of a glass of jasmine tea
+would you please brew a cup of a glass of milk tea
+would you please brew a glass of a cup of red tea
+would you please brew a glass of a cup of sweet tea
+would you please brew a glass of a cup of green tea
+would you please brew a glass of a cup of jasmine tea
+would you please brew a glass of a cup of milk tea
+would you please brew a glass of a glass of red tea
+would you please brew a glass of a glass of sweet tea
+would you please brew a glass of a glass of green tea
+would you please brew a glass of a glass of jasmine tea
+would you please brew a glass of a glass of milk tea
+would you please whip up a cup of a cup of red tea
+would you please whip up a cup of a cup of sweet tea
+would you please whip up a cup of a cup of green tea
+would you please whip up a cup of a cup of jasmine tea
+would you please whip up a cup of a cup of milk tea
+would you please whip up a cup of a glass of red tea
+would you please whip up a cup of a glass of sweet tea
+would you please whip up a cup of a glass of green tea
+would you please whip up a cup of a glass of jasmine tea
+would you please whip up a cup of a glass of milk tea
+would you please whip up a glass of a cup of red tea
+would you please whip up a glass of a cup of sweet tea
+would you please whip up a glass of a cup of green tea
+would you please whip up a glass of a cup of jasmine tea
+would you please whip up a glass of a cup of milk tea
+would you please whip up a glass of a glass of red tea
+would you please whip up a glass of a glass of sweet tea
+would you please whip up a glass of a glass of green tea
+would you please whip up a glass of a glass of jasmine tea
+would you please whip up a glass of a glass of milk tea
