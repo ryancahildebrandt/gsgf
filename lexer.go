@@ -7,7 +7,6 @@ package main
 
 import (
 	"errors"
-	"regexp"
 	"strings"
 
 	"github.com/bzick/tokenizer"
@@ -84,13 +83,4 @@ func captureString(s *tokenizer.Stream, close string, include_close bool) (strin
 		s.GoNext()
 	}
 	return b.String(), nil
-}
-
-func ValidateJSGF(s string) bool {
-	// optional public declaration
-	// the name of the rule being defined, in <>
-	// an equals sign `='
-	// the expansion of the rule
-	// a closing semi-colon `;'.
-	return regexp.MustCompile("^(public )?<.+?> ?= ?.*?;$").MatchString(s)
 }

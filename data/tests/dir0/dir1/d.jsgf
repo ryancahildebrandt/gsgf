@@ -2,6 +2,5 @@
 
 grammar d;
 
-import <a.order>
-import <c.teatype>
-
+import <a.order>;
+import <c.teatype>;

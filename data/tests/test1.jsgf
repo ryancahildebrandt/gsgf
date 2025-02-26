@@ -2,7 +2,7 @@
 
 grammar test1;
 
-import <c.brew>
+import <c.brew>;
 
 public <main> = (<request>|<order>) <quant> <teatype> tea;
 

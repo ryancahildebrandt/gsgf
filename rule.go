@@ -152,11 +152,9 @@ func ParseRule(lex *tokenizer.Tokenizer, line string) (string, Rule, error) {
 	var name string
 	var exp string
 
-	if line == "" {
-		return name, Rule{}, errors.New("line cannot be empty")
-	}
-	if !ValidateJSGF(line) {
-		return name, Rule{}, errors.New("invalid line")
+	err := ValidateJSGFRule(line)
+	if err != nil {
+		return name, Rule{}, err
 	}
 	stream := lex.ParseString(strings.TrimSpace(line))
 	for stream.IsValid() {
@@ -170,4 +168,26 @@ func ParseRule(lex *tokenizer.Tokenizer, line string) (string, Rule, error) {
 		stream.GoNext()
 	}
 	return name, NewRule(Expression(exp), strings.HasPrefix(line, "public")), nil
+}
+
+func ValidateRuleRecursion(r Rule, m map[string]Rule) error {
+	// check for self ref in rule and dependencies a la composition order
+
+	if len(r.References) == 0 {
+		return nil
+	}
+	rules := make(map[string]Rule)
+	for k, v := range m {
+		rules[k] = v
+	}
+	for _, ref := range r.References {
+		if ref == "" {
+			continue
+		}
+		_, ok := rules[ref]
+		if !ok {
+			return errors.New("referenced rule does not exist in grammar")
+		}
+	}
+	return nil
 }

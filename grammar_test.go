@@ -193,16 +193,16 @@ func TestGrammarPeek(t *testing.T) {
 		exp_imports []string
 		exp_rules   map[string][]string
 	}{
-		{"data/tests/test0.jsgf", "test0", []string{"import <a.*>"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
-		{"data/tests/test1.jsgf", "test1", []string{"import <c.brew>"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
-		{"data/tests/test2.jsgf", "test2", []string{"import <a1.*>"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
-		{"data/tests/test3.jsgf", "test3", []string{"import <e.dne>"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
-		{"data/tests/test4.jsgf", "test4", []string{"import <d.*>"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "quant": {}, "brew": {"quant"}}},
-		{"data/tests/test5.jsgf", "test5", []string{"import <b.request>"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
+		{"data/tests/test0.jsgf", "test0", []string{"import <a.*>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
+		{"data/tests/test1.jsgf", "test1", []string{"import <c.brew>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
+		{"data/tests/test2.jsgf", "test2", []string{"import <a1.*>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
+		{"data/tests/test3.jsgf", "test3", []string{"import <e.dne>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
+		{"data/tests/test4.jsgf", "test4", []string{"import <d.*>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "quant": {}, "brew": {"quant"}}},
+		{"data/tests/test5.jsgf", "test5", []string{"import <b.request>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
 		{"data/tests/a.jsgf", "a", []string{}, map[string][]string{"request": {"brew"}, "order": {"quant"}, "brew": {"quant"}, "quant": {}}},
-		{"data/tests/b.jsgf", "b", []string{"import <c.brew>"}, map[string][]string{"request": {"brew"}, "order": {"quant"}, "quant": {}}},
+		{"data/tests/b.jsgf", "b", []string{"import <c.brew>;"}, map[string][]string{"request": {"brew"}, "order": {"quant"}, "quant": {}}},
 		{"data/tests/dir0/c.jsgf", "c", []string{}, map[string][]string{"teatype": {}, "brew": {"quant"}, "quant": {}}},
-		{"data/tests/dir0/dir1/d.jsgf", "d", []string{"import <c.teatype>", "import <a.order>"}, map[string][]string{}},
+		{"data/tests/dir0/dir1/d.jsgf", "d", []string{"import <c.teatype>;", "import <a.order>;"}, map[string][]string{}},
 		{"data/tests/dir0/dir1/dir2/e.jsgf", "e", []string{}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
 	}
 	for _, test := range table {

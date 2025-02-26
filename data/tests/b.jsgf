@@ -2,7 +2,7 @@
 
 grammar b;
 
-import <c.brew>
+import <c.brew>;
 
 <request> = [(could|will|would) you] please <brew>;
 <order> = i'd like [to order|a|<quant>];

@@ -30,8 +30,9 @@ func NewGrammar(p string) Grammar {
 }
 
 func (g Grammar) Peek() (string, []string, map[string][]string, error) {
-	name := ""
-	imports := []string{}
+	var err error
+	var name string
+	var imports []string
 	rules := make(map[string][]string)
 
 	f, err := os.Open(g.Path)
@@ -43,10 +44,22 @@ func (g Grammar) Peek() (string, []string, map[string][]string, error) {
 		line := s.Text()
 		switch {
 		case strings.HasPrefix(line, "grammar "):
+			err = ValidateJSGFName(line)
+			if err != nil {
+				return name, imports, rules, err
+			}
 			name = CleanGrammarStatement(line)
 		case strings.HasPrefix(line, "import <"):
+			err = ValidateJSGFImport(line)
+			if err != nil {
+				return name, imports, rules, err
+			}
 			imports = append(imports, line)
 		case strings.HasPrefix(line, "<") || strings.HasPrefix(line, "public <"):
+			err = ValidateJSGFRule(line)
+			if err != nil {
+				return name, imports, rules, err
+			}
 			name, rule, _ := strings.Cut(line, "=")
 			name = UnwrapRule(name)
 			rules[name] = []string{}
@@ -109,15 +122,24 @@ func (g Grammar) Resolve(lex *tokenizer.Tokenizer) (Grammar, error) {
 }
 
 func (g Grammar) ReadLines(s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar, error) {
+	var err error
 	for s.Scan() {
 		line := s.Text()
 		switch {
 		case strings.HasPrefix(line, "import <"):
+			err = ValidateJSGFImport(line)
+			if err != nil {
+				return NewGrammar(""), err
+			}
 			s := line
 			s = strings.TrimPrefix(s, "import <")
 			s = strings.TrimSuffix(s, ">")
 			g.Imports = append(g.Imports, CleanImportStatement(s))
 		case strings.HasPrefix(line, "public <"), strings.HasPrefix(line, "<"):
+			err := ValidateJSGFRule(line)
+			if err != nil {
+				return NewGrammar(""), err
+			}
 			name, rule, err := ParseRule(lex, line)
 			if err != nil {
 				return NewGrammar(""), err
@@ -147,16 +169,16 @@ func (g Grammar) ReadNameSpace(r map[string]string, lex *tokenizer.Tokenizer) Gr
 	return g
 }
 
-func (g Grammar) IsComplete() bool {
+func ValidateGrammarCompleteness(g Grammar) error {
 	for _, v := range g.Rules {
 		for _, ref := range v.References {
 			_, ok := g.Rules[ref]
 			if !ok {
-				return false
+				return errors.New("grammar references rule not present in namespace")
 			}
 		}
 	}
-	return true
+	return nil
 }
 
 // basepath := "./data/tests/dir2/dir1/dir0/test.jsgf"

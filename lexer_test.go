@@ -86,30 +86,35 @@ func TestParseRule(t *testing.T) {
 }
 
 func TestValidateJSGF(t *testing.T) {
+	dummy_error := errors.New("")
 	table := []struct {
 		l   string
-		exp bool
+		exp error
 	}{
-		{"", false},
-		{";", false},
-		{"=;", false},
-		{"<>=;", false},
-		{"public<>=;", false},
-		{"public <>=;", false},
-		{"< > = <>; ", false},
-		{"< > = <>;", true},
-		{"< >=;", true},
-		{"public < >=;", true},
-		{"public < > = ;", true},
-		{"<abc> = def <ghi>;", true},
-		{"<abc> = def = <ghi>;", true},
-		{"<abc> = \"def\" = <ghi>;", true},
-		{"<abc> = def <ghi>;;", true},
+		{"", dummy_error},
+		{";", dummy_error},
+		{"=;", dummy_error},
+		{"<>=;", dummy_error},
+		{"public<>=;", dummy_error},
+		{"public <>=;", dummy_error},
+		{"< > = <>; ", dummy_error},
+		{"< > = <>;", nil},
+		{"< >=;", nil},
+		{"public < >=;", nil},
+		{"public < > = ;", nil},
+		{"<abc> = def <ghi>;", nil},
+		{"<abc> = def = <ghi>;", nil},
+		{"<abc> = \"def\" = <ghi>;", nil},
+		{"<abc> = def <ghi>;;", nil},
 	}
 	for _, test := range table {
-		res := ValidateJSGF(test.l)
-		if res != test.exp {
+		res := ValidateJSGFRule(test.l)
+		if res == nil && test.exp != nil {
 			t.Errorf("ValidateJSGF(%v)\nGOT %v\nEXP %v", test.l, res, test.exp)
 		}
+		if res != nil && test.exp == nil {
+			t.Errorf("ValidateJSGF(%v)\nGOT %v\nEXP %v", test.l, res, test.exp)
+		}
+
 	}
 }

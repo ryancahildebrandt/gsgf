@@ -2,7 +2,7 @@
 
 grammar test4;
 
-import <d.*>
+import <d.*>;
 
 public <main> = (<request>|<order>) <quant> <teatype> tea;
 

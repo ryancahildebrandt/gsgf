@@ -2,7 +2,7 @@
 
 grammar test3;
 
-import <e.dne>
+import <e.dne>;
 
 public <main> = (<request>|<order>) <quant> <teatype> tea;
 

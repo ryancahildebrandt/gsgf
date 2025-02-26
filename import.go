@@ -12,6 +12,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -40,6 +41,34 @@ func CleanGrammarStatement(s string) string {
 	s = strings.TrimPrefix(s, "grammar ")
 	s = strings.TrimSuffix(s, ";")
 	return s
+}
+
+func ValidateJSGFRule(s string) error {
+	// optional public declaration
+	// the name of the rule being defined, in <>
+	// an equals sign `='
+	// the expansion of the rule
+	// a closing semi-colon `;'.
+	if !regexp.MustCompile("^(public )?<.+?> ?= ?.*?;$").MatchString(s) {
+		return errors.New("invalid jsgf line")
+	}
+	return nil
+}
+
+func ValidateJSGFName(s string) error {
+	// grammar name;
+	if !regexp.MustCompile("^grammar .+?;$").MatchString(s) {
+		return errors.New("invalid jsgf name declaration")
+	}
+	return nil
+}
+
+func ValidateJSGFImport(s string) error {
+	// import <gram.rule>;
+	if !regexp.MustCompile("^import <.+?>;$").MatchString(s) {
+		return errors.New("invalid jsgf import")
+	}
+	return nil
 }
 
 func CreateNameSpace(p string, e string) (map[string]string, error) {
