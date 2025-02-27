@@ -13,7 +13,7 @@ import (
 )
 
 func TestCaptureString(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	lexer := NewJSGFLexer()
 	table := []struct {
 		s   string
@@ -22,14 +22,14 @@ func TestCaptureString(t *testing.T) {
 		exp string
 		err error
 	}{
-		{" ", "", false, " ", dummy_error},
-		{" ", "", true, " ", dummy_error},
-		{" ", " ", false, "", dummy_error},
-		{" ", " ", true, " ", dummy_error},
-		{"abc", "c", false, "abc", dummy_error},
-		{"abc", "c", true, "abc", dummy_error},
-		{"()()", ")", false, "(", dummy_error},
-		{"()()", ")", true, "()", dummy_error},
+		{s: " ", c: "", k: false, exp: " ", err: dummyError},
+		{s: " ", c: "", k: true, exp: " ", err: dummyError},
+		{s: " ", c: " ", k: false, exp: "", err: dummyError},
+		{s: " ", c: " ", k: true, exp: " ", err: dummyError},
+		{s: "abc", c: "c", k: false, exp: "abc", err: dummyError},
+		{s: "abc", c: "c", k: true, exp: "abc", err: dummyError},
+		{s: "()()", c: ")", k: false, exp: "(", err: dummyError},
+		{s: "()()", c: ")", k: true, exp: "()", err: dummyError},
 	}
 	for i, test := range table {
 		stream := lexer.ParseString(test.s)
@@ -47,23 +47,108 @@ func TestParseRule(t *testing.T) {
 		n string
 		r Rule
 	}{
-		{"", "", Rule{Expression(""), false, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{";", "", Rule{Expression(""), false, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{" ", "", Rule{Expression(""), false, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"<rule> =", "", Rule{Expression(""), false, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"<rule> = ", "", Rule{Expression(""), false, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"public <rule> =", "", Rule{Expression(""), false, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"public <rule> = ", "", Rule{Expression(""), false, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"<rule> =;", "<rule>", Rule{Expression(";"), false, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"public <rule> =;", "<rule>", Rule{Expression(";"), true, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"<rule> = test expression 123;", "<rule>", Rule{Expression("test expression 123;"), false, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"<rule> = test \"expression\" 123;", "<rule>", Rule{Expression("test expression 123;"), false, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"public <rule> = test expression 123;", "<rule>", Rule{Expression("test expression 123;"), true, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"public <rule> = test \"expression\" 123;", "<rule>", Rule{Expression("test expression 123;"), true, []string{}, Graph{}, []Expression{}, []Expression{}}},
-		{"<rule> = test expression 123 <rule> (abc) [def];", "<rule>", Rule{Expression("test expression 123 <rule> (abc) [def];"), false, []string{"<rule>"}, Graph{}, []Expression{}, []Expression{}}},
-		{"public <rule> = test expression 123 <rule> (abc) [def];", "<rule>", Rule{Expression("test expression 123 <rule> (abc) [def];"), true, []string{"<rule>"}, Graph{}, []Expression{}, []Expression{}}},
-		{"<rule> = test expression 123 <rule1> <rule2> (abc) [def];", "<rule>", Rule{Expression("test expression 123 <rule1> <rule2> (abc) [def];"), false, []string{"<rule1>", "<rule2>"}, Graph{}, []Expression{}, []Expression{}}},
-		{"public <rule> = test expression 123 <rule1> <rule2> (abc) [def];", "<rule>", Rule{Expression("test expression 123 <rule1> <rule2> (abc) [def];"), true, []string{"<rule1>", "<rule2>"}, Graph{}, []Expression{}, []Expression{}}},
+		{
+			l: "", n: "", r: Rule{
+			Exp: Expression(""), IsPublic: false, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: ";", n: "", r: Rule{
+			Exp: Expression(""), IsPublic: false, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: " ", n: "", r: Rule{
+			Exp: Expression(""), IsPublic: false, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "<rule> =", n: "", r: Rule{
+			Exp: Expression(""), IsPublic: false, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "<rule> = ", n: "", r: Rule{
+			Exp: Expression(""), IsPublic: false, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "public <rule> =", n: "", r: Rule{
+			Exp: Expression(""), IsPublic: false, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "public <rule> = ", n: "", r: Rule{
+			Exp: Expression(""), IsPublic: false, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "<rule> =;", n: "<rule>", r: Rule{
+			Exp: Expression(";"), IsPublic: false, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "public <rule> =;", n: "<rule>", r: Rule{
+			Exp: Expression(";"), IsPublic: true, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "<rule> = test expression 123;", n: "<rule>", r: Rule{
+			Exp: Expression("test expression 123;"), IsPublic: false, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "<rule> = test \"expression\" 123;", n: "<rule>", r: Rule{
+			Exp: Expression("test expression 123;"), IsPublic: false, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "public <rule> = test expression 123;", n: "<rule>", r: Rule{
+			Exp: Expression("test expression 123;"), IsPublic: true, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "public <rule> = test \"expression\" 123;", n: "<rule>", r: Rule{
+			Exp: Expression("test expression 123;"), IsPublic: true, References: []string{}, Tokens: []Expression{},
+			productions: []Expression{},
+		},
+		},
+		{
+			l: "<rule> = test expression 123 <rule> (abc) [def];", n: "<rule>", r: Rule{
+			Exp: Expression("test expression 123 <rule> (abc) [def];"), IsPublic: false,
+			References: []string{"<rule>"}, Tokens: []Expression{}, productions: []Expression{},
+		},
+		},
+		{
+			l: "public <rule> = test expression 123 <rule> (abc) [def];", n: "<rule>", r: Rule{
+			Exp: Expression("test expression 123 <rule> (abc) [def];"), IsPublic: true, References: []string{"<rule>"},
+			Tokens: []Expression{}, productions: []Expression{},
+		},
+		},
+		{
+			l: "<rule> = test expression 123 <rule1> <rule2> (abc) [def];", n: "<rule>", r: Rule{
+			Exp: Expression("test expression 123 <rule1> <rule2> (abc) [def];"), IsPublic: false,
+			References: []string{"<rule1>", "<rule2>"}, Tokens: []Expression{}, productions: []Expression{},
+		},
+		},
+		{
+			l: "public <rule> = test expression 123 <rule1> <rule2> (abc) [def];", n: "<rule>", r: Rule{
+			Exp: Expression("test expression 123 <rule1> <rule2> (abc) [def];"), IsPublic: true,
+			References: []string{"<rule1>", "<rule2>"}, Tokens: []Expression{}, productions: []Expression{},
+		},
+		},
 	}
 	for i, test := range table {
 		n, r, _ := ParseRule(lexer, test.l)
@@ -73,7 +158,7 @@ func TestParseRule(t *testing.T) {
 		if r.Exp != test.r.Exp {
 			t.Errorf("test %v: ParseRule(jsgflexer, %v)\nGOT %v\nEXP %v", i, test.l, r, test.r)
 		}
-		if r.Is_public != test.r.Is_public {
+		if r.IsPublic != test.r.IsPublic {
 			t.Errorf("test %v: ParseRule(jsgflexer, %v).Is_public\nGOT %v\nEXP %v", i, test.l, r, test.r)
 		}
 		if !slices.Equal(r.References, test.r.References) {
@@ -89,26 +174,26 @@ func TestParseRule(t *testing.T) {
 }
 
 func TestValidateJSGF(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	table := []struct {
 		l   string
 		err error
 	}{
-		{"", dummy_error},
-		{";", dummy_error},
-		{"=;", dummy_error},
-		{"<>=;", dummy_error},
-		{"public<>=;", dummy_error},
-		{"public <>=;", dummy_error},
-		{"< > = <>; ", dummy_error},
-		{"< > = <>;", nil},
-		{"< >=;", nil},
-		{"public < >=;", nil},
-		{"public < > = ;", nil},
-		{"<abc> = def <ghi>;", nil},
-		{"<abc> = def = <ghi>;", nil},
-		{"<abc> = \"def\" = <ghi>;", nil},
-		{"<abc> = def <ghi>;;", nil},
+		{l: "", err: dummyError},
+		{l: ";", err: dummyError},
+		{l: "=;", err: dummyError},
+		{l: "<>=;", err: dummyError},
+		{l: "public<>=;", err: dummyError},
+		{l: "public <>=;", err: dummyError},
+		{l: "< > = <>; ", err: dummyError},
+		{l: "< > = <>;", err: nil},
+		{l: "< >=;", err: nil},
+		{l: "public < >=;", err: nil},
+		{l: "public < > = ;", err: nil},
+		{l: "<abc> = def <ghi>;", err: nil},
+		{l: "<abc> = def = <ghi>;", err: nil},
+		{l: "<abc> = \"def\" = <ghi>;", err: nil},
+		{l: "<abc> = def <ghi>;;", err: nil},
 	}
 	for i, test := range table {
 		err := ValidateJSGFRule(test.l)

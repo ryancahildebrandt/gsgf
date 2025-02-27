@@ -15,17 +15,17 @@ import (
 
 type Rule struct {
 	Exp        Expression
-	Is_public  bool
+	IsPublic   bool
 	References []string
 	Graph
 	Tokens      []Expression
 	productions []Expression
 }
 
-func NewRule(e Expression, is_public bool) Rule {
+func NewRule(e Expression, isPublic bool) Rule {
 	r := Rule{}
 	r.Exp = e
-	r.Is_public = is_public
+	r.IsPublic = isPublic
 	seen := make(map[string]struct{})
 	for _, ref := range regexp.MustCompile(`<.*?>`).FindAllString(e.str(), -1) {
 		_, ok := seen[ref]

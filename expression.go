@@ -15,6 +15,7 @@ import (
 )
 
 type Expression string
+
 //type Expression = string // will need to change methods to functions
 
 func (e Expression) str() string {
@@ -24,7 +25,7 @@ func (e Expression) str() string {
 func (e Expression) ToTokens(lex *tokenizer.Tokenizer) []Expression {
 	var res string
 	var b strings.Builder
-	var out []Expression = []Expression{"<SOS>"}
+	var out = []Expression{"<SOS>"}
 
 	if e.str() == "" {
 		return []Expression{}

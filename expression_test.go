@@ -17,37 +17,136 @@ func TestExpressionToTokens(t *testing.T) {
 		e   Expression
 		exp []Expression
 	}{
-		{Expression(""), []Expression{}},
-		{Expression(";"), []Expression{"<SOS>", ";", "<EOS>"}},
-		{Expression(" "), []Expression{"<SOS>", " ", "<EOS>"}},
-		{Expression("test expression 123"), []Expression{"<SOS>", "test expression 123", "<EOS>"}},
-		{Expression("test expression 123;"), []Expression{"<SOS>", "test expression 123", ";", "<EOS>"}},
-		{Expression("test expression 123 (abc);"), []Expression{"<SOS>", "test expression 123 ", "(", "abc", ")", ";", "<EOS>"}},
-		{Expression("test expression 123 [abc];"), []Expression{"<SOS>", "test expression 123 ", "[", "abc", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 [(abc)];"), []Expression{"<SOS>", "test expression 123 ", "[", "(", "abc", ")", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (abc) [def];"), []Expression{"<SOS>", "test expression 123 ", "(", "abc", ")", " ", "[", "def", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (ab|c) | [de|f];"), []Expression{"<SOS>", "test expression 123 ", "(", "ab", "|", "c", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 <rule> (abc) [def];"), []Expression{"<SOS>", "test expression 123 ", "<rule>", " ", "(", "abc", ")", " ", "[", "def", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 <rule> (abc) [def];"), []Expression{"<SOS>", "test expression 123 ", "<rule>", " ", "(", "abc", ")", " ", "[", "def", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 <rule> (abc) [def];"), []Expression{"<SOS>", "test expression 123 ", "<rule>", " ", "(", "abc", ")", " ", "[", "def", "]", ";", "<EOS>"}},
-		{Expression("test expression 123// [(abc)];"), []Expression{"<SOS>", "test expression 123// ", "[", "(", "abc", ")", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 // [(abc)];"), []Expression{"<SOS>", "test expression 123 // ", "[", "(", "abc", ")", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 /0.0/ [(abc)];"), []Expression{"<SOS>", "test expression 123 /0.0/", " ", "[", "(", "abc", ")", "]", ";", "<EOS>"}},
-		{Expression("test expression 123{} [(abc)];"), []Expression{"<SOS>", "test expression 123{}", " ", "[", "(", "abc", ")", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 {} [(abc)];"), []Expression{"<SOS>", "test expression 123 {}", " ", "[", "(", "abc", ")", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 {tag} [(abc)];"), []Expression{"<SOS>", "test expression 123 {tag}", " ", "[", "(", "abc", ")", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (abc /1.0/) [def];"), []Expression{"<SOS>", "test expression 123 ", "(", "abc /1.0/", ")", " ", "[", "def", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (abc /1000/) [def];"), []Expression{"<SOS>", "test expression 123 ", "(", "abc /1000/", ")", " ", "[", "def", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (abc /-0.0001/) [def];"), []Expression{"<SOS>", "test expression 123 ", "(", "abc /-0.0001/", ")", " ", "[", "def", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (abc { }) [def];"), []Expression{"<SOS>", "test expression 123 ", "(", "abc { }", ")", " ", "[", "def", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (abc {_}) [def];"), []Expression{"<SOS>", "test expression 123 ", "(", "abc {_}", ")", " ", "[", "def", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (abc {_t_a_g_}) [def];"), []Expression{"<SOS>", "test expression 123 ", "(", "abc {_t_a_g_}", ")", " ", "[", "def", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (ab/1.0/|c/1.0/) | [de|f];"), []Expression{"<SOS>", "test expression 123 ", "(", "ab/1.0/", "|", "c/1.0/", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (ab/1000/|c/1000/) | [de|f];"), []Expression{"<SOS>", "test expression 123 ", "(", "ab/1000/", "|", "c/1000/", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (ab/-0.0001/|c/-0.0001/) | [de|f];"), []Expression{"<SOS>", "test expression 123 ", "(", "ab/-0.0001/", "|", "c/-0.0001/", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (ab{1}|c{1}) | [de|f];"), []Expression{"<SOS>", "test expression 123 ", "(", "ab{1}", "|", "c{1}", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (ab{1.1}|c{1.1}) | [de|f];"), []Expression{"<SOS>", "test expression 123 ", "(", "ab{1.1}", "|", "c{1.1}", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";", "<EOS>"}},
-		{Expression("test expression 123 (ab{1.1/1}|c{1.1/1}) | [de|f];"), []Expression{"<SOS>", "test expression 123 ", "(", "ab{1.1/1}", "|", "c{1.1/1}", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";", "<EOS>"}},
+		{e: Expression(""), exp: []Expression{}},
+		{e: Expression(";"), exp: []Expression{"<SOS>", ";", "<EOS>"}},
+		{e: Expression(" "), exp: []Expression{"<SOS>", " ", "<EOS>"}},
+		{e: Expression("test expression 123"), exp: []Expression{"<SOS>", "test expression 123", "<EOS>"}},
+		{e: Expression("test expression 123;"), exp: []Expression{"<SOS>", "test expression 123", ";", "<EOS>"}},
+		{
+			e:   Expression("test expression 123 (abc);"),
+			exp: []Expression{"<SOS>", "test expression 123 ", "(", "abc", ")", ";", "<EOS>"},
+		},
+		{
+			e:   Expression("test expression 123 [abc];"),
+			exp: []Expression{"<SOS>", "test expression 123 ", "[", "abc", "]", ";", "<EOS>"},
+		},
+		{
+			e:   Expression("test expression 123 [(abc)];"),
+			exp: []Expression{"<SOS>", "test expression 123 ", "[", "(", "abc", ")", "]", ";", "<EOS>"},
+		},
+		{
+			e:   Expression("test expression 123 (abc) [def];"),
+			exp: []Expression{"<SOS>", "test expression 123 ", "(", "abc", ")", " ", "[", "def", "]", ";", "<EOS>"},
+		},
+		{
+			e: Expression("test expression 123 (ab|c) | [de|f];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "ab", "|", "c", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";",
+			"<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 <rule> (abc) [def];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "<rule>", " ", "(", "abc", ")", " ", "[", "def", "]", ";", "<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 <rule> (abc) [def];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "<rule>", " ", "(", "abc", ")", " ", "[", "def", "]", ";", "<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 <rule> (abc) [def];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "<rule>", " ", "(", "abc", ")", " ", "[", "def", "]", ";", "<EOS>",
+		},
+		},
+		{
+			e:   Expression("test expression 123// [(abc)];"),
+			exp: []Expression{"<SOS>", "test expression 123// ", "[", "(", "abc", ")", "]", ";", "<EOS>"},
+		},
+		{
+			e:   Expression("test expression 123 // [(abc)];"),
+			exp: []Expression{"<SOS>", "test expression 123 // ", "[", "(", "abc", ")", "]", ";", "<EOS>"},
+		},
+		{
+			e:   Expression("test expression 123 /0.0/ [(abc)];"),
+			exp: []Expression{"<SOS>", "test expression 123 /0.0/", " ", "[", "(", "abc", ")", "]", ";", "<EOS>"},
+		},
+		{
+			e:   Expression("test expression 123{} [(abc)];"),
+			exp: []Expression{"<SOS>", "test expression 123{}", " ", "[", "(", "abc", ")", "]", ";", "<EOS>"},
+		},
+		{
+			e:   Expression("test expression 123 {} [(abc)];"),
+			exp: []Expression{"<SOS>", "test expression 123 {}", " ", "[", "(", "abc", ")", "]", ";", "<EOS>"},
+		},
+		{
+			e:   Expression("test expression 123 {tag} [(abc)];"),
+			exp: []Expression{"<SOS>", "test expression 123 {tag}", " ", "[", "(", "abc", ")", "]", ";", "<EOS>"},
+		},
+		{
+			e: Expression("test expression 123 (abc /1.0/) [def];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "abc /1.0/", ")", " ", "[", "def", "]", ";", "<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 (abc /1000/) [def];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "abc /1000/", ")", " ", "[", "def", "]", ";", "<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 (abc /-0.0001/) [def];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "abc /-0.0001/", ")", " ", "[", "def", "]", ";", "<EOS>",
+		},
+		},
+		{
+			e:   Expression("test expression 123 (abc { }) [def];"),
+			exp: []Expression{"<SOS>", "test expression 123 ", "(", "abc { }", ")", " ", "[", "def", "]", ";", "<EOS>"},
+		},
+		{
+			e:   Expression("test expression 123 (abc {_}) [def];"),
+			exp: []Expression{"<SOS>", "test expression 123 ", "(", "abc {_}", ")", " ", "[", "def", "]", ";", "<EOS>"},
+		},
+		{
+			e: Expression("test expression 123 (abc {_t_a_g_}) [def];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "abc {_t_a_g_}", ")", " ", "[", "def", "]", ";", "<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 (ab/1.0/|c/1.0/) | [de|f];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "ab/1.0/", "|", "c/1.0/", ")", " ", "|", " ", "[", "de", "|", "f",
+			"]", ";", "<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 (ab/1000/|c/1000/) | [de|f];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "ab/1000/", "|", "c/1000/", ")", " ", "|", " ", "[", "de", "|", "f",
+			"]", ";", "<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 (ab/-0.0001/|c/-0.0001/) | [de|f];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "ab/-0.0001/", "|", "c/-0.0001/", ")", " ", "|", " ", "[", "de", "|",
+			"f", "]", ";", "<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 (ab{1}|c{1}) | [de|f];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "ab{1}", "|", "c{1}", ")", " ", "|", " ", "[", "de", "|", "f", "]",
+			";", "<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 (ab{1.1}|c{1.1}) | [de|f];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "ab{1.1}", "|", "c{1.1}", ")", " ", "|", " ", "[", "de", "|", "f",
+			"]", ";", "<EOS>",
+		},
+		},
+		{
+			e: Expression("test expression 123 (ab{1.1/1}|c{1.1/1}) | [de|f];"), exp: []Expression{
+			"<SOS>", "test expression 123 ", "(", "ab{1.1/1}", "|", "c{1.1/1}", ")", " ", "|", " ", "[", "de", "|", "f",
+			"]", ";", "<EOS>",
+		},
+		},
 	}
 	for i, test := range table {
 		res := test.e.ToTokens(lexer)
@@ -58,31 +157,31 @@ func TestExpressionToTokens(t *testing.T) {
 }
 
 func TestExpressionParseWeight(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	table := []struct {
 		e   Expression
 		ee  Expression
 		ef  float64
 		err error
 	}{
-		{Expression(""), Expression(""), 0.0, dummy_error},
-		{Expression("/"), Expression("/"), 0.0, dummy_error},
-		{Expression("//"), Expression("//"), 0.0, dummy_error},
-		{Expression("/.//"), Expression("/.//"), 0.0, dummy_error},
-		{Expression("abc"), Expression("abc"), 0.0, dummy_error},
-		{Expression("abc//"), Expression("abc//"), 0.0, dummy_error},
-		{Expression("/aaa/"), Expression("/aaa/"), 0.0, dummy_error},
+		{e: Expression(""), ee: Expression(""), ef: 0.0, err: dummyError},
+		{e: Expression("/"), ee: Expression("/"), ef: 0.0, err: dummyError},
+		{e: Expression("//"), ee: Expression("//"), ef: 0.0, err: dummyError},
+		{e: Expression("/.//"), ee: Expression("/.//"), ef: 0.0, err: dummyError},
+		{e: Expression("abc"), ee: Expression("abc"), ef: 0.0, err: dummyError},
+		{e: Expression("abc//"), ee: Expression("abc//"), ef: 0.0, err: dummyError},
+		{e: Expression("/aaa/"), ee: Expression("/aaa/"), ef: 0.0, err: dummyError},
 
-		{Expression("/1.0/"), Expression(""), 1.0, nil},
-		{Expression("abc/1.0/"), Expression("abc"), 1.0, nil},
-		{Expression("abc/0.1/"), Expression("abc"), 0.1, nil},
-		{Expression("abc/0.001/"), Expression("abc"), 0.001, nil},
-		{Expression("abc/100000/"), Expression("abc"), 100000.0, nil},
-		{Expression("abc/100000.0/"), Expression("abc"), 100000.0, nil},
-		{Expression("abc/1/"), Expression("abc"), 1, nil},
-		{Expression("abc/-1/"), Expression("abc"), -1.0, nil},
-		{Expression("abc/-1.0/"), Expression("abc"), -1.0, nil},
-		{Expression("abc/0/"), Expression("abc"), 0.0, nil},
+		{e: Expression("/1.0/"), ee: Expression(""), ef: 1.0, err: nil},
+		{e: Expression("abc/1.0/"), ee: Expression("abc"), ef: 1.0, err: nil},
+		{e: Expression("abc/0.1/"), ee: Expression("abc"), ef: 0.1, err: nil},
+		{e: Expression("abc/0.001/"), ee: Expression("abc"), ef: 0.001, err: nil},
+		{e: Expression("abc/100000/"), ee: Expression("abc"), ef: 100000.0, err: nil},
+		{e: Expression("abc/100000.0/"), ee: Expression("abc"), ef: 100000.0, err: nil},
+		{e: Expression("abc/1/"), ee: Expression("abc"), ef: 1, err: nil},
+		{e: Expression("abc/-1/"), ee: Expression("abc"), ef: -1.0, err: nil},
+		{e: Expression("abc/-1.0/"), ee: Expression("abc"), ef: -1.0, err: nil},
+		{e: Expression("abc/0/"), ee: Expression("abc"), ef: 0.0, err: nil},
 	}
 	for i, test := range table {
 		e, f, err := test.e.ParseWeight()

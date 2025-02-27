@@ -29,7 +29,6 @@ const (
 	SequenceStart
 	SequenceEnd
 	DoubleQuote
-	SingleQuote
 	BackSlash
 	ForwardSlash
 )
@@ -62,7 +61,7 @@ func NewJSGFLexer() *tokenizer.Tokenizer {
 	return lexer
 }
 
-func captureString(s *tokenizer.Stream, close string, include_close bool) (string, error) {
+func captureString(s *tokenizer.Stream, close string, includeClose bool) (string, error) {
 	var b strings.Builder
 	// really high value here because s doesn't have a "show me whats left in the string" method
 	r := s.GetSnippetAsString(0, 1000000, 0)
@@ -74,7 +73,7 @@ func captureString(s *tokenizer.Stream, close string, include_close bool) (strin
 	}
 	for s.IsValid() {
 		if s.CurrentToken().ValueUnescapedString() == close {
-			if include_close {
+			if includeClose {
 				b.WriteString(s.CurrentToken().ValueUnescapedString())
 			}
 			break

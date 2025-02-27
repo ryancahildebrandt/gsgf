@@ -1,0 +1,13 @@
+linters:
+  presets:
+    - bugs
+    - complexity
+    - error
+    - format
+    - import
+    - metalinter
+    - performance
+    - style
+    - test
+    - unused
+  fast: true

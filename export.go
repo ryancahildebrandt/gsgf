@@ -32,18 +32,21 @@ type EdgeJson struct {
 
 type RuleJson struct {
 	Expression string    `json:"expression"`
-	Is_public  bool      `json:"is_public"`
+	IsPublic   bool      `json:"is_public"`
 	References []string  `json:"references"`
 	Graph      GraphJson `json:"graph"`
 	Tokens     []string  `json:"tokens"`
 }
 
 func RuleToJson(r Rule) RuleJson {
-	tokens := []string{}
+	var tokens []string
 	for _, i := range r.Tokens {
 		tokens = append(tokens, i.str())
 	}
-	return RuleJson{r.Exp.str(), r.Is_public, r.References, GraphToJson(r.Graph), tokens}
+	return RuleJson{
+		Expression: r.Exp.str(), IsPublic: r.IsPublic, References: r.References, Graph: GraphToJson(r.Graph),
+		Tokens: tokens,
+	}
 }
 
 func EdgeToJson(e Edge) EdgeJson {
@@ -70,7 +73,7 @@ func GrammarToJson(g Grammar) GrammarJson {
 	for k, v := range g.Rules {
 		rules[k] = RuleToJson(v)
 	}
-	return GrammarJson{rules, imports}
+	return GrammarJson{Rules: rules, Imports: imports}
 
 }
 

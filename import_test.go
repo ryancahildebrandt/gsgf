@@ -13,40 +13,44 @@ import (
 )
 
 func TestCreateNameSpace(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	table := []struct {
 		d   string
 		e   string
 		r   map[string]string
 		err error
 	}{
-		{"data/tests/test0.jsgf",
-			".jsgf",
-			map[string]string{
+		{
+			d: "data/tests/test0.jsgf",
+			e: ".jsgf",
+			r: map[string]string{
 				"<order>":   "i'd like [to order|a|<quant>];",
 				"<request>": "[(could|will|would) you] please <brew>;",
 				"<quant>":   "some|a (cup|glass) of;",
 				"<brew>":    "(make|brew|whip up) <quant>;",
 			},
-			nil,
+			err: nil,
 		},
-		{"data/tests/test1.jsgf",
-			".jsgf",
-			map[string]string{
+		{
+			d: "data/tests/test1.jsgf",
+			e: ".jsgf",
+			r: map[string]string{
 				"<brew>":    "(make|brew|whip up) <quant>;",
 				"<teatype>": "red|sweet|green|jasmine|milk;",
 				"<quant>":   "some|a (cup|glass) of;",
 			},
-			nil,
+			err: nil,
 		},
-		{"data/tests/test2.jsgf",
-			".jsgf",
-			map[string]string{},
-			dummy_error,
+		{
+			d:   "data/tests/test2.jsgf",
+			e:   ".jsgf",
+			r:   map[string]string{},
+			err: dummyError,
 		},
-		{"data/tests/test3.jsgf",
-			".jsgf",
-			map[string]string{
+		{
+			d: "data/tests/test3.jsgf",
+			e: ".jsgf",
+			r: map[string]string{
 				"<request>": "[(could|will|would) you] please <brew>;",
 				"<order>":   "i'd like [to order|a|<quant>];",
 				"<quant>":   "some|a (cup|glass) of;",
@@ -54,69 +58,77 @@ func TestCreateNameSpace(t *testing.T) {
 				"<brew>":    "(make|brew|whip up) <quant>;",
 				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
 			},
-			nil,
+			err: nil,
 		},
-		{"data/tests/test4.jsgf",
-			".jsgf",
-			map[string]string{
+		{
+			d: "data/tests/test4.jsgf",
+			e: ".jsgf",
+			r: map[string]string{
 				"<order>":   "i'd like [to order|a|<quant>];",
 				"<quant>":   "some|a (cup|glass) of;",
 				"<teatype>": "red|sweet|green|jasmine|milk;",
 				"<request>": "[(could|will|would) you] please <brew>;",
 				"<brew>":    "(make|brew|whip up) <quant>;",
 			},
-			nil,
+			err: nil,
 		},
-		{"data/tests/test5.jsgf",
-			".jsgf",
-			map[string]string{
+		{
+			d: "data/tests/test5.jsgf",
+			e: ".jsgf",
+			r: map[string]string{
 				"<request>": "[(could|will|would) you] please <brew>;",
 				"<brew>":    "(make|brew|whip up) <quant>;",
 				"<order>":   "i'd like [to order|a|<quant>];",
 				"<teatype>": "red|sweet|green|jasmine|milk;",
 				"<quant>":   "some|a (cup|glass) of;",
 			},
-			nil,
+			err: nil,
 		},
-		{"data/tests/test6.jsgf",
-			".jsgf",
-			map[string]string{
+		{
+			d: "data/tests/test6.jsgf",
+			e: ".jsgf",
+			r: map[string]string{
 				"<request>": "[(could|will|would) you] please <brew>;",
 				"<brew>":    "(make|brew|whip up) <quant>;",
 				"<order>":   "i'd like [to order|a|<quant>];",
 				"<teatype>": "red|sweet|green|jasmine|milk;",
 				"<quant>":   "some|a (cup|glass) of;",
 			},
-			nil,
+			err: nil,
 		},
 
-		{"data/tests/a.jsgf",
-			".jsgf",
-			map[string]string{},
-			nil,
-		}, {"data/tests/b.jsgf",
-			".jsgf",
-			map[string]string{
+		{
+			d:   "data/tests/a.jsgf",
+			e:   ".jsgf",
+			r:   map[string]string{},
+			err: nil,
+		}, {
+			d: "data/tests/b.jsgf",
+			e: ".jsgf",
+			r: map[string]string{
 				"<brew>":    "(make|brew|whip up) <quant>;",
 				"<teatype>": "red|sweet|green|jasmine|milk;",
 				"<quant>":   "some|a (cup|glass) of;",
 			},
-			nil,
+			err: nil,
 		},
-		{"data/tests/dir0/c.jsgf",
-			".jsgf",
-			map[string]string{},
-			nil,
+		{
+			d:   "data/tests/dir0/c.jsgf",
+			e:   ".jsgf",
+			r:   map[string]string{},
+			err: nil,
 		},
-		{"data/tests/dir0/dir1/d.jsgf",
-			".jsgf",
-			map[string]string{},
-			dummy_error,
+		{
+			d:   "data/tests/dir0/dir1/d.jsgf",
+			e:   ".jsgf",
+			r:   map[string]string{},
+			err: dummyError,
 		},
-		{"data/tests/dir0/dir1/dir2/e.jsgf",
-			".jsgf",
-			map[string]string{},
-			nil,
+		{
+			d:   "data/tests/dir0/dir1/dir2/e.jsgf",
+			e:   ".jsgf",
+			r:   map[string]string{},
+			err: nil,
 		},
 	}
 	for i, test := range table {
@@ -140,7 +152,7 @@ func TestCreateNameSpace(t *testing.T) {
 }
 
 func TestFindGrammar(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	table := []struct {
 		p   string
 		t   string
@@ -148,18 +160,21 @@ func TestFindGrammar(t *testing.T) {
 		exp string
 		err error
 	}{
-		{"./data/tests", "test0", ".jsgf", "data/tests/test0.jsgf", nil},
-		{"./data/tests/.jsgf", "test0", ".jsgf", "data/tests/test0.jsgf", nil},
-		{"./data/tests/test0.jsgf", "test0", ".jsgf", "data/tests/test0.jsgf", nil},
-		{"./data/tests/test0.jsgf", "a", ".jsgf", "data/tests/a.jsgf", nil},
-		{"./data/tests/test0.jsgf", "e", ".jsgf", "data/tests/dir0/dir1/dir2/e.jsgf", nil},
-		{"./data/tests/a.jsgf", "a", ".jsgf", "data/tests/a.jsgf", nil},
-		{"./data/tests/dir0/dir1/c.jsgf", "d", ".jsgf", "data/tests/dir0/dir1/d.jsgf", nil},
-		{"./data/tests/dir0/dir1/c.jsgf", "e", ".jsgf", "data/tests/dir0/dir1/dir2/e.jsgf", nil},
-		{"./data/tests/dir0/dir1/dir2/e.jsgf", "e", ".jsgf", "data/tests/dir0/dir1/dir2/e.jsgf", nil},
-		{"./data/tests/dir0/dir1/c.jsgf", "b", ".jsgf", "", dummy_error},
-		{"./data/tests/test0.jsgf", "f", ".jsgf", "", dummy_error},
-		{"./data/tests/dir0/dir1/dir2/e.jsgf", "d", ".jsgf", "", dummy_error},
+		{p: "./data/tests", t: "test0", e: ".jsgf", exp: "data/tests/test0.jsgf", err: nil},
+		{p: "./data/tests/.jsgf", t: "test0", e: ".jsgf", exp: "data/tests/test0.jsgf", err: nil},
+		{p: "./data/tests/test0.jsgf", t: "test0", e: ".jsgf", exp: "data/tests/test0.jsgf", err: nil},
+		{p: "./data/tests/test0.jsgf", t: "a", e: ".jsgf", exp: "data/tests/a.jsgf", err: nil},
+		{p: "./data/tests/test0.jsgf", t: "e", e: ".jsgf", exp: "data/tests/dir0/dir1/dir2/e.jsgf", err: nil},
+		{p: "./data/tests/a.jsgf", t: "a", e: ".jsgf", exp: "data/tests/a.jsgf", err: nil},
+		{p: "./data/tests/dir0/dir1/c.jsgf", t: "d", e: ".jsgf", exp: "data/tests/dir0/dir1/d.jsgf", err: nil},
+		{p: "./data/tests/dir0/dir1/c.jsgf", t: "e", e: ".jsgf", exp: "data/tests/dir0/dir1/dir2/e.jsgf", err: nil},
+		{
+			p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "e", e: ".jsgf", exp: "data/tests/dir0/dir1/dir2/e.jsgf",
+			err: nil,
+		},
+		{p: "./data/tests/dir0/dir1/c.jsgf", t: "b", e: ".jsgf", exp: "", err: dummyError},
+		{p: "./data/tests/test0.jsgf", t: "f", e: ".jsgf", exp: "", err: dummyError},
+		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "d", e: ".jsgf", exp: "", err: dummyError},
 	}
 	for i, test := range table {
 		res, err := FindGrammar(test.p, test.t, test.e)
@@ -173,27 +188,30 @@ func TestFindGrammar(t *testing.T) {
 }
 
 func TestImportOrder(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	table := []struct {
 		p   string
 		e   string
 		exp []string
 		err error
 	}{
-		{"./data/tests", ".jsgf", []string{}, dummy_error},
-		{"./data/tests/.jsgf", ".jsgf", []string{}, dummy_error},
-		{"./data/tests/test0.jsgf", ".jsgf", []string{"import <a.*>"}, nil},
-		{"./data/tests/test1.jsgf", ".jsgf", []string{"import <c.brew>"}, nil},
-		{"./data/tests/test3.jsgf", ".jsgf", []string{"import <e.dne>"}, nil},
-		{"./data/tests/test4.jsgf", ".jsgf", []string{"import <a.order>", "import <c.teatype>", "import <d.*>"}, nil},
-		{"./data/tests/test5.jsgf", ".jsgf", []string{"import <b.request>", "import <c.brew>"}, nil},
-		{"./data/tests/a.jsgf", ".jsgf", []string{}, nil},
-		{"./data/tests/b.jsgf", ".jsgf", []string{"import <c.brew>"}, nil},
-		{"./data/tests/dir0/c.jsgf", ".jsgf", []string{}, nil},
-		{"./data/tests/dir0/dir1/dir2/e.jsgf", ".jsgf", []string{}, nil},
+		{p: "./data/tests", e: ".jsgf", exp: []string{}, err: dummyError},
+		{p: "./data/tests/.jsgf", e: ".jsgf", exp: []string{}, err: dummyError},
+		{p: "./data/tests/test0.jsgf", e: ".jsgf", exp: []string{"import <a.*>"}, err: nil},
+		{p: "./data/tests/test1.jsgf", e: ".jsgf", exp: []string{"import <c.brew>"}, err: nil},
+		{p: "./data/tests/test3.jsgf", e: ".jsgf", exp: []string{"import <e.dne>"}, err: nil},
+		{
+			p: "./data/tests/test4.jsgf", e: ".jsgf",
+			exp: []string{"import <a.order>", "import <c.teatype>", "import <d.*>"}, err: nil,
+		},
+		{p: "./data/tests/test5.jsgf", e: ".jsgf", exp: []string{"import <b.request>", "import <c.brew>"}, err: nil},
+		{p: "./data/tests/a.jsgf", e: ".jsgf", exp: []string{}, err: nil},
+		{p: "./data/tests/b.jsgf", e: ".jsgf", exp: []string{"import <c.brew>"}, err: nil},
+		{p: "./data/tests/dir0/c.jsgf", e: ".jsgf", exp: []string{}, err: nil},
+		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", e: ".jsgf", exp: []string{}, err: nil},
 
-		{"./data/tests/test2.jsgf", ".jsgf", []string{}, dummy_error},
-		{"./data/tests/dir0/dir1/d.jsgf", ".jsgf", []string{}, dummy_error},
+		{p: "./data/tests/test2.jsgf", e: ".jsgf", exp: []string{}, err: dummyError},
+		{p: "./data/tests/dir0/dir1/d.jsgf", e: ".jsgf", exp: []string{}, err: dummyError},
 	}
 	for i, test := range table {
 		res, err := ImportOrder(test.p, test.e)

@@ -20,14 +20,39 @@ func TestGraphFrom(t *testing.T) {
 		n   int
 		exp []int
 	}{
-		{EdgeList{}, -1, []int{}},
-		{EdgeList{}, 0, []int{}},
-		{EdgeList{{0, 1, 1.0}}, 2, []int{}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, 0, []int{1}},
-		{EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}}, 6, []int{}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {5, 7, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}}, 2, []int{3, 4}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}}, 5, []int{6}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {2, 8, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}}, 2, []int{3, 5, 7, 8}},
+		{e: EdgeList{}, n: -1, exp: []int{}},
+		{e: EdgeList{}, n: 0, exp: []int{}},
+		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, n: 2, exp: []int{}},
+		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}}, n: 0, exp: []int{1}},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0},
+				{From: 1, To: 6, Weight: 1.0}, {From: 3, To: 6, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+			}, n: 6, exp: []int{},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 4, Weight: 1.0}, {From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0},
+				{From: 5, To: 6, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0},
+			}, n: 2, exp: []int{3, 4},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+			}, n: 5, exp: []int{6},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 2, To: 8, Weight: 1.0},
+				{From: 3, To: 8, Weight: 1.0}, {From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+				{From: 8, To: 9, Weight: 1.0},
+			}, n: 2, exp: []int{3, 5, 7, 8},
+		},
 	}
 	for i, test := range table {
 		g := NewGraph(test.e, []Expression{})
@@ -45,15 +70,68 @@ func TestGraphWeight(t *testing.T) {
 		t   int
 		exp float64
 	}{
-		{Graph{[]Expression{}, EdgeList{}, map[int][]int{}, map[int]map[int]float64{}}, 0, 0, 1.0},
-		{Graph{[]Expression{}, EdgeList{}, map[int][]int{}, map[int]map[int]float64{}}, -1, 0, 1.0},
-		{Graph{[]Expression{}, EdgeList{}, map[int][]int{}, map[int]map[int]float64{}}, 0, -1, 1.0},
-		{Graph{[]Expression{}, EdgeList{}, map[int][]int{}, map[int]map[int]float64{}}, -1, -1, 1.0},
-		{Graph{[]Expression{}, EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, map[int][]int{0: {1}, 1: {2}}, map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}}}, 0, 0, 1.0},
-		{Graph{[]Expression{}, EdgeList{{0, 1, 1.0}, {0, 3, 0.99}, {0, 5, 0.0}, {1, 6, 100}, {3, 6, 99}, {5, 6, 9}}, map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}}, map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}}}, 0, 1, 1.0},
-		{Graph{[]Expression{}, EdgeList{{0, 1, 1.0}, {0, 3, 0.99}, {0, 5, 0.0}, {1, 6, 100}, {3, 6, 99}, {5, 6, 9}}, map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}}, map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}}}, 0, 5, 0.0},
-		{Graph{[]Expression{}, EdgeList{{0, 1, 1.0}, {0, 3, 0.99}, {0, 5, 0.0}, {1, 6, 100}, {3, 6, 99}, {5, 6, 9}}, map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}}, map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}}}, 1, 6, 100},
-		{Graph{[]Expression{}, EdgeList{{0, 1, 1.0}, {0, 3, 0.99}, {0, 5, 0.0}, {1, 6, 100}, {3, 6, 99}, {5, 6, 9}}, map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}}, map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}}}, 5, 6, 9},
+		{
+			g: Graph{
+				Nodes: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
+			}, f: 0, t: 0, exp: 1.0,
+		},
+		{
+			g: Graph{
+				Nodes: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
+			}, f: -1, t: 0, exp: 1.0,
+		},
+		{
+			g: Graph{
+				Nodes: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
+			}, f: 0, t: -1, exp: 1.0,
+		},
+		{
+			g: Graph{
+				Nodes: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
+			}, f: -1, t: -1, exp: 1.0,
+		},
+		{
+			g: Graph{
+				Nodes: []Expression{}, Edges: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+				Children: map[int][]int{0: {1}, 1: {2}}, Weights: map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
+			}, f: 0, t: 0, exp: 1.0,
+		},
+		{
+			g: Graph{
+				Nodes: []Expression{}, Edges: EdgeList{
+					{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 0.99}, {From: 0, To: 5, Weight: 0.0},
+					{From: 1, To: 6, Weight: 100}, {From: 3, To: 6, Weight: 99}, {From: 5, To: 6, Weight: 9},
+				}, Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				Weights:     map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+			}, f: 0, t: 1, exp: 1.0,
+		},
+		{
+			g: Graph{
+				Nodes: []Expression{}, Edges: EdgeList{
+					{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 0.99}, {From: 0, To: 5, Weight: 0.0},
+					{From: 1, To: 6, Weight: 100}, {From: 3, To: 6, Weight: 99}, {From: 5, To: 6, Weight: 9},
+				}, Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				Weights:     map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+			}, f: 0, t: 5, exp: 0.0,
+		},
+		{
+			g: Graph{
+				Nodes: []Expression{}, Edges: EdgeList{
+					{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 0.99}, {From: 0, To: 5, Weight: 0.0},
+					{From: 1, To: 6, Weight: 100}, {From: 3, To: 6, Weight: 99}, {From: 5, To: 6, Weight: 9},
+				}, Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				Weights:     map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+			}, f: 1, t: 6, exp: 100,
+		},
+		{
+			g: Graph{
+				Nodes: []Expression{}, Edges: EdgeList{
+					{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 0.99}, {From: 0, To: 5, Weight: 0.0},
+					{From: 1, To: 6, Weight: 100}, {From: 3, To: 6, Weight: 99}, {From: 5, To: 6, Weight: 9},
+				}, Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				Weights:     map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+			}, f: 5, t: 6, exp: 9,
+		},
 	}
 	for i, test := range table {
 		res := test.g.Weight(test.f, test.t)
@@ -69,16 +147,93 @@ func TestGraphAddEdge(t *testing.T) {
 		edg Edge
 		exp Graph
 	}{
-		{EdgeList{}, Edge{}, Graph{[]Expression{}, EdgeList{}, map[int][]int{}, map[int]map[int]float64{}}},
-		{EdgeList{}, Edge{0, 0, 1.0}, Graph{[]Expression{}, EdgeList{}, map[int][]int{}, map[int]map[int]float64{}}},
-		{EdgeList{}, Edge{1, 10, 1.0}, Graph{[]Expression{}, EdgeList{{1, 10, 1.0}}, map[int][]int{1: {10}}, map[int]map[int]float64{1: {10: 1.0}}}},
-		{EdgeList{{0, 1, 1.0}}, Edge{}, Graph{[]Expression{}, EdgeList{{0, 1, 1.0}}, map[int][]int{0: {1}}, map[int]map[int]float64{0: {1: 1.0}}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, Edge{1, 2, 1.0}, Graph{[]Expression{}, EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {1, 2, 1.0}}, map[int][]int{0: {1}, 1: {2, 2}}, map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}}}},
-		{EdgeList{{0, 1, 0.99}, {1, 2, 1.0}}, Edge{1, 2, 1.0}, Graph{[]Expression{}, EdgeList{{0, 1, 0.99}, {1, 2, 1.0}, {1, 2, 1.0}}, map[int][]int{0: {1}, 1: {2, 2}}, map[int]map[int]float64{0: {1: 0.99}, 1: {2: 1.0}}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, Edge{1, 2, 0.99}, Graph{[]Expression{}, EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {1, 2, 0.99}}, map[int][]int{0: {1}, 1: {2, 2}}, map[int]map[int]float64{0: {1: 1.0}, 1: {2: 0.99}}}},
-		{EdgeList{{0, 1, 0.99}, {1, 2, 1.0}}, Edge{1, 2, 0.99}, Graph{[]Expression{}, EdgeList{{0, 1, 0.99}, {1, 2, 1.0}, {1, 2, 0.99}}, map[int][]int{0: {1}, 1: {2, 2}}, map[int]map[int]float64{0: {1: 0.99}, 1: {2: 0.99}}}},
-		{EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}}, Edge{8, 9, 1.0}, Graph{[]Expression{}, EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}, {8, 9, 1.0}}, map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}, 8: {9}}, map[int]map[int]float64{0: {1: 1.0, 3: 1.0, 5: 1.0}, 1: {6: 1.0}, 3: {6: 1.0}, 5: {6: 1.0}, 8: {9: 1.0}}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {5, 7, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}}, Edge{0, 2, 1.0}, Graph{[]Expression{}, EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {5, 7, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {0, 2, 1.0}}, map[int][]int{0: {1, 2}, 1: {2}, 2: {3, 4}, 3: {4}, 4: {5}, 5: {6, 7}, 6: {7}, 7: {8}}, map[int]map[int]float64{0: {1: 1.0, 2: 1.0}, 1: {2: 1.0}, 2: {3: 1.0, 4: 1.0}, 3: {4: 1.0}, 4: {5: 1.0}, 5: {6: 1.0, 7: 1.0}, 6: {7: 1.0}, 7: {8: 1.0}}}},
+		{
+			e: EdgeList{}, exp: Graph{
+			Nodes: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
+		},
+		},
+		{
+			e: EdgeList{}, edg: Edge{From: 0, To: 0, Weight: 1.0}, exp: Graph{
+			Nodes: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
+		},
+		},
+		{
+			e: EdgeList{}, edg: Edge{From: 1, To: 10, Weight: 1.0}, exp: Graph{
+			Nodes: []Expression{}, Edges: EdgeList{{From: 1, To: 10, Weight: 1.0}}, Children: map[int][]int{1: {10}},
+			Weights: map[int]map[int]float64{1: {10: 1.0}},
+		},
+		},
+		{
+			e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, exp: Graph{
+			Nodes: []Expression{}, Edges: EdgeList{{From: 0, To: 1, Weight: 1.0}}, Children: map[int][]int{0: {1}},
+			Weights: map[int]map[int]float64{0: {1: 1.0}},
+		},
+		},
+		{
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+			edg: Edge{From: 1, To: 2, Weight: 1.0}, exp: Graph{
+			Nodes: []Expression{}, Edges: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
+			}, Children: map[int][]int{0: {1}, 1: {2, 2}}, Weights: map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
+		},
+		},
+		{
+			e:   EdgeList{{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}},
+			edg: Edge{From: 1, To: 2, Weight: 1.0}, exp: Graph{
+			Nodes: []Expression{}, Edges: EdgeList{
+				{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
+			}, Children: map[int][]int{0: {1}, 1: {2, 2}}, Weights: map[int]map[int]float64{0: {1: 0.99}, 1: {2: 1.0}},
+		},
+		},
+		{
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+			edg: Edge{From: 1, To: 2, Weight: 0.99}, exp: Graph{
+			Nodes: []Expression{}, Edges: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 0.99},
+			}, Children: map[int][]int{0: {1}, 1: {2, 2}}, Weights: map[int]map[int]float64{0: {1: 1.0}, 1: {2: 0.99}},
+		},
+		},
+		{
+			e:   EdgeList{{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}},
+			edg: Edge{From: 1, To: 2, Weight: 0.99}, exp: Graph{
+			Nodes: []Expression{}, Edges: EdgeList{
+				{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 0.99},
+			}, Children: map[int][]int{0: {1}, 1: {2, 2}}, Weights: map[int]map[int]float64{0: {1: 0.99}, 1: {2: 0.99}},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0},
+				{From: 1, To: 6, Weight: 1.0}, {From: 3, To: 6, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+			}, edg: Edge{From: 8, To: 9, Weight: 1.0}, exp: Graph{
+			Nodes: []Expression{}, Edges: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0},
+				{From: 1, To: 6, Weight: 1.0}, {From: 3, To: 6, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 8, To: 9, Weight: 1.0},
+			}, Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}, 8: {9}}, Weights: map[int]map[int]float64{
+				0: {1: 1.0, 3: 1.0, 5: 1.0}, 1: {6: 1.0}, 3: {6: 1.0}, 5: {6: 1.0}, 8: {9: 1.0},
+			},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 4, Weight: 1.0}, {From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0},
+				{From: 5, To: 6, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0},
+			}, edg: Edge{From: 0, To: 2, Weight: 1.0}, exp: Graph{
+			Nodes: []Expression{}, Edges: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 4, Weight: 1.0}, {From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0},
+				{From: 5, To: 6, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0}, {From: 0, To: 2, Weight: 1.0},
+			}, Children: map[int][]int{0: {1, 2}, 1: {2}, 2: {3, 4}, 3: {4}, 4: {5}, 5: {6, 7}, 6: {7}, 7: {8}},
+			Weights: map[int]map[int]float64{
+				0: {1: 1.0, 2: 1.0}, 1: {2: 1.0}, 2: {3: 1.0, 4: 1.0}, 3: {4: 1.0}, 4: {5: 1.0}, 5: {6: 1.0, 7: 1.0},
+				6: {7: 1.0}, 7: {8: 1.0},
+			},
+		},
+		},
 	}
 	for i, test := range table {
 		g := NewGraph(test.e, []Expression{})
@@ -113,12 +268,37 @@ func TestGraphEndPoints(t *testing.T) {
 		i int
 		f int
 	}{
-		{EdgeList{}, 0, 0},
-		{EdgeList{{0, 1, 1.0}}, 0, 1},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, 0, 2},
-		{EdgeList{{10, 0, 1.0}, {0, 1, 1.0}, {1, 2, 1.0}, {2, 20, 1.0}}, 10, 20},
-		{EdgeList{{1, 11, 1.0}, {11, 62, 1.0}, {62, 2, 1.0}, {2, 3, 1.0}, {3, 2, 1.0}, {2, 4, 1.0}, {4, 8, 1.0}, {8, 44, 1.0}}, 1, 44},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 11, 1.0}, {2, 15, 1.0}, {2, 24, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 8, 1.0}, {15, 20, 1.0}, {17, 18, 1.0}, {18, 19, 1.0}, {19, 8, 1.0}, {20, 21, 1.0}, {21, 22, 1.0}, {22, 23, 1.0}, {23, 17, 1.0}, {24, 25, 1.0}, {25, 30, 1.0}, {27, 28, 1.0}, {28, 29, 1.0}, {29, 8, 1.0}, {30, 31, 1.0}, {30, 33, 1.0}, {30, 35, 1.0}, {31, 36, 1.0}, {33, 36, 1.0}, {35, 36, 1.0}, {36, 37, 1.0}, {37, 27, 1.0}}, 0, 10},
+		{e: EdgeList{}, i: 0, f: 0},
+		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, i: 0, f: 1},
+		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}}, i: 0, f: 2},
+		{
+			e: EdgeList{
+				{From: 10, To: 0, Weight: 1.0}, {From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
+				{From: 2, To: 20, Weight: 1.0},
+			}, i: 10, f: 20,
+		},
+		{
+			e: EdgeList{
+				{From: 1, To: 11, Weight: 1.0}, {From: 11, To: 62, Weight: 1.0}, {From: 62, To: 2, Weight: 1.0},
+				{From: 2, To: 3, Weight: 1.0}, {From: 3, To: 2, Weight: 1.0}, {From: 2, To: 4, Weight: 1.0},
+				{From: 4, To: 8, Weight: 1.0}, {From: 8, To: 44, Weight: 1.0},
+			}, i: 1, f: 44,
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0},
+				{From: 2, To: 15, Weight: 1.0}, {From: 2, To: 24, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0},
+				{From: 13, To: 14, Weight: 1.0}, {From: 14, To: 8, Weight: 1.0}, {From: 15, To: 20, Weight: 1.0},
+				{From: 17, To: 18, Weight: 1.0}, {From: 18, To: 19, Weight: 1.0}, {From: 19, To: 8, Weight: 1.0},
+				{From: 20, To: 21, Weight: 1.0}, {From: 21, To: 22, Weight: 1.0}, {From: 22, To: 23, Weight: 1.0},
+				{From: 23, To: 17, Weight: 1.0}, {From: 24, To: 25, Weight: 1.0}, {From: 25, To: 30, Weight: 1.0},
+				{From: 27, To: 28, Weight: 1.0}, {From: 28, To: 29, Weight: 1.0}, {From: 29, To: 8, Weight: 1.0},
+				{From: 30, To: 31, Weight: 1.0}, {From: 30, To: 33, Weight: 1.0}, {From: 30, To: 35, Weight: 1.0},
+				{From: 31, To: 36, Weight: 1.0}, {From: 33, To: 36, Weight: 1.0}, {From: 35, To: 36, Weight: 1.0},
+				{From: 36, To: 37, Weight: 1.0}, {From: 37, To: 27, Weight: 1.0},
+			}, i: 0, f: 10,
+		},
 	}
 	for i, test := range table {
 		g := NewGraph(test.e, []Expression{})
@@ -134,28 +314,216 @@ func TestGraphAllPaths(t *testing.T) {
 		e   EdgeList
 		exp []Path
 	}{
-		{EdgeList{{0, 1, 1.0}}, []Path{{0, 1}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, []Path{{0, 1, 2}}},
-		{EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}}, []Path{{0, 1, 6}, {0, 3, 6}, {0, 5, 6}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {5, 7, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 7, 8}, {0, 1, 2, 3, 4, 5, 7, 8}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {2, 8, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}}, []Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}, {0, 1, 2, 8, 9}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}}, []Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 14, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 14, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {3, 7, 1.0}, {4, 6, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {3, 5, 1.0}, {6, 8, 1.0}, {9, 11, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 13}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 14, 1.0}, {14, 15, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 14, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {3, 5, 1.0}, {7, 9, 1.0}, {11, 13, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 3, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 7, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 13, 14, 15}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {2, 8, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 8, 9}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {2, 12, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 12, 13}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {9, 14, 1.0}, {5, 14, 1.0}, {14, 15, 1.0}, {2, 14, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {2, 8, 1.0}, {3, 7, 1.0}, {4, 6, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}, {0, 1, 2, 8, 9}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {2, 12, 1.0}, {3, 5, 1.0}, {6, 8, 1.0}, {9, 11, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 13}, {0, 1, 2, 12, 13}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 14, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 14, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}, {2, 14, 1.0}, {3, 5, 1.0}, {7, 9, 1.0}, {11, 13, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 3, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 7, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 13, 14, 15}, {0, 1, 2, 14, 15}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 13, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {10, 12, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 13, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 12, 13, 14, 15}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 11, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {7, 9, 1.0}, {10, 11, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}, {12, 14, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 11, 12, 13, 14, 15}, {0, 1, 2, 3, 4, 5, 11, 12, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 11, 12, 14, 15}, {0, 1, 2, 7, 9, 10, 11, 12, 13, 14, 15}, {0, 1, 2, 7, 9, 10, 11, 12, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 12, 14, 15}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {1, 12, 1.0}, {6, 8, 1.0}}, []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14}, {0, 1, 12, 13, 14}}},
+		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, exp: []Path{{0, 1}}},
+		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}}, exp: []Path{{0, 1, 2}}},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0},
+				{From: 1, To: 6, Weight: 1.0}, {From: 3, To: 6, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+			}, exp: []Path{{0, 1, 6}, {0, 3, 6}, {0, 5, 6}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 4, Weight: 1.0}, {From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0},
+				{From: 5, To: 6, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0},
+			}, exp: []Path{
+			{0, 1, 2, 3, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 7, 8}, {0, 1, 2, 3, 4, 5, 7, 8},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+			}, exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 2, To: 8, Weight: 1.0},
+				{From: 3, To: 8, Weight: 1.0}, {From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+				{From: 8, To: 9, Weight: 1.0},
+			}, exp: []Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}, {0, 1, 2, 8, 9}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 3, To: 8, Weight: 1.0},
+				{From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			}, exp: []Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			}, exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0},
+			}, exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 14, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+			}, exp: []Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 3, To: 7, Weight: 1.0}, {From: 4, To: 6, Weight: 1.0},
+			}, exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 3, To: 5, Weight: 1.0}, {From: 6, To: 8, Weight: 1.0},
+				{From: 9, To: 11, Weight: 1.0},
+			}, exp: []Path{
+			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13},
+			{0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 13},
+			{0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13},
+			{0, 1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 13},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0},
+				{From: 14, To: 15, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+				{From: 8, To: 9, Weight: 1.0}, {From: 9, To: 14, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0},
+				{From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+				{From: 3, To: 5, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0}, {From: 11, To: 13, Weight: 1.0},
+			}, exp: []Path{
+			{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 3, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 7, 9, 14, 15},
+			{0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 13, 14, 15},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 2, To: 8, Weight: 1.0},
+			}, exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 8, 9}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 2, To: 12, Weight: 1.0},
+			}, exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 12, 13}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0},
+				{From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+				{From: 9, To: 14, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+				{From: 2, To: 14, Weight: 1.0},
+			}, exp: []Path{
+			{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 2, To: 8, Weight: 1.0}, {From: 3, To: 7, Weight: 1.0}, {From: 4, To: 6, Weight: 1.0},
+			}, exp: []Path{
+			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}, {0, 1, 2, 8, 9},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 2, To: 12, Weight: 1.0}, {From: 3, To: 5, Weight: 1.0},
+				{From: 6, To: 8, Weight: 1.0}, {From: 9, To: 11, Weight: 1.0},
+			}, exp: []Path{
+			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13},
+			{0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 13},
+			{0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13},
+			{0, 1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 13}, {0, 1, 2, 12, 13},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 14, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+				{From: 2, To: 14, Weight: 1.0}, {From: 3, To: 5, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0},
+				{From: 11, To: 13, Weight: 1.0},
+			}, exp: []Path{
+			{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 3, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 7, 9, 14, 15},
+			{0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 13, 14, 15}, {0, 1, 2, 14, 15},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 13, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 10, To: 12, Weight: 1.0},
+				{From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+				{From: 14, To: 15, Weight: 1.0},
+			}, exp: []Path{
+			{0, 1, 2, 3, 4, 5, 13, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15},
+			{0, 1, 2, 7, 8, 9, 10, 12, 13, 14, 15},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 11, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0},
+				{From: 2, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0},
+				{From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0}, {From: 12, To: 14, Weight: 1.0},
+			}, exp: []Path{
+			{0, 1, 2, 3, 4, 5, 11, 12, 13, 14, 15}, {0, 1, 2, 3, 4, 5, 11, 12, 14, 15},
+			{0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 11, 12, 14, 15},
+			{0, 1, 2, 7, 9, 10, 11, 12, 13, 14, 15}, {0, 1, 2, 7, 9, 10, 11, 12, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15},
+			{0, 1, 2, 11, 12, 14, 15},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 1, To: 12, Weight: 1.0},
+				{From: 6, To: 8, Weight: 1.0},
+			}, exp: []Path{
+			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14},
+			{0, 1, 12, 13, 14},
+		},
+		},
 	}
 	for i, test := range table {
 		g := NewGraph(test.e, []Expression{})
@@ -171,7 +539,7 @@ func TestGraphAllPaths(t *testing.T) {
 }
 
 func TestGraphCompose(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	table := []struct {
 		g   Graph
 		h   Graph
@@ -180,52 +548,136 @@ func TestGraphCompose(t *testing.T) {
 		err error
 	}{
 		{
-			NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{"a", "b"}),
-			NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{"c", "d"}),
-			0,
-			NewGraph(EdgeList{{2, 3, 1.0}, {3, 1, 1.0}}, []Expression{"a", "b", "c", "d"}),
-			nil,
+			g: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{"a", "b"}),
+			h: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{"c", "d"}),
+			i: 0,
+			exp: NewGraph(EdgeList{{From: 2, To: 3, Weight: 1.0}, {From: 3, To: 1, Weight: 1.0}}, []Expression{
+				"a", "b", "c", "d",
+			}),
+			err: nil,
 		},
 		{
-			NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{"c", "d"}),
-			NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{"a", "b"}),
-			1,
-			NewGraph(EdgeList{{0, 2, 1.0}, {2, 3, 1.0}}, []Expression{"c", "d", "a", "b"}),
-			nil,
+			g: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{"c", "d"}),
+			h: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{"a", "b"}),
+			i: 1,
+			exp: NewGraph(EdgeList{{From: 0, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}}, []Expression{
+				"c", "d", "a", "b",
+			}),
+			err: nil,
 		},
 		{
-			NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 10, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {7, 9, 1.0}}, []Expression{"a", "b", "c", "d"}),
-			NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}}, []Expression{"a", "b", "c", "d"}),
-			0,
-			NewGraph(EdgeList{{15, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 10, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {7, 9, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}}, []Expression{"a", "b", "c", "d", "a", "b", "c", "d"}),
-			nil,
+			g: NewGraph(EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 10, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0},
+			}, []Expression{"a", "b", "c", "d"}),
+			h: NewGraph(EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0},
+			}, []Expression{"a", "b", "c", "d"}),
+			i: 0,
+			exp: NewGraph(EdgeList{
+				{From: 15, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 10, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+			}, []Expression{"a", "b", "c", "d", "a", "b", "c", "d"}),
+			err: nil,
 		},
 		{
-			NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 10, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {7, 9, 1.0}}, []Expression{""}),
-			NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}}, []Expression{""}),
-			5,
-			NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 11, 1.0}, {15, 10, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {7, 9, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}}, []Expression{"", ""}),
-			nil,
+			g: NewGraph(EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 10, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0},
+			}, []Expression{""}),
+			h: NewGraph(EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0},
+			}, []Expression{""}),
+			i: 5,
+			exp: NewGraph(EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 11, Weight: 1.0}, {From: 15, To: 10, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+			}, []Expression{"", ""}),
+			err: nil,
 		},
 		{
-			NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 10, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {7, 9, 1.0}}, []Expression{"a", "b", "c"}),
-			NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}}, []Expression{}),
-			10,
-			NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 11, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 11, 1.0}, {7, 9, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}}, []Expression{"a", "b", "c"}),
-			nil,
+			g: NewGraph(EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 10, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0},
+			}, []Expression{"a", "b", "c"}),
+			h: NewGraph(EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0},
+			}, []Expression{}),
+			i: 10,
+			exp: NewGraph(EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 11, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 11, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+			}, []Expression{"a", "b", "c"}),
+			err: nil,
 		},
 
-		{NewGraph(EdgeList{}, []Expression{}), NewGraph(EdgeList{}, []Expression{}), -1, NewGraph(EdgeList{}, []Expression{}), dummy_error},
-		{NewGraph(EdgeList{}, []Expression{}), NewGraph(EdgeList{}, []Expression{}), 0, NewGraph(EdgeList{}, []Expression{}), dummy_error},
-		{NewGraph(EdgeList{}, []Expression{}), NewGraph(EdgeList{}, []Expression{}), 2, NewGraph(EdgeList{}, []Expression{}), dummy_error},
-		{NewGraph(EdgeList{}, []Expression{}), NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{}), -1, NewGraph(EdgeList{}, []Expression{}), dummy_error},
-		{NewGraph(EdgeList{}, []Expression{}), NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{}), 0, NewGraph(EdgeList{}, []Expression{}), dummy_error},
-		{NewGraph(EdgeList{}, []Expression{}), NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{}), 2, NewGraph(EdgeList{}, []Expression{}), dummy_error},
-		{NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{}), NewGraph(EdgeList{}, []Expression{}), -1, NewGraph(EdgeList{}, []Expression{}), dummy_error},
-		{NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{}), NewGraph(EdgeList{}, []Expression{}), 0, NewGraph(EdgeList{}, []Expression{}), dummy_error},
-		{NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{}), NewGraph(EdgeList{}, []Expression{}), 2, NewGraph(EdgeList{}, []Expression{}), dummy_error},
-		{NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{}), NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{}), -1, NewGraph(EdgeList{}, []Expression{}), dummy_error},
-		{NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{}), NewGraph(EdgeList{{0, 1, 1.0}}, []Expression{}), 2, NewGraph(EdgeList{}, []Expression{}), dummy_error},
+		{
+			g: NewGraph(EdgeList{}, []Expression{}), h: NewGraph(EdgeList{}, []Expression{}), i: -1,
+			exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
+		{
+			g: NewGraph(EdgeList{}, []Expression{}), h: NewGraph(EdgeList{}, []Expression{}), i: 0,
+			exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
+		{
+			g: NewGraph(EdgeList{}, []Expression{}), h: NewGraph(EdgeList{}, []Expression{}), i: 2,
+			exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
+		{
+			g: NewGraph(EdgeList{}, []Expression{}),
+			h: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}), i: -1,
+			exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
+		{
+			g: NewGraph(EdgeList{}, []Expression{}),
+			h: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}), i: 0,
+			exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
+		{
+			g: NewGraph(EdgeList{}, []Expression{}),
+			h: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}), i: 2,
+			exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
+		{
+			g: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}),
+			h: NewGraph(EdgeList{}, []Expression{}), i: -1, exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
+		{
+			g: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}),
+			h: NewGraph(EdgeList{}, []Expression{}), i: 0, exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
+		{
+			g: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}),
+			h: NewGraph(EdgeList{}, []Expression{}), i: 2, exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
+		{
+			g: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}),
+			h: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}), i: -1,
+			exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
+		{
+			g: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}),
+			h: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}), i: 2,
+			exp: NewGraph(EdgeList{}, []Expression{}), err: dummyError,
+		},
 	}
 	for i, test := range table {
 		res, err := ComposeGraphs(test.g, test.h, test.i)
@@ -257,7 +709,7 @@ func TestGraphCompose(t *testing.T) {
 }
 
 func TestChooseNext(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	table := []struct {
 		c   []int
 		w   []float64
@@ -265,15 +717,15 @@ func TestChooseNext(t *testing.T) {
 		exp int
 		err error
 	}{
-		{[]int{}, []float64{}, false, -1, dummy_error},
-		{[]int{0}, []float64{}, false, -1, dummy_error},
-		{[]int{}, []float64{0.0}, false, -1, dummy_error},
-		{[]int{0, 1, 2, 3}, []float64{0.0, 0.0, 0.0, 0.0}, false, -1, dummy_error},
-		{[]int{0, 1, 2, 3}, []float64{0.0, 1.0, 0.0, 0.0}, false, 1, nil},
-		{[]int{0, 1, 2, 3}, []float64{0.0, 0.0, 0.0, 1.0}, false, 3, nil},
-		{[]int{10, 11, 12, 13}, []float64{10.0, 1.0, 100.0, 0.0}, true, 12, nil},
-		{[]int{10, 11, 12, 13}, []float64{0.001, 0.99, 0.01, 0.1}, true, 11, nil},
-		{[]int{10, 11, 12, 13}, []float64{1.0, 11.0, 111.0, 1111.0}, true, 13, nil},
+		{c: []int{}, w: []float64{}, p: false, exp: -1, err: dummyError},
+		{c: []int{0}, w: []float64{}, p: false, exp: -1, err: dummyError},
+		{c: []int{}, w: []float64{0.0}, p: false, exp: -1, err: dummyError},
+		{c: []int{0, 1, 2, 3}, w: []float64{0.0, 0.0, 0.0, 0.0}, p: false, exp: -1, err: dummyError},
+		{c: []int{0, 1, 2, 3}, w: []float64{0.0, 1.0, 0.0, 0.0}, p: false, exp: 1, err: nil},
+		{c: []int{0, 1, 2, 3}, w: []float64{0.0, 0.0, 0.0, 1.0}, p: false, exp: 3, err: nil},
+		{c: []int{10, 11, 12, 13}, w: []float64{10.0, 1.0, 100.0, 0.0}, p: true, exp: 12, err: nil},
+		{c: []int{10, 11, 12, 13}, w: []float64{0.001, 0.99, 0.01, 0.1}, p: true, exp: 11, err: nil},
+		{c: []int{10, 11, 12, 13}, w: []float64{1.0, 11.0, 111.0, 1111.0}, p: true, exp: 13, err: nil},
 	}
 	for i, test := range table {
 		var err error
@@ -309,114 +761,263 @@ func TestGraphRandomPath(t *testing.T) {
 		err error
 	}{
 		{
-			EdgeList{{0, 1, 1.0}},
-			[]Path{{0, 1}},
-			nil,
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			exp: []Path{{0, 1}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}},
-			[]Path{{0, 1, 2}},
-			nil,
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+			exp: []Path{{0, 1, 2}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}},
-			[]Path{{0, 1, 6}, {0, 3, 6}, {0, 5, 6}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0},
+				{From: 1, To: 6, Weight: 1.0}, {From: 3, To: 6, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+			},
+			exp: []Path{{0, 1, 6}, {0, 3, 6}, {0, 5, 6}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {5, 7, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 7, 8}, {0, 1, 2, 3, 4, 5, 7, 8}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 4, Weight: 1.0}, {From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0},
+				{From: 5, To: 6, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0},
+			},
+			exp: []Path{
+				{0, 1, 2, 3, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 7, 8}, {0, 1, 2, 3, 4, 5, 7, 8},
+			},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+			},
+			exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {2, 8, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			[]Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}, {0, 1, 2, 8, 9}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 2, To: 8, Weight: 1.0},
+				{From: 3, To: 8, Weight: 1.0}, {From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+				{From: 8, To: 9, Weight: 1.0},
+			},
+			exp: []Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}, {0, 1, 2, 8, 9}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			[]Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 3, To: 8, Weight: 1.0},
+				{From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
+			exp: []Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
+			exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0},
+			},
+			exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 14, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 14, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 14, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+			},
+			exp: []Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {3, 7, 1.0}, {4, 6, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 3, To: 7, Weight: 1.0}, {From: 4, To: 6, Weight: 1.0},
+			},
+			exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {3, 5, 1.0}, {6, 8, 1.0}, {9, 11, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 13}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 3, To: 5, Weight: 1.0}, {From: 6, To: 8, Weight: 1.0},
+				{From: 9, To: 11, Weight: 1.0},
+			},
+			exp: []Path{
+				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13},
+				{0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 13},
+				{0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13},
+				{0, 1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 13},
+			},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 14, 1.0}, {14, 15, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 14, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {3, 5, 1.0}, {7, 9, 1.0}, {11, 13, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 3, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 7, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 13, 14, 15}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0},
+				{From: 14, To: 15, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+				{From: 8, To: 9, Weight: 1.0}, {From: 9, To: 14, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0},
+				{From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+				{From: 3, To: 5, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0}, {From: 11, To: 13, Weight: 1.0},
+			},
+			exp: []Path{
+				{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 3, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15},
+				{0, 1, 2, 7, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 13, 14, 15},
+			},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {2, 8, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 8, 9}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 2, To: 8, Weight: 1.0},
+			},
+			exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 8, 9}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {2, 12, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 12, 13}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 2, To: 12, Weight: 1.0},
+			},
+			exp: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 12, 13}},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {9, 14, 1.0}, {5, 14, 1.0}, {14, 15, 1.0}, {2, 14, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0},
+				{From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+				{From: 9, To: 14, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+				{From: 2, To: 14, Weight: 1.0},
+			},
+			exp: []Path{
+				{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15},
+				{0, 1, 2, 11, 12, 13, 14, 15},
+			},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {2, 8, 1.0}, {3, 7, 1.0}, {4, 6, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}, {0, 1, 2, 8, 9}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 2, To: 8, Weight: 1.0}, {From: 3, To: 7, Weight: 1.0}, {From: 4, To: 6, Weight: 1.0},
+			},
+			exp: []Path{
+				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}, {0, 1, 2, 8, 9},
+			},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {2, 12, 1.0}, {3, 5, 1.0}, {6, 8, 1.0}, {9, 11, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 13}, {0, 1, 2, 12, 13}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 2, To: 12, Weight: 1.0}, {From: 3, To: 5, Weight: 1.0},
+				{From: 6, To: 8, Weight: 1.0}, {From: 9, To: 11, Weight: 1.0},
+			},
+			exp: []Path{
+				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13},
+				{0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 13},
+				{0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13},
+				{0, 1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 13}, {0, 1, 2, 12, 13},
+			},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 14, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 14, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}, {2, 14, 1.0}, {3, 5, 1.0}, {7, 9, 1.0}, {11, 13, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 3, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 7, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 13, 14, 15}, {0, 1, 2, 14, 15}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 14, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+				{From: 2, To: 14, Weight: 1.0}, {From: 3, To: 5, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0},
+				{From: 11, To: 13, Weight: 1.0},
+			},
+			exp: []Path{
+				{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 3, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15},
+				{0, 1, 2, 7, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 13, 14, 15}, {0, 1, 2, 14, 15},
+			},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 13, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {10, 12, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 13, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 12, 13, 14, 15}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 13, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 10, To: 12, Weight: 1.0},
+				{From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+				{From: 14, To: 15, Weight: 1.0},
+			},
+			exp: []Path{
+				{0, 1, 2, 3, 4, 5, 13, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15},
+				{0, 1, 2, 7, 8, 9, 10, 12, 13, 14, 15},
+			},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 11, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {7, 9, 1.0}, {10, 11, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}, {12, 14, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 11, 12, 13, 14, 15}, {0, 1, 2, 3, 4, 5, 11, 12, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 11, 12, 14, 15}, {0, 1, 2, 7, 9, 10, 11, 12, 13, 14, 15}, {0, 1, 2, 7, 9, 10, 11, 12, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 12, 14, 15}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 11, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0},
+				{From: 2, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0},
+				{From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0}, {From: 12, To: 14, Weight: 1.0},
+			},
+			exp: []Path{
+				{0, 1, 2, 3, 4, 5, 11, 12, 13, 14, 15}, {0, 1, 2, 3, 4, 5, 11, 12, 14, 15},
+				{0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15}, {0, 1, 2, 7, 8, 9, 10, 11, 12, 14, 15},
+				{0, 1, 2, 7, 9, 10, 11, 12, 13, 14, 15}, {0, 1, 2, 7, 9, 10, 11, 12, 14, 15},
+				{0, 1, 2, 11, 12, 13, 14, 15}, {0, 1, 2, 11, 12, 14, 15},
+			},
+			err: nil,
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {1, 12, 1.0}, {6, 8, 1.0}},
-			[]Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14}, {0, 1, 12, 13, 14}},
-			nil,
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 1, To: 12, Weight: 1.0},
+				{From: 6, To: 8, Weight: 1.0},
+			},
+			exp: []Path{
+				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, {0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14},
+				{0, 1, 12, 13, 14},
+			},
+			err: nil,
 		},
 	}
 	for i, test := range table {
@@ -444,64 +1045,133 @@ func TestGraphDropNode(t *testing.T) {
 		exp EdgeList
 	}{
 		{
-			EdgeList{{0, 1, 1.0}},
-			0,
-			EdgeList{{0, 1, 1.0}},
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			i:   0,
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}},
 		},
 		{
-			EdgeList{{0, 1, 1.0}},
-			1,
-			EdgeList{{0, 1, 1.0}},
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			i:   1,
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}},
 		},
 		{
-			EdgeList{{0, 1, 1.0}},
-			2,
-			EdgeList{{0, 1, 1.0}},
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			i:   2,
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}},
-			1,
-			EdgeList{{0, 2, 1.0}},
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+			i:   1,
+			exp: EdgeList{{From: 0, To: 2, Weight: 1.0}},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}},
-			5,
-			EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {0, 6, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0},
+				{From: 1, To: 6, Weight: 1.0}, {From: 3, To: 6, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+			},
+			i: 5,
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 1, To: 6, Weight: 1.0},
+				{From: 3, To: 6, Weight: 1.0}, {From: 0, To: 6, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {5, 7, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}},
-			2,
-			EdgeList{{0, 1, 1.0}, {1, 3, 1.0}, {1, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {5, 7, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 4, Weight: 1.0}, {From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0},
+				{From: 5, To: 6, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0},
+			},
+			i: 2,
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 3, Weight: 1.0}, {From: 1, To: 4, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 5, To: 7, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}},
-			3,
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+			},
+			i: 3,
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 4, Weight: 1.0},
+				{From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {2, 8, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			2,
-			EdgeList{{0, 1, 1.0}, {1, 3, 1.0}, {1, 5, 1.0}, {1, 7, 1.0}, {1, 8, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 2, To: 8, Weight: 1.0},
+				{From: 3, To: 8, Weight: 1.0}, {From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+				{From: 8, To: 9, Weight: 1.0},
+			},
+			i: 2,
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 3, Weight: 1.0}, {From: 1, To: 5, Weight: 1.0},
+				{From: 1, To: 7, Weight: 1.0}, {From: 1, To: 8, Weight: 1.0}, {From: 3, To: 8, Weight: 1.0},
+				{From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			8,
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {3, 9, 1.0}, {5, 9, 1.0}, {7, 9, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 3, To: 8, Weight: 1.0},
+				{From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
+			i: 8,
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 3, To: 9, Weight: 1.0},
+				{From: 5, To: 9, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			4,
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
+			i: 4,
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}},
-			6,
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0},
+			},
+			i: 6,
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0}, {From: 9, To: 10, Weight: 1.0},
+				{From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {0, 7, 1.0}, {0, 9, 1.0}, {1, 10, 1.0}, {3, 10, 1.0}, {5, 10, 1.0}, {7, 10, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}},
-			0,
-			EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {0, 7, 1.0}, {0, 9, 1.0}, {1, 10, 1.0}, {3, 10, 1.0}, {5, 10, 1.0}, {7, 10, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0},
+				{From: 0, To: 7, Weight: 1.0}, {From: 0, To: 9, Weight: 1.0}, {From: 1, To: 10, Weight: 1.0},
+				{From: 3, To: 10, Weight: 1.0}, {From: 5, To: 10, Weight: 1.0}, {From: 7, To: 10, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0},
+			},
+			i: 0,
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0},
+				{From: 0, To: 7, Weight: 1.0}, {From: 0, To: 9, Weight: 1.0}, {From: 1, To: 10, Weight: 1.0},
+				{From: 3, To: 10, Weight: 1.0}, {From: 5, To: 10, Weight: 1.0}, {From: 7, To: 10, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0},
+			},
 		},
 	}
 	for i, test := range table {
@@ -520,49 +1190,104 @@ func TestGraphMinimize(t *testing.T) {
 		exp EdgeList
 	}{
 		{
-			EdgeList{{0, 1, 1.0}},
-			[]Expression{"a", "b"},
-			EdgeList{{0, 1, 1.0}},
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			n:   []Expression{"a", "b"},
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}},
-			[]Expression{"a", "|", "b"},
-			EdgeList{{0, 2, 1.0}},
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+			n:   []Expression{"a", "|", "b"},
+			exp: EdgeList{{From: 0, To: 2, Weight: 1.0}},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}},
-			[]Expression{"<SOS>", "(", "|", ")", "[", "]", "<EOS>"},
-			EdgeList{{0, 6, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0},
+				{From: 1, To: 6, Weight: 1.0}, {From: 3, To: 6, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+			},
+			n:   []Expression{"<SOS>", "(", "|", ")", "[", "]", "<EOS>"},
+			exp: EdgeList{{From: 0, To: 6, Weight: 1.0}},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {5, 7, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}},
-			[]Expression{"a", "b", "c", "d", "e", "f", "g", "h", "i"},
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {5, 7, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 4, Weight: 1.0}, {From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0},
+				{From: 5, To: 6, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0},
+			},
+			n: []Expression{"a", "b", "c", "d", "e", "f", "g", "h", "i"},
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 4, Weight: 1.0}, {From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0},
+				{From: 5, To: 6, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}},
-			[]Expression{"a", "b", "c", "d", "e", "f", "g", "h", ""},
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+			},
+			n: []Expression{"a", "b", "c", "d", "e", "f", "g", "h", ""},
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {2, 8, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			[]Expression{"", "", "", "d", "e", "f", "<EOS>", "h", "i", "j"},
-			EdgeList{{0, 3, 1.0}, {0, 5, 1.0}, {0, 7, 1.0}, {0, 8, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 2, To: 8, Weight: 1.0},
+				{From: 3, To: 8, Weight: 1.0}, {From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+				{From: 8, To: 9, Weight: 1.0},
+			},
+			n: []Expression{"", "", "", "d", "e", "f", "<EOS>", "h", "i", "j"},
+			exp: EdgeList{
+				{From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0}, {From: 0, To: 7, Weight: 1.0},
+				{From: 0, To: 8, Weight: 1.0}, {From: 3, To: 8, Weight: 1.0}, {From: 5, To: 8, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			[]Expression{"a", "b", "c", "d", "|", "f", "|", "h", "i", ";"},
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 3, To: 8, Weight: 1.0},
+				{From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
+			n: []Expression{"a", "b", "c", "d", "|", "f", "|", "h", "i", ";"},
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 3, To: 8, Weight: 1.0},
+				{From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			[]Expression{"<SOS>", "<SOS>", "c", "d", "|", "f", "|", "h", ";", ";"},
-			EdgeList{{0, 2, 1.0}, {2, 3, 1.0}, {3, 5, 1.0}, {5, 7, 1.0}, {7, 9, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
+			n: []Expression{"<SOS>", "<SOS>", "c", "d", "|", "f", "|", "h", ";", ";"},
+			exp: EdgeList{
+				{From: 0, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}, {From: 3, To: 5, Weight: 1.0},
+				{From: 5, To: 7, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0},
+			},
 		},
 		{
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}},
-			[]Expression{"a", "(", "b", ")", "[", "c", "]", "d", "e", "|", "f", "g", "h", ";"},
-			EdgeList{{0, 2, 1.0}, {2, 5, 1.0}, {5, 7, 1.0}, {7, 8, 1.0}, {8, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}},
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0},
+			},
+			n: []Expression{"a", "(", "b", ")", "[", "c", "]", "d", "e", "|", "f", "g", "h", ";"},
+			exp: EdgeList{
+				{From: 0, To: 2, Weight: 1.0}, {From: 2, To: 5, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0}, {From: 8, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0},
+				{From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0},
+			},
 		},
 	}
 	for i, test := range table {

@@ -12,7 +12,7 @@ import (
 )
 
 func TestBuildEdgeList(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	lexer := NewJSGFLexer()
 	table := []struct {
 		r   string
@@ -20,129 +20,251 @@ func TestBuildEdgeList(t *testing.T) {
 		err error
 	}{
 		{
-			"",
-			EdgeList{},
-			dummy_error,
+			r:   "",
+			exp: EdgeList{},
+			err: dummyError,
 		},
 		{
-			"=",
-			EdgeList{},
-			dummy_error,
+			r:   "=",
+			exp: EdgeList{},
+			err: dummyError,
 		},
 		{
-			"<>=;",
-			EdgeList{},
-			dummy_error,
+			r:   "<>=;",
+			exp: EdgeList{},
+			err: dummyError,
 		},
 		{
-			"public <test> = ;",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}},
-			nil,
+			r:   "public <test> = ;",
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+			err: nil,
 		},
 		{
-			"public <test> = one two three;",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}},
-			nil,
+			r:   "public <test> = one two three;",
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+			err: nil,
 		},
 		{
-			"public <test> = four|five|six;",
-			EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}},
-			nil,
+			r: "public <test> = four|five|six;",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 3, Weight: 1.0}, {From: 0, To: 5, Weight: 1.0},
+				{From: 1, To: 6, Weight: 1.0}, {From: 3, To: 6, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = six[ seven][ eight];",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {5, 7, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			nil,
+			r: "public <test> = six[ seven][ eight];",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 4, Weight: 1.0}, {From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0},
+				{From: 5, To: 6, Weight: 1.0}, {From: 5, To: 7, Weight: 1.0}, {From: 6, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = eight( nine)( ten);",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}},
-			nil,
+			r: "public <test> = eight( nine)( ten);",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 [12|13|14];",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {2, 8, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}},
-			nil,
+			r: "public <test> = 11 [12|13|14];",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 2, To: 8, Weight: 1.0},
+				{From: 3, To: 8, Weight: 1.0}, {From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+				{From: 8, To: 9, Weight: 1.0}, {From: 9, To: 10, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 (12|13|14);",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 5, 1.0}, {2, 7, 1.0}, {3, 8, 1.0}, {5, 8, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}},
-			nil,
+			r: "public <test> = 11 (12|13|14);",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 3, To: 8, Weight: 1.0},
+				{From: 5, To: 8, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 (((12)));",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}},
-			nil,
+			r: "public <test> = 11 (((12)));",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 ((12)(13)(14));",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}},
-			nil,
+			r: "public <test> = 11 ((12)(13)(14));",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 ((12)|(13)|(14));",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 14, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 14, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}, {15, 16, 1.0}},
-			nil,
+			r: "public <test> = 11 ((12)|(13)|(14));",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 14, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+				{From: 15, To: 16, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 ([[12]]);",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {3, 7, 1.0}, {4, 6, 1.0}, {9, 10, 1.0}},
-			nil,
+			r: "public <test> = 11 ([[12]]);",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 3, To: 7, Weight: 1.0}, {From: 4, To: 6, Weight: 1.0}, {From: 9, To: 10, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 ([12][13][14]);",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {3, 5, 1.0}, {6, 8, 1.0}, {9, 11, 1.0}, {13, 14, 1.0}},
-			nil,
+			r: "public <test> = 11 ([12][13][14]);",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 3, To: 5, Weight: 1.0}, {From: 6, To: 8, Weight: 1.0},
+				{From: 9, To: 11, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 ([12]|[13]|[14]);",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 14, 1.0}, {14, 15, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 14, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {3, 5, 1.0}, {7, 9, 1.0}, {11, 13, 1.0}, {15, 16, 1.0}},
-			nil,
+			r: "public <test> = 11 ([12]|[13]|[14]);",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0},
+				{From: 14, To: 15, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0},
+				{From: 8, To: 9, Weight: 1.0}, {From: 9, To: 14, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0},
+				{From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+				{From: 3, To: 5, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0}, {From: 11, To: 13, Weight: 1.0},
+				{From: 15, To: 16, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 [((12))];",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {2, 8, 1.0}, {9, 10, 1.0}},
-			nil,
+			r: "public <test> = 11 [((12))];",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 2, To: 8, Weight: 1.0}, {From: 9, To: 10, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 [(12)(13)(14)];",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {2, 12, 1.0}, {13, 14, 1.0}},
-			nil,
+			r: "public <test> = 11 [(12)(13)(14)];",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 2, To: 12, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 [(12)|(13)|(14)];",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {9, 14, 1.0}, {5, 14, 1.0}, {14, 15, 1.0}, {2, 14, 1.0}, {15, 16, 1.0}},
-			nil,
+			r: "public <test> = 11 [(12)|(13)|(14)];",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 2, To: 7, Weight: 1.0},
+				{From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0},
+				{From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+				{From: 9, To: 14, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+				{From: 2, To: 14, Weight: 1.0}, {From: 15, To: 16, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 [[[12]]];",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {2, 8, 1.0}, {3, 7, 1.0}, {4, 6, 1.0}, {9, 10, 1.0}},
-			nil,
+			r: "public <test> = 11 [[[12]]];",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 2, To: 8, Weight: 1.0}, {From: 3, To: 7, Weight: 1.0}, {From: 4, To: 6, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 [[12][13][14]];",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {2, 12, 1.0}, {3, 5, 1.0}, {6, 8, 1.0}, {9, 11, 1.0}, {13, 14, 1.0}},
-			nil,
+			r: "public <test> = 11 [[12][13][14]];",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 2, To: 12, Weight: 1.0}, {From: 3, To: 5, Weight: 1.0},
+				{From: 6, To: 8, Weight: 1.0}, {From: 9, To: 11, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 [[12]|[13]|[14]];",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 14, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 14, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}, {2, 14, 1.0}, {3, 5, 1.0}, {7, 9, 1.0}, {11, 13, 1.0}, {15, 16, 1.0}},
-			nil,
+			r: "public <test> = 11 [[12]|[13]|[14]];",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 14, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 14, Weight: 1.0}, {From: 2, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+				{From: 2, To: 14, Weight: 1.0}, {From: 3, To: 5, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0},
+				{From: 11, To: 13, Weight: 1.0}, {From: 15, To: 16, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 ((12)|(13)[14]) 15;",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 13, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {10, 12, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}, {15, 16, 1.0}},
-			nil,
+			r: "public <test> = 11 ((12)|(13)[14]) 15;",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 13, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 10, To: 12, Weight: 1.0},
+				{From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0},
+				{From: 14, To: 15, Weight: 1.0}, {From: 15, To: 16, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = 11 [(12)|[13]14][15];",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 11, 1.0}, {2, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {7, 9, 1.0}, {10, 11, 1.0}, {2, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {14, 15, 1.0}, {12, 14, 1.0}, {15, 16, 1.0}},
-			nil,
+			r: "public <test> = 11 [(12)|[13]14][15];",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 11, Weight: 1.0},
+				{From: 2, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 7, To: 9, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0},
+				{From: 2, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0}, {From: 12, To: 13, Weight: 1.0},
+				{From: 13, To: 14, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0}, {From: 12, To: 14, Weight: 1.0},
+				{From: 15, To: 16, Weight: 1.0},
+			},
+			err: nil,
 		},
 		{
-			"public <test> = [(11)12[13](14)] 15;",
-			EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}, {9, 10, 1.0}, {10, 11, 1.0}, {11, 12, 1.0}, {12, 13, 1.0}, {13, 14, 1.0}, {1, 12, 1.0}, {6, 8, 1.0}, {14, 15, 1.0}},
-			nil,
+			r: "public <test> = [(11)12[13](14)] 15;",
+			exp: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 3, To: 4, Weight: 1.0}, {From: 4, To: 5, Weight: 1.0}, {From: 5, To: 6, Weight: 1.0},
+				{From: 6, To: 7, Weight: 1.0}, {From: 7, To: 8, Weight: 1.0}, {From: 8, To: 9, Weight: 1.0},
+				{From: 9, To: 10, Weight: 1.0}, {From: 10, To: 11, Weight: 1.0}, {From: 11, To: 12, Weight: 1.0},
+				{From: 12, To: 13, Weight: 1.0}, {From: 13, To: 14, Weight: 1.0}, {From: 1, To: 12, Weight: 1.0},
+				{From: 6, To: 8, Weight: 1.0}, {From: 14, To: 15, Weight: 1.0},
+			},
+			err: nil,
 		},
 	}
 	for i, test := range table {
@@ -162,11 +284,20 @@ func TestEdgeListSort(t *testing.T) {
 		e   EdgeList
 		exp EdgeList
 	}{
-		{EdgeList{}, EdgeList{}},
-		{EdgeList{{0, 1, 1.0}}, EdgeList{{0, 1, 1.0}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}}, EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}}},
-		{EdgeList{{2, 3, 1.0}, {0, 1, 1.0}, {1, 2, 1.0}}, EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}}},
-		{EdgeList{{0, 1, 1.0}, {0, 1, 1.0}, {2, 3, 1.0}}, EdgeList{{0, 1, 1.0}, {0, 1, 1.0}, {2, 3, 1.0}}},
+		{e: EdgeList{}, exp: EdgeList{}},
+		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, exp: EdgeList{{From: 0, To: 1, Weight: 1.0}}},
+		{
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+		},
+		{
+			e:   EdgeList{{From: 2, To: 3, Weight: 1.0}, {From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+		},
+		{
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 1, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 1, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+		},
 	}
 	for i, test := range table {
 		res := test.e.Sort()
@@ -181,11 +312,22 @@ func TestEdgeListUnique(t *testing.T) {
 		e   EdgeList
 		exp EdgeList
 	}{
-		{EdgeList{}, EdgeList{}},
-		{EdgeList{{0, 1, 1.0}}, EdgeList{{0, 1, 1.0}}},
-		{EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}}, EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}}},
-		{EdgeList{{2, 3, 1.0}, {0, 1, 1.0}, {0, 1, 1.0}}, EdgeList{{0, 1, 1.0}, {2, 3, 1.0}}},
-		{EdgeList{{0, 1, 1.0}, {0, 1, 1.0}, {2, 3, 1.0}, {2, 3, 1.0}}, EdgeList{{0, 1, 1.0}, {2, 3, 1.0}}},
+		{e: EdgeList{}, exp: EdgeList{}},
+		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, exp: EdgeList{{From: 0, To: 1, Weight: 1.0}}},
+		{
+			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+		},
+		{
+			e:   EdgeList{{From: 2, To: 3, Weight: 1.0}, {From: 0, To: 1, Weight: 1.0}, {From: 0, To: 1, Weight: 1.0}},
+			exp: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+		},
+		{
+			e: EdgeList{
+				{From: 0, To: 1, Weight: 1.0}, {From: 0, To: 1, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				{From: 2, To: 3, Weight: 1.0},
+			}, exp: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+		},
 	}
 	for i, test := range table {
 		res := test.e.Unique()
@@ -200,11 +342,22 @@ func TestEdgeListMax(t *testing.T) {
 		e   EdgeList
 		exp int
 	}{
-		{EdgeList{}, 0},
-		{EdgeList{{0, 0, 1.0}}, 0},
-		{EdgeList{{1, 1, 1.0}, {1, 1, 1.0}}, 1},
-		{EdgeList{{10, 12, 1.0}, {55, 94, 1.0}, {0, 15, 1.0}, {1, 1, 1.0}}, 94},
-		{EdgeList{{-1, 1651, 1.0}, {55, 65, 1.0}, {10, 1, 1.0}, {15, 99, 1.0}, {65, 54, 1.0}, {1000000000, 0, 1.0}, {0, 8, 1.0}, {15, 44, 1.0}}, 1000000000},
+		{e: EdgeList{}, exp: 0},
+		{e: EdgeList{{From: 0, To: 0, Weight: 1.0}}, exp: 0},
+		{e: EdgeList{{From: 1, To: 1, Weight: 1.0}, {From: 1, To: 1, Weight: 1.0}}, exp: 1},
+		{
+			e: EdgeList{
+				{From: 10, To: 12, Weight: 1.0}, {From: 55, To: 94, Weight: 1.0}, {From: 0, To: 15, Weight: 1.0},
+				{From: 1, To: 1, Weight: 1.0},
+			}, exp: 94,
+		},
+		{
+			e: EdgeList{
+				{From: -1, To: 1651, Weight: 1.0}, {From: 55, To: 65, Weight: 1.0}, {From: 10, To: 1, Weight: 1.0},
+				{From: 15, To: 99, Weight: 1.0}, {From: 65, To: 54, Weight: 1.0},
+				{From: 1000000000, To: 0, Weight: 1.0}, {From: 0, To: 8, Weight: 1.0}, {From: 15, To: 44, Weight: 1.0},
+			}, exp: 1000000000,
+		},
 	}
 	for i, test := range table {
 		res := test.e.Max()
@@ -220,11 +373,32 @@ func TestEdgeListIncrement(t *testing.T) {
 		n   int
 		exp EdgeList
 	}{
-		{EdgeList{}, 0, EdgeList{}},
-		{EdgeList{{0, 0, 1.0}}, 0, EdgeList{{0, 0, 1.0}}},
-		{EdgeList{{1, 1, 1.0}, {1, 1, 1.0}}, 1, EdgeList{{2, 2, 1.0}, {2, 2, 1.0}}},
-		{EdgeList{{10, 12, 1.0}, {55, 94, 1.0}, {0, 15, 1.0}, {1, 1, 1.0}}, -1, EdgeList{{9, 11, 1.0}, {54, 93, 1.0}, {-1, 14, 1.0}, {0, 0, 1.0}}},
-		{EdgeList{{-1, 1651, 1.0}, {55, 65, 1.0}, {10, 1, 1.0}, {15, 99, 1.0}, {65, 54, 1.0}, {1000000000, 0, 1.0}, {0, 8, 1.0}, {15, 44, 1.0}}, 10, EdgeList{{9, 1661, 1.0}, {65, 75, 1.0}, {20, 11, 1.0}, {25, 109, 1.0}, {75, 64, 1.0}, {1000000010, 10, 1.0}, {10, 18, 1.0}, {25, 54, 1.0}}},
+		{e: EdgeList{}, n: 0, exp: EdgeList{}},
+		{e: EdgeList{{From: 0, To: 0, Weight: 1.0}}, n: 0, exp: EdgeList{{From: 0, To: 0, Weight: 1.0}}},
+		{
+			e: EdgeList{{From: 1, To: 1, Weight: 1.0}, {From: 1, To: 1, Weight: 1.0}}, n: 1,
+			exp: EdgeList{{From: 2, To: 2, Weight: 1.0}, {From: 2, To: 2, Weight: 1.0}},
+		},
+		{
+			e: EdgeList{
+				{From: 10, To: 12, Weight: 1.0}, {From: 55, To: 94, Weight: 1.0}, {From: 0, To: 15, Weight: 1.0},
+				{From: 1, To: 1, Weight: 1.0},
+			}, n: -1, exp: EdgeList{
+			{From: 9, To: 11, Weight: 1.0}, {From: 54, To: 93, Weight: 1.0}, {From: -1, To: 14, Weight: 1.0},
+			{From: 0, To: 0, Weight: 1.0},
+		},
+		},
+		{
+			e: EdgeList{
+				{From: -1, To: 1651, Weight: 1.0}, {From: 55, To: 65, Weight: 1.0}, {From: 10, To: 1, Weight: 1.0},
+				{From: 15, To: 99, Weight: 1.0}, {From: 65, To: 54, Weight: 1.0},
+				{From: 1000000000, To: 0, Weight: 1.0}, {From: 0, To: 8, Weight: 1.0}, {From: 15, To: 44, Weight: 1.0},
+			}, n: 10, exp: EdgeList{
+			{From: 9, To: 1661, Weight: 1.0}, {From: 65, To: 75, Weight: 1.0}, {From: 20, To: 11, Weight: 1.0},
+			{From: 25, To: 109, Weight: 1.0}, {From: 75, To: 64, Weight: 1.0}, {From: 1000000010, To: 10, Weight: 1.0},
+			{From: 10, To: 18, Weight: 1.0}, {From: 25, To: 54, Weight: 1.0},
+		},
+		},
 	}
 	for i, test := range table {
 		res := test.e.Increment(test.n)

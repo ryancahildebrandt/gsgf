@@ -79,7 +79,7 @@ func (g Grammar) CompositionOrder() []string {
 	var res []string
 
 	for k, v := range g.Rules {
-		if v.Is_public {
+		if v.IsPublic {
 			rules = append(rules, k)
 		}
 	}
@@ -92,9 +92,9 @@ func (g Grammar) CompositionOrder() []string {
 }
 
 func (g Grammar) Productions() []string {
-	out := []string{}
+	var out []string
 	for _, v := range g.Rules {
-		if v.Is_public {
+		if v.IsPublic {
 			out = append(out, v.Productions()...)
 		}
 	}

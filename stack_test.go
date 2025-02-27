@@ -12,17 +12,17 @@ import (
 )
 
 func TestStackPeek(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	table := []struct {
 		s   Stack
 		exp int
 		err error
 	}{
-		{Stack{}, 0, dummy_error},
-		{Stack{0}, 0, nil},
-		{Stack{0, 1, 2}, 2, nil},
-		{Stack{100, 99, 98, 97, 96, 95}, 95, nil},
-		{Stack{2, 1, 0, -1, -2}, -2, nil},
+		{s: Stack{}, exp: 0, err: dummyError},
+		{s: Stack{0}, exp: 0, err: nil},
+		{s: Stack{0, 1, 2}, exp: 2, err: nil},
+		{s: Stack{100, 99, 98, 97, 96, 95}, exp: 95, err: nil},
+		{s: Stack{2, 1, 0, -1, -2}, exp: -2, err: nil},
 	}
 	for i, test := range table {
 		res, err := test.s.Peek()
@@ -36,18 +36,18 @@ func TestStackPeek(t *testing.T) {
 }
 
 func TestStackPop(t *testing.T) {
-	dummy_error := errors.New("")
+	dummyError := errors.New("")
 	table := []struct {
 		s   Stack
 		t   int
 		b   Stack
 		err error
 	}{
-		{Stack{}, 0, Stack{}, dummy_error},
-		{Stack{0}, 0, Stack{}, nil},
-		{Stack{0, 1, 2}, 2, Stack{0, 1}, nil},
-		{Stack{100, 99, 98, 97, 96, 95}, 95, Stack{100, 99, 98, 97, 96}, nil},
-		{Stack{2, 1, 0, -1, -2}, -2, Stack{2, 1, 0, -1}, nil},
+		{s: Stack{}, t: 0, b: Stack{}, err: dummyError},
+		{s: Stack{0}, t: 0, b: Stack{}, err: nil},
+		{s: Stack{0, 1, 2}, t: 2, b: Stack{0, 1}, err: nil},
+		{s: Stack{100, 99, 98, 97, 96, 95}, t: 95, b: Stack{100, 99, 98, 97, 96}, err: nil},
+		{s: Stack{2, 1, 0, -1, -2}, t: -2, b: Stack{2, 1, 0, -1}, err: nil},
 	}
 	for i, test := range table {
 		top, bot, err := test.s.Pop()
@@ -69,12 +69,12 @@ func TestStackDrop(t *testing.T) {
 		n   int
 		exp Stack
 	}{
-		{Stack{}, 0, Stack{}},
-		{Stack{0}, 0, Stack{}},
-		{Stack{0, 1, 2}, 1, Stack{0, 2}},
-		{Stack{0, 1, 2, 2}, 2, Stack{0, 1}},
-		{Stack{100, 99, 98, 97, 96, 95}, 98, Stack{100, 99, 97, 96, 95}},
-		{Stack{2, 1, 0, -1, -2}, -2, Stack{2, 1, 0, -1}},
+		{s: Stack{}, n: 0, exp: Stack{}},
+		{s: Stack{0}, n: 0, exp: Stack{}},
+		{s: Stack{0, 1, 2}, n: 1, exp: Stack{0, 2}},
+		{s: Stack{0, 1, 2, 2}, n: 2, exp: Stack{0, 1}},
+		{s: Stack{100, 99, 98, 97, 96, 95}, n: 98, exp: Stack{100, 99, 97, 96, 95}},
+		{s: Stack{2, 1, 0, -1, -2}, n: -2, exp: Stack{2, 1, 0, -1}},
 	}
 	for i, test := range table {
 		res := test.s.Drop(test.n)

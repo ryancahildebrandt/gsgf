@@ -123,16 +123,16 @@ func ComposeGraphs(g Graph, h Graph, i int) (Graph, error) {
 	}
 
 	h.Edges = h.Edges.Increment(g.Edges.Max() + 1)
-	h_from, h_to := h.EndPoints()
+	hFrom, hTo := h.EndPoints()
 	exp := append(g.Nodes, h.Nodes...)
 	edg := h.Edges
 	for _, edge := range g.Edges {
 		e := edge
 		if edge.From == i {
-			e.From = h_to
+			e.From = hTo
 		}
 		if edge.To == i {
-			e.To = h_from
+			e.To = hFrom
 		}
 		edg = append(edg, e)
 	}
@@ -222,7 +222,7 @@ func (g Graph) DropNode(i int) Graph {
 
 	for _, f := range from {
 		for _, t := range to {
-			edg = append(edg, Edge{f, t, 1.0})
+			edg = append(edg, Edge{From: f, To: t, Weight: 1.0})
 		}
 	}
 	return NewGraph(edg.Unique(), g.Nodes)
