@@ -7,7 +7,7 @@ package main
 
 import (
 	"errors"
-	"reflect"
+	"slices"
 	"testing"
 )
 
@@ -49,10 +49,10 @@ func TestExpressionToTokens(t *testing.T) {
 		{Expression("test expression 123 (ab{1.1}|c{1.1}) | [de|f];"), []Expression{"<SOS>", "test expression 123 ", "(", "ab{1.1}", "|", "c{1.1}", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";", "<EOS>"}},
 		{Expression("test expression 123 (ab{1.1/1}|c{1.1/1}) | [de|f];"), []Expression{"<SOS>", "test expression 123 ", "(", "ab{1.1/1}", "|", "c{1.1/1}", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";", "<EOS>"}},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		res := test.e.ToTokens(lexer)
-		if !reflect.DeepEqual(res, test.exp) {
-			t.Errorf("%v.ToTokens(jsgflexer)\nGOT %v\nEXP %v", test.e, res, test.exp)
+		if !slices.Equal(res, test.exp) {
+			t.Errorf("test %v: %v.ToTokens(jsgflexer)\nGOT %v\nEXP %v", i, test.e, res, test.exp)
 		}
 	}
 }
@@ -60,15 +60,18 @@ func TestExpressionToTokens(t *testing.T) {
 func TestExpressionParseWeight(t *testing.T) {
 	dummy_error := errors.New("")
 	table := []struct {
-		e     Expression
-		exp_e Expression
-		exp_f float64
-		err   error
+		e   Expression
+		ee  Expression
+		ef  float64
+		err error
 	}{
 		{Expression(""), Expression(""), 0.0, dummy_error},
+		{Expression("/"), Expression("/"), 0.0, dummy_error},
 		{Expression("//"), Expression("//"), 0.0, dummy_error},
+		{Expression("/.//"), Expression("/.//"), 0.0, dummy_error},
 		{Expression("abc"), Expression("abc"), 0.0, dummy_error},
 		{Expression("abc//"), Expression("abc//"), 0.0, dummy_error},
+		{Expression("/aaa/"), Expression("/aaa/"), 0.0, dummy_error},
 
 		{Expression("/1.0/"), Expression(""), 1.0, nil},
 		{Expression("abc/1.0/"), Expression("abc"), 1.0, nil},
@@ -81,19 +84,16 @@ func TestExpressionParseWeight(t *testing.T) {
 		{Expression("abc/-1.0/"), Expression("abc"), -1.0, nil},
 		{Expression("abc/0/"), Expression("abc"), 0.0, nil},
 	}
-	for _, test := range table {
-		res_e, res_f, err := test.e.ParseWeight()
-		if test.exp_e != res_e {
-			t.Errorf("ParseWeight(%v)\nGOT %v\nEXP %v", test.e, res_e, test.exp_e)
+	for i, test := range table {
+		e, f, err := test.e.ParseWeight()
+		if test.ee != e {
+			t.Errorf("test %v: ParseWeight(%v)\nGOT %v\nEXP %v", i, test.e, e, test.ee)
 		}
-		if test.exp_f != res_f {
-			t.Errorf("ParseWeight(%v)\nGOT %v\nEXP %v", test.e, res_f, test.exp_f)
+		if test.ef != f {
+			t.Errorf("test %v: ParseWeight(%v)\nGOT %v\nEXP %v", i, test.e, f, test.ef)
 		}
-		if test.err != nil && err == nil {
-			t.Errorf("ParseWeight(%v)\nGOT %v\nEXP %v", test.e, err, test.err)
-		}
-		if test.err == nil && err != nil {
-			t.Errorf("ParseWeight(%v)\nGOT %v\nEXP %v", test.e, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: ParseWeight(%v)\nGOT %v\nEXP %v", i, test.e, err, test.err)
 		}
 	}
 }

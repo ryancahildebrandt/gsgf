@@ -171,8 +171,6 @@ func ParseRule(lex *tokenizer.Tokenizer, line string) (string, Rule, error) {
 }
 
 func ValidateRuleRecursion(r Rule, m map[string]Rule) error {
-	// check for self ref in rule and dependencies a la composition order
-
 	if len(r.References) == 0 {
 		return nil
 	}

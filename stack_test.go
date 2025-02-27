@@ -7,7 +7,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
+	"slices"
 	"testing"
 )
 
@@ -24,16 +24,13 @@ func TestStackPeek(t *testing.T) {
 		{Stack{100, 99, 98, 97, 96, 95}, 95, nil},
 		{Stack{2, 1, 0, -1, -2}, -2, nil},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		res, err := test.s.Peek()
-		if fmt.Sprint(test.exp) != fmt.Sprint(res) {
-			t.Errorf("%v.Peek()\nGOT %v\nEXP %v", test.s, res, test.exp)
+		if res != test.exp {
+			t.Errorf("test %v: %v.Peek()\nGOT %v\nEXP %v", i, test.s, res, test.exp)
 		}
-		if test.err != nil && err == nil {
-			t.Errorf("%v.Peek()\nGOT %v\nEXP %v", test.s, err, test.err)
-		}
-		if test.err == nil && err != nil {
-			t.Errorf("%v.Peek()\nGOT %v\nEXP %v", test.s, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: %v.Peek()\nGOT %v\nEXP %v", i, test.s, err, test.err)
 		}
 	}
 }
@@ -41,10 +38,10 @@ func TestStackPeek(t *testing.T) {
 func TestStackPop(t *testing.T) {
 	dummy_error := errors.New("")
 	table := []struct {
-		s     Stack
-		exp_t int
-		exp_b Stack
-		err   error
+		s   Stack
+		t   int
+		b   Stack
+		err error
 	}{
 		{Stack{}, 0, Stack{}, dummy_error},
 		{Stack{0}, 0, Stack{}, nil},
@@ -52,19 +49,16 @@ func TestStackPop(t *testing.T) {
 		{Stack{100, 99, 98, 97, 96, 95}, 95, Stack{100, 99, 98, 97, 96}, nil},
 		{Stack{2, 1, 0, -1, -2}, -2, Stack{2, 1, 0, -1}, nil},
 	}
-	for _, test := range table {
-		res_t, res_b, err := test.s.Pop()
-		if fmt.Sprint(test.exp_t) != fmt.Sprint(res_t) {
-			t.Errorf("%v.Pop()\nGOT %v\nEXP %v", test.s, res_t, test.exp_t)
+	for i, test := range table {
+		top, bot, err := test.s.Pop()
+		if top != test.t {
+			t.Errorf("test %v: %v.Pop()\nGOT %v\nEXP %v", i, test.s, t, test.t)
 		}
-		if fmt.Sprint(test.exp_b) != fmt.Sprint(res_b) {
-			t.Errorf("%v.Pop()\nGOT %v\nEXP %v", test.s, res_b, test.exp_b)
+		if !slices.Equal(bot, test.b) {
+			t.Errorf("test %v: %v.Pop()\nGOT %v\nEXP %v", i, test.s, bot, test.b)
 		}
-		if test.err != nil && err == nil {
-			t.Errorf("%v.Pop()\nGOT %v\nEXP %v", test.s, err, test.err)
-		}
-		if test.err == nil && err != nil {
-			t.Errorf("%v.Pop()\nGOT %v\nEXP %v", test.s, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: %v.Pop()\nGOT %v\nEXP %v", i, test.s, err, test.err)
 		}
 	}
 }
@@ -82,10 +76,10 @@ func TestStackDrop(t *testing.T) {
 		{Stack{100, 99, 98, 97, 96, 95}, 98, Stack{100, 99, 97, 96, 95}},
 		{Stack{2, 1, 0, -1, -2}, -2, Stack{2, 1, 0, -1}},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		res := test.s.Drop(test.n)
-		if fmt.Sprint(test.exp) != fmt.Sprint(res) {
-			t.Errorf("%v.Drop()\nGOT %v\nEXP %v", test.s, res, test.exp)
+		if !slices.Equal(res, test.exp) {
+			t.Errorf("test %v: %v.Drop()\nGOT %v\nEXP %v", i, test.s, res, test.exp)
 		}
 	}
 }

@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"slices"
 	"sort"
 	"testing"
 )
@@ -34,12 +35,12 @@ func TestGrammarCompositionOrder(t *testing.T) {
 		{Grammar{"", map[string]Rule{"<a>": NewRule("<c>", true), "<b>": NewRule("<c>", false), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{"<a>", "<c>", "<d>"}},
 		{Grammar{"", map[string]Rule{"<a>": NewRule("<c>", false), "<b>": NewRule("<c>", false), "<c>": NewRule("<d>", false), "<d>": NewRule("", false)}, []string{}}, []string{}},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		res := test.g.CompositionOrder()
 		sort.Strings(res)
 		sort.Strings(test.exp)
-		if fmt.Sprint(res) != fmt.Sprint(test.exp) {
-			t.Errorf("%v.CompositionOrder()\nGOT %v\nEXP %v", test.g, res, test.exp)
+		if !slices.Equal(res, test.exp) {
+			t.Errorf("test %v: %v.CompositionOrder()\nGOT %v\nEXP %v", i, test.g, res, test.exp)
 		}
 	}
 }
@@ -48,9 +49,9 @@ func TestGrammarProductions(t *testing.T) {
 	dummy_error := errors.New("")
 	lexer := NewJSGFLexer()
 	table := []struct {
-		pubs []string
-		exp  []string
-		err  error
+		p   []string
+		exp []string
+		err error
 	}{
 		{[]string{""}, []string{}, nil},
 		{[]string{";"}, []string{}, nil},
@@ -76,7 +77,7 @@ func TestGrammarProductions(t *testing.T) {
 		{[]string{"abc(<g>|<h>|<i>);", "def[<g>|<h>|<i>];", "ghi<b><b><b>;"}, []string{"abcabc", "abc123bc", "abca1c", "abca2c", "abca3c", "def", "defabc", "def123bc", "defa1c", "defa2c", "defa3c", "ghi111", "ghi112", "ghi113", "ghi121", "ghi122", "ghi123", "ghi131", "ghi132", "ghi133", "ghi211", "ghi212", "ghi213", "ghi221", "ghi222", "ghi223", "ghi231", "ghi232", "ghi233", "ghi311", "ghi312", "ghi313", "ghi321", "ghi322", "ghi323", "ghi331", "ghi332", "ghi333"}, nil},
 		{[]string{"abc<g><g><g>;", "<h><i>;", "<j>|<k>;"}, []string{"abcabcabcabc", "123bca1c", "123bca2c", "123bca3c", "a11312312", "a21312312", "a31312312", "a112312312", "a212312312", "a312312312", "a113123123", "a213123123", "a313123123", "a1123123123", "a2123123123", "a3123123123", "a111", "a112", "a113", "a121", "a122", "a123", "a131", "a132", "a133", "a211", "a212", "a213", "a221", "a222", "a223", "a231", "a232", "a233", "a311", "a312", "a313", "a321", "a322", "a323", "a331", "a332", "a333"}, nil},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		g := NewGrammar("")
 		g.Rules = map[string]Rule{
 			"<_>": {"", false, []string{}, NewGraph(EdgeList{}, []Expression{}), []Expression{}, []Expression{}},
@@ -92,7 +93,7 @@ func TestGrammarProductions(t *testing.T) {
 			"<j>": {"a<b><c><d><e>;", false, []string{"<b>", "<c>", "<d>", "<e>"}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}), []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}, []Expression{}},
 			"<k>": {"a<b><b><b>;", false, []string{"<b>"}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}}, []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}), []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}, []Expression{}},
 		}
-		for j, p := range test.pubs {
+		for j, p := range test.p {
 			rule := NewRule(Expression(p), true)
 			rule.Tokens = rule.Exp.ToTokens(lexer)
 			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
@@ -103,14 +104,11 @@ func TestGrammarProductions(t *testing.T) {
 		res := g.Productions()
 		sort.Strings(test.exp)
 		sort.Strings(res)
-		if fmt.Sprint(res) != fmt.Sprint(test.exp) {
-			t.Errorf("%v.Productions()\nGOT len %v %v\nEXP len %v %v", test.pubs, len(res), res, len(test.exp), test.exp)
+		if !slices.Equal(res, test.exp) {
+			t.Errorf("test %v: %v.Productions()\nGOT len %v %v\nEXP len %v %v", i, test.p, len(res), res, len(test.exp), test.exp)
 		}
-		if test.err != nil && err == nil {
-			t.Errorf("%v.Productions().err\nGOT %v\nEXP %v", test.pubs, err, test.err)
-		}
-		if test.err == nil && err != nil {
-			t.Errorf("%v.Productions().err\nGOT %v\nEXP %v", test.pubs, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: %v.Productions().err\nGOT %v\nEXP %v", i, test.p, err, test.err)
 		}
 	}
 }
@@ -119,9 +117,9 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 	dummy_error := errors.New("")
 	lexer := NewJSGFLexer()
 	table := []struct {
-		pubs []string
-		exp  []string
-		err  error
+		p   []string
+		exp []string
+		err error
 	}{
 		{[]string{""}, []string{}, nil},
 		{[]string{";"}, []string{}, nil},
@@ -147,7 +145,7 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 		{[]string{"abc(<g>|<h>|<i>);", "def[<g>|<h>|<i>];", "ghi<b><b><b>;"}, []string{"abcabc", "abc123bc", "abca1c", "abca2c", "abca3c", "def", "defabc", "def123bc", "defa1c", "defa2c", "defa3c", "ghi111", "ghi112", "ghi113", "ghi121", "ghi122", "ghi123", "ghi131", "ghi132", "ghi133", "ghi211", "ghi212", "ghi213", "ghi221", "ghi222", "ghi223", "ghi231", "ghi232", "ghi233", "ghi311", "ghi312", "ghi313", "ghi321", "ghi322", "ghi323", "ghi331", "ghi332", "ghi333"}, nil},
 		{[]string{"abc<g><g><g>;", "<h><i>;", "<j>|<k>;"}, []string{"abcabcabcabc", "123bca1c", "123bca2c", "123bca3c", "a11312312", "a21312312", "a31312312", "a112312312", "a212312312", "a312312312", "a113123123", "a213123123", "a313123123", "a1123123123", "a2123123123", "a3123123123", "a111", "a112", "a113", "a121", "a122", "a123", "a131", "a132", "a133", "a211", "a212", "a213", "a221", "a222", "a223", "a231", "a232", "a233", "a311", "a312", "a313", "a321", "a322", "a323", "a331", "a332", "a333"}, nil},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		g := NewGrammar("")
 		g.Rules = map[string]Rule{
 			"<_>": {"", false, []string{}, NewGraph(EdgeList{}, []Expression{}), []Expression{}, []Expression{}},
@@ -163,7 +161,7 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 			"<j>": {"a<b><c><d><e>;", false, []string{"<b>", "<c>", "<d>", "<e>"}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}), []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}, []Expression{}},
 			"<k>": {"a<b><b><b>;", false, []string{"<b>"}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}}, []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}), []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}, []Expression{}},
 		}
-		for j, p := range test.pubs {
+		for j, p := range test.p {
 			rule := NewRule(Expression(p), true)
 			rule.Tokens = rule.Exp.ToTokens(lexer)
 			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
@@ -174,27 +172,24 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 		res := g.Productions()
 		sort.Strings(test.exp)
 		sort.Strings(res)
-		if fmt.Sprint(res) != fmt.Sprint(test.exp) {
-			t.Errorf("%v.Productions()\nGOT len %v %v\nEXP len %v %v", test.pubs, len(res), res, len(test.exp), test.exp)
+		if !slices.Equal(res, test.exp) {
+			t.Errorf("test %v: %v.Productions()\nGOT len %v %v\nEXP len %v %v", i, test.p, len(res), res, len(test.exp), test.exp)
 		}
-		if test.err != nil && err == nil {
-			t.Errorf("%v.Productions().err\nGOT %v\nEXP %v", test.pubs, err, test.err)
-		}
-		if test.err == nil && err != nil {
-			t.Errorf("%v.Productions().err\nGOT %v\nEXP %v", test.pubs, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: %v.Productions().err\nGOT %v\nEXP %v", i, test.p, err, test.err)
 		}
 	}
 }
 
 func TestGrammarPeek(t *testing.T) {
 	table := []struct {
-		p           string
-		name        string
-		exp_imports []string
-		exp_rules   map[string][]string
+		p       string
+		n       string
+		imports []string
+		rules   map[string][]string
 	}{
 		{"data/tests/test0.jsgf", "test0", []string{"import <a.*>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
-		{"data/tests/test1.jsgf", "test1", []string{"import <c.brew>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
+		{"data/tests/test1.jsgf", "test1", []string{"import <c.brew>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}}},
 		{"data/tests/test2.jsgf", "test2", []string{"import <a1.*>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
 		{"data/tests/test3.jsgf", "test3", []string{"import <e.dne>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
 		{"data/tests/test4.jsgf", "test4", []string{"import <d.*>;"}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "quant": {}, "brew": {"quant"}}},
@@ -205,31 +200,32 @@ func TestGrammarPeek(t *testing.T) {
 		{"data/tests/dir0/dir1/d.jsgf", "d", []string{"import <c.teatype>;", "import <a.order>;"}, map[string][]string{}},
 		{"data/tests/dir0/dir1/dir2/e.jsgf", "e", []string{}, map[string][]string{"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {}, "teatype": {}, "brew": {"quant"}}},
 	}
-	for _, test := range table {
-		res_name, res_imports, res_rules, err := NewGrammar(test.p).Peek()
+	for i, test := range table {
+		name, imports, rules, err := NewGrammar(test.p).Peek()
 		if err != nil {
-			t.Errorf("Grammar(%v).Peek()\nGOT error %v", test.p, err)
+			t.Errorf("test %v: Grammar(%v).Peek()\nGOT error %v", i, test.p, err)
+		}
+		if name != test.n {
+			t.Errorf("test %v: Grammar(%v).Peek().imports\nGOT %v\nEXP %v", i, test.p, name, test.n)
+		}
+		sort.Strings(imports)
+		sort.Strings(test.imports)
+		if !slices.Equal(imports, test.imports) {
+			t.Errorf("test %v: Grammar(%v).Peek().imports\nGOT %v\nEXP %v", i, test.p, imports, test.imports)
 		}
 
-		if res_name != test.name {
-			t.Errorf("Grammar(%v).Peek().imports\nGOT %v\nEXP %v", test.p, res_name, test.name)
+		if len(rules) != len(test.rules) {
+			t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
 		}
-
-		sort.Strings(res_imports)
-		sort.Strings(test.exp_imports)
-		if fmt.Sprint(res_imports) != fmt.Sprint(test.exp_imports) {
-			t.Errorf("Grammar(%v).Peek().imports\nGOT %v\nEXP %v", test.p, res_imports, test.exp_imports)
-		}
-
-		for k, v_res := range res_rules {
-			v_exp, ok := test.exp_rules[k]
+		for k1, v1 := range rules {
+			v2, ok := test.rules[k1]
 			if !ok {
-				t.Errorf("Grammar(%v).Peek().rules\nGOT %v\nEXP %v", test.p, res_rules, test.exp_rules)
+				t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
 			}
-			sort.Strings(v_exp)
-			sort.Strings(v_res)
-			if fmt.Sprint((v_exp)) != fmt.Sprint((v_res)) {
-				t.Errorf("Grammar(%v).Peek().rules\nGOT %v\nEXP %v", test.p, res_rules, test.exp_rules)
+			sort.Strings(v1)
+			sort.Strings(v2)
+			if !slices.Equal(v1, v2) {
+				t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
 			}
 		}
 	}
@@ -261,7 +257,7 @@ func TestGrammarProductionsE2E(t *testing.T) {
 		{"data/tests/dir0/dir1/d.jsgf", []string{}, dummy_error},
 		{"data/tests/dir0/dir1/dir2/e.jsgf", productions, nil},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		var err error
 		grammar := NewGrammar(test.p)
 		f, err1 := os.Open(test.p)
@@ -276,20 +272,14 @@ func TestGrammarProductionsE2E(t *testing.T) {
 				err = e
 			}
 		}
-
 		sort.Strings(test.exp)
 		sort.Strings(res)
-		if fmt.Sprint(res) != fmt.Sprint(test.exp) {
-			t.Errorf("%v.Productions()\nGOT %v\nEXP %v", test.p, res, test.exp)
-			fmt.Println(len(res), len(test.exp))
+		if !slices.Equal(res, test.exp) {
+			t.Errorf("test %v: %v.Productions()\nGOT %v\nEXP %v", i, test.p, res, test.exp)
 		}
 
-		if test.err != nil && err == nil {
-			t.Errorf("%v.Productions().err\nGOT %v\nEXP %v", test.p, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: %v.Productions().err\nGOT %v\nEXP %v", i, test.p, err, test.err)
 		}
-		if test.err == nil && err != nil {
-			t.Errorf("%v.Productions().err\nGOT %v\nEXP %v", test.p, err, test.err)
-		}
-
 	}
 }

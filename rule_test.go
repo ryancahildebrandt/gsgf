@@ -7,7 +7,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
+	"slices"
 	"sort"
 	"testing"
 )
@@ -98,28 +98,25 @@ func TestRuleResolveReferences(t *testing.T) {
 			nil,
 		},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		res, err := test.r.ResolveReferences(m, lexer)
 		if test.exp.Is_public != res.Is_public {
-			t.Errorf("%v.ResolveReferences().Is_public\nGOT %v\nEXP %v", test.r, res.Is_public, test.exp.Is_public)
+			t.Errorf("test %v: %v.ResolveReferences().Is_public\nGOT %v\nEXP %v", i, test.r, res.Is_public, test.exp.Is_public)
 		}
-		if fmt.Sprint(test.exp.References) != fmt.Sprint(res.References) {
-			t.Errorf("%v.ResolveReferences().References\nGOT %v\nEXP %v", test.r, res.References, test.exp.References)
+		if !slices.Equal(test.exp.References, res.References) {
+			t.Errorf("test %v: %v.ResolveReferences().References\nGOT %v\nEXP %v", i, test.r, res.References, test.exp.References)
 		}
-		if fmt.Sprint(test.exp.Graph.Edges.Sort()) != fmt.Sprint(res.Graph.Edges.Sort()) {
-			t.Errorf("%v.ResolveReferences().edges\nGOT %v\nEXP %v", test.r, res.Graph.Edges.Sort(), test.exp.Graph.Edges.Sort())
+		if !slices.Equal(test.exp.Graph.Edges.Sort(), res.Graph.Edges.Sort()) {
+			t.Errorf("test %v: %v.ResolveReferences().edges\nGOT %v\nEXP %v", i, test.r, res.Graph.Edges.Sort(), test.exp.Graph.Edges.Sort())
 		}
-		if fmt.Sprint(test.exp.Graph.Nodes) != fmt.Sprint(res.Graph.Nodes) {
-			t.Errorf("%v.ResolveReferences().nodes\nGOT %v\nEXP %v", test.r, res.Graph.Nodes, test.exp.Graph.Nodes)
+		if !slices.Equal(test.exp.Graph.Nodes, res.Graph.Nodes) {
+			t.Errorf("test %v: %v.ResolveReferences().nodes\nGOT %v\nEXP %v", i, test.r, res.Graph.Nodes, test.exp.Graph.Nodes)
 		}
-		if fmt.Sprint(test.exp.Tokens) != fmt.Sprint(res.Tokens) {
-			t.Errorf("%v.ResolveReferences().Tokens\nGOT %v\nEXP %v", test.r, res.Tokens, test.exp.Tokens)
+		if !slices.Equal(test.exp.Tokens, res.Tokens) {
+			t.Errorf("test %v: %v.ResolveReferences().Tokens\nGOT %v\nEXP %v", i, test.r, res.Tokens, test.exp.Tokens)
 		}
-		if test.err != nil && err == nil {
-			t.Errorf("%v.ResolveReferences().err\nGOT %v\nEXP %v", test.r, err, test.err)
-		}
-		if test.err == nil && err != nil {
-			t.Errorf("%v.ResolveReferences().err\nGOT %v\nEXP %v", test.r, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: %v.ResolveReferences().err\nGOT %v\nEXP %v", i, test.r, err, test.err)
 		}
 	}
 }
@@ -129,31 +126,61 @@ func TestRuleProductions(t *testing.T) {
 		r   Rule
 		exp []string
 	}{
-		{Rule{"", false, []string{}, NewGraph(EdgeList{}, []Expression{}), []Expression{}, []Expression{}}, []string{}},
-		{Rule{";", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, []Expression{"<SOS>", ";", "<EOS>"}), []Expression{"<SOS>", ";", "<EOS>"}, []Expression{"", "", ""}}, []string{""}},
-		{Rule{"123;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}}, []Expression{"<SOS>", "123", ";", "<EOS>"}), []Expression{"<SOS>", "123", ";", "<EOS>"}, []Expression{"", "123", "", ""}}, []string{"123"}},
-		{Rule{"1|2|3;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}, []Expression{"", "1", "", "2", "", "3", "", ""}}, []string{"1", "2", "3"}},
-		{Rule{"1{}|2//|3/0.1/;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"}), []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"}, []Expression{"", "1{}", "", "2//", "", "3/0.1/", "", ""}}, []string{"1{}", "2//", "3/0.1/"}},
-		{Rule{"1[2]3;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}, []Expression{"", "1", "", "2", "", "3", "", ""}}, []string{"123", "13"}},
-		{Rule{"1(2)3;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}, []Expression{"", "1", "", "2", "", "3", "", ""}}, []string{"123"}},
-		{Rule{"1(2[3]);", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {4, 6, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}), []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}, []Expression{"", "1", "", "2", "", "3", "", "", "", ""}}, []string{"12", "123"}},
+		{
+			Rule{"", false, []string{}, NewGraph(EdgeList{}, []Expression{}), []Expression{}, []Expression{}},
+			[]string{},
+		},
+		{
+			Rule{";", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}}, []Expression{"<SOS>", ";", "<EOS>"}), []Expression{"<SOS>", ";", "<EOS>"}, []Expression{"", "", ""}},
+			[]string{},
+		},
+		{
+			Rule{"123;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}}, []Expression{"<SOS>", "123", ";", "<EOS>"}), []Expression{"<SOS>", "123", ";", "<EOS>"}, []Expression{"", "123", "", ""}},
+			[]string{"123"},
+		},
+		{
+			Rule{"1|2|3;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}, []Expression{"", "1", "", "2", "", "3", "", ""}},
+			[]string{"1", "2", "3"},
+		},
+		{
+			Rule{"1{}|2//|3/0.1/;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {0, 3, 1.0}, {0, 5, 1.0}, {1, 6, 1.0}, {3, 6, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"}), []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"}, []Expression{"", "1{}", "", "2//", "", "3/0.1/", "", ""}},
+			[]string{"1{}", "2//", "3/0.1/"},
+		},
+		{
+			Rule{"1[2]3;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {2, 4, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}, []Expression{"", "1", "", "2", "", "3", "", ""}},
+			[]string{"123", "13"},
+		},
+		{
+			Rule{"1(2)3;", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}), []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}, []Expression{"", "1", "", "2", "", "3", "", ""}},
+			[]string{"123"},
+		},
+		{
+			Rule{"1(2[3]);", false, []string{}, NewGraph(EdgeList{{0, 1, 1.0}, {1, 2, 1.0}, {2, 3, 1.0}, {3, 4, 1.0}, {4, 5, 1.0}, {4, 6, 1.0}, {5, 6, 1.0}, {6, 7, 1.0}, {7, 8, 1.0}, {8, 9, 1.0}}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}), []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}, []Expression{"", "1", "", "2", "", "3", "", "", "", ""}},
+			[]string{"12", "123"},
+		},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		res := test.r.Productions()
 		sort.Strings(res)
 		sort.Strings(test.exp)
-		if fmt.Sprint(res) != fmt.Sprint(test.exp) {
-			t.Errorf("%v.Productions()\nGOT %v\nEXP %v", test.r, res, test.exp)
+		if !slices.Equal(res, test.exp) {
+			t.Errorf("test %v: %v.Productions()\nGOT %v\nEXP %v", i, test.r, res, test.exp)
 		}
 	}
 }
 
 func TestRuleWeightEdges(t *testing.T) {
+	dummy_error := errors.New("")
 	table := []struct {
 		r   Rule
 		exp Rule
 		err error
 	}{
+		{
+			Rule{"/.//", false, []string{}, NewGraph(EdgeList{}, []Expression{}), []Expression{"/.//"}, []Expression{}},
+			Rule{"", false, []string{}, NewGraph(EdgeList{}, []Expression{}), []Expression{"/.//"}, []Expression{}},
+			dummy_error,
+		},
 		{
 			Rule{"", false, []string{}, NewGraph(EdgeList{}, []Expression{}), []Expression{}, []Expression{}},
 			Rule{"", false, []string{}, NewGraph(EdgeList{}, []Expression{}), []Expression{}, []Expression{}},
@@ -200,28 +227,25 @@ func TestRuleWeightEdges(t *testing.T) {
 			nil,
 		},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		res, err := test.r.WeightEdges()
 		if test.exp.Is_public != res.Is_public {
-			t.Errorf("%v.WeightEdges().Is_public\nGOT %v\nEXP %v", test.r, res.Is_public, test.exp.Is_public)
+			t.Errorf("test %v: %v.WeightEdges().Is_public\nGOT %v\nEXP %v", i, test.r, res.Is_public, test.exp.Is_public)
 		}
-		if fmt.Sprint(test.exp.References) != fmt.Sprint(res.References) {
-			t.Errorf("%v.WeightEdges().References\nGOT %v\nEXP %v", test.r, res.References, test.exp.References)
+		if !slices.Equal(test.exp.References, res.References) {
+			t.Errorf("test %v: %v.WeightEdges().References\nGOT %v\nEXP %v", i, test.r, res.References, test.exp.References)
 		}
-		if fmt.Sprint(test.exp.Graph.Edges.Sort()) != fmt.Sprint(res.Graph.Edges.Sort()) {
-			t.Errorf("%v.WeightEdges().edges\nGOT %v\nEXP %v", test.r, res.Graph.Edges.Sort(), test.exp.Graph.Edges.Sort())
+		if !slices.Equal(test.exp.Graph.Edges.Sort(), res.Graph.Edges.Sort()) {
+			t.Errorf("test %v: %v.WeightEdges().edges\nGOT %v\nEXP %v", i, test.r, res.Graph.Edges.Sort(), test.exp.Graph.Edges.Sort())
 		}
-		if fmt.Sprint(test.exp.Graph.Nodes) != fmt.Sprint(res.Graph.Nodes) {
-			t.Errorf("%v.WeightEdges().nodes\nGOT %v\nEXP %v", test.r, res.Graph.Nodes, test.exp.Graph.Nodes)
+		if !slices.Equal(test.exp.Graph.Nodes, res.Graph.Nodes) {
+			t.Errorf("test %v: %v.WeightEdges().nodes\nGOT %v\nEXP %v", i, test.r, res.Graph.Nodes, test.exp.Graph.Nodes)
 		}
-		if fmt.Sprint(test.exp.Tokens) != fmt.Sprint(res.Tokens) {
-			t.Errorf("%v.WeightEdges().Tokens\nGOT %v\nEXP %v", test.r, res.Tokens, test.exp.Tokens)
+		if !slices.Equal(test.exp.Tokens, res.Tokens) {
+			t.Errorf("test %v: %v.WeightEdges().Tokens\nGOT %v\nEXP %v", i, test.r, res.Tokens, test.exp.Tokens)
 		}
-		if test.err != nil && err == nil {
-			t.Errorf("%v.WeightEdges().err\nGOT %v\nEXP %v", test.r, err, test.err)
-		}
-		if test.err == nil && err != nil {
-			t.Errorf("%v.WeightEdges().err\nGOT %v\nEXP %v", test.r, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: %v.WeightEdges().err\nGOT %v\nEXP %v", i, test.r, err, test.err)
 		}
 	}
 }

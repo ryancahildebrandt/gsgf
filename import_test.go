@@ -7,8 +7,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
-	"reflect"
+	"slices"
 	"sort"
 	"testing"
 )
@@ -16,10 +15,10 @@ import (
 func TestCreateNameSpace(t *testing.T) {
 	dummy_error := errors.New("")
 	table := []struct {
-		d     string
-		e     string
-		rules map[string]string
-		err   error
+		d   string
+		e   string
+		r   map[string]string
+		err error
 	}{
 		{"data/tests/test0.jsgf",
 			".jsgf",
@@ -120,36 +119,22 @@ func TestCreateNameSpace(t *testing.T) {
 			nil,
 		},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		rules, err := CreateNameSpace(test.d, test.e)
-
-		if !reflect.DeepEqual(rules, test.rules) {
-			t.Errorf("CreateNameSpace(%v, %v).rules\nGOT %v\nEXP %v", test.d, test.e, rules, test.rules)
+		if len(rules) != len(test.r) {
+			t.Errorf("test %v: CreateNameSpace(%v, %v).rules\nGOT %v\nEXP %v", i, test.d, test.e, rules, test.r)
 		}
-
-		// for k, v_res := range rules {
-		// 	v_exp, ok := test.rules[k]
-		// 	if !ok {
-		// 		t.Errorf("CreateNameSpace(%v, %v).rules\nGOT %v\nEXP %v", test.d, test.e, v_res, v_exp)
-		// 	}
-		// 	for kk, vv_res := range v_exp {
-		// 		vv_exp, ok := v_exp[kk]
-		// 		if !ok {
-		// 			t.Errorf("CreateNameSpace(%v, %v).rules\nGOT %v\nEXP %v", test.d, test.e, vv_res, vv_exp)
-		// 		}
-		// 		sort.Strings(vv_exp)
-		// 		sort.Strings(vv_res)
-		// 		if fmt.Sprint(vv_exp) != fmt.Sprint(vv_res) {
-		// 			t.Errorf("CreateNameSpace(%v, %v).rules\nGOT %v\nEXP %v", test.d, test.e, vv_res, vv_exp)
-		// 		}
-		// 	}
-		// }
-
-		if test.err != nil && err == nil {
-			t.Errorf("CreateNameSpace(%v, %v).err\nGOT %v\nEXP %v", test.d, test.e, err, test.err)
+		for k1, v1 := range rules {
+			v2, ok := test.r[k1]
+			if !ok {
+				t.Errorf("test %v: CreateNameSpace(%v, %v).rules\nGOT %v\nEXP %v", i, test.d, test.e, v1, v2)
+			}
+			if v1 != v2 {
+				t.Errorf("test %v: CreateNameSpace(%v, %v).rules\nGOT %v\nEXP %v", i, test.d, test.e, v1, v2)
+			}
 		}
-		if test.err == nil && err != nil {
-			t.Errorf("CreateNameSpace(%v, %v).err\nGOT %v\nEXP %v", test.d, test.e, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: CreateNameSpace(%v, %v).err\nGOT %v\nEXP %v", i, test.d, test.e, err, test.err)
 		}
 	}
 }
@@ -176,16 +161,13 @@ func TestFindGrammar(t *testing.T) {
 		{"./data/tests/test0.jsgf", "f", ".jsgf", "", dummy_error},
 		{"./data/tests/dir0/dir1/dir2/e.jsgf", "d", ".jsgf", "", dummy_error},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		res, err := FindGrammar(test.p, test.t, test.e)
 		if res != test.exp {
-			t.Errorf("FindGrammar(%v, %v, %v)\nGOT %v\nEXP %v", test.p, test.t, test.e, res, test.exp)
+			t.Errorf("test %v: FindGrammar(%v, %v, %v)\nGOT %v\nEXP %v", i, test.p, test.t, test.e, res, test.exp)
 		}
-		if test.err != nil && err == nil {
-			t.Errorf("FindGrammar(%v, %v, %v).err\nGOT %v\nEXP %v", test.p, test.t, test.e, err, test.err)
-		}
-		if test.err == nil && err != nil {
-			t.Errorf("FindGrammar(%v, %v, %v).err\nGOT %v\nEXP %v", test.p, test.t, test.e, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: FindGrammar(%v, %v, %v).err\nGOT %v\nEXP %v", i, test.p, test.t, test.e, err, test.err)
 		}
 	}
 }
@@ -213,20 +195,15 @@ func TestImportOrder(t *testing.T) {
 		{"./data/tests/test2.jsgf", ".jsgf", []string{}, dummy_error},
 		{"./data/tests/dir0/dir1/d.jsgf", ".jsgf", []string{}, dummy_error},
 	}
-	for _, test := range table {
+	for i, test := range table {
 		res, err := ImportOrder(test.p, test.e)
 		sort.Strings(test.exp)
 		sort.Strings(res)
-
-		if fmt.Sprint(res) != fmt.Sprint(test.exp) {
-			t.Errorf("ImportOrder(%v, %v)\nGOT %v\nEXP %v", test.p, test.e, res, test.exp)
+		if !slices.Equal(res, test.exp) {
+			t.Errorf("test %v: ImportOrder(%v, %v)\nGOT %v\nEXP %v", i, test.p, test.e, res, test.exp)
 		}
-		if test.err != nil && err == nil {
-			t.Errorf("ImportOrder(%v, %v).err\nGOT %v\nEXP %v", test.p, test.e, err, test.err)
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: ImportOrder(%v, %v).err\nGOT %v\nEXP %v", i, test.p, test.e, err, test.err)
 		}
-		if test.err == nil && err != nil {
-			t.Errorf("ImportOrder(%v, %v).err\nGOT %v\nEXP %v", test.p, test.e, err, test.err)
-		}
-
 	}
 }
