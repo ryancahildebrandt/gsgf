@@ -14,28 +14,28 @@ import (
 )
 
 type GrammarJson struct {
-	Rules   map[string]RuleJson `json:rules`
-	Imports []string            `json:imports`
+	Rules   map[string]RuleJson `json:"rules"`
+	Imports []string            `json:"imports"`
 }
 
 type GraphJson struct {
-	Nodes []string   `json:nodes`
-	Edges []EdgeJson `json:edges`
-	Paths [][]int    `json:paths`
+	Nodes []string   `json:"nodes"`
+	Edges []EdgeJson `json:"edges"`
+	Paths [][]int    `json:"paths"`
 }
 
 type EdgeJson struct {
-	From   int     `json:source`
-	To     int     `json:destination`
-	Weight float64 `json:weight`
+	From   int     `json:"source"`
+	To     int     `json:"destination"`
+	Weight float64 `json:"weight"`
 }
 
 type RuleJson struct {
-	Expression string    `json:expression`
-	Is_public  bool      `json:is_public`
-	References []string  `json:references`
-	Graph      GraphJson `json:graph`
-	Tokens     []string  `json:tokens`
+	Expression string    `json:"expression"`
+	Is_public  bool      `json:"is_public"`
+	References []string  `json:"references"`
+	Graph      GraphJson `json:"graph"`
+	Tokens     []string  `json:"tokens"`
 }
 
 func RuleToJson(r Rule) RuleJson {

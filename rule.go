@@ -37,19 +37,6 @@ func NewRule(e Expression, is_public bool) Rule {
 	return r
 }
 
-func (r Rule) Copy() Rule {
-	s := NewRule(r.Exp, r.Is_public)
-	s.References = make([]string, len(r.References))
-	copy(s.References, r.References)
-	s.Tokens = make([]Expression, len(r.Tokens))
-	copy(s.Tokens, r.Tokens)
-	s.productions = make([]Expression, len(r.productions))
-	copy(s.productions, r.productions)
-	s.Graph = r.Graph //.Copy()
-
-	return s
-}
-
 func (r Rule) Productions() (out []string) {
 	for _, path := range r.Graph.AllPaths() {
 		prod := singleProduction(path, r.productions)

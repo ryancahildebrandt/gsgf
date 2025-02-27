@@ -8,6 +8,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"slices"
 	"sort"
 )
 
@@ -15,10 +16,6 @@ type Edge struct {
 	From   int
 	To     int
 	Weight float64
-}
-
-func (e Edge) Copy() Edge {
-	return Edge{e.From, e.To, e.Weight}
 }
 
 func (e Edge) IsEmpty() bool {
@@ -41,16 +38,10 @@ func (e EdgeList) Sort() EdgeList {
 	return e
 }
 
-func (e EdgeList) Copy() EdgeList {
-	var e1 EdgeList
-	for _, edge := range e {
-		e1 = append(e1, edge) //.Copy())
-	}
-	return e1
-}
-
 func (e EdgeList) Increment(n int) EdgeList {
-	e1 := e.Copy()
+	var e1 EdgeList
+	e1 = append(e1, e...)
+
 	for i := range e1 {
 		e1[i].From = e1[i].From + n
 		e1[i].To = e1[i].To + n
@@ -63,28 +54,29 @@ func (e EdgeList) IsEmpty() bool {
 }
 
 func (e EdgeList) Max() int {
+	var arr []int
+
 	if e.IsEmpty() {
 		return 0
 	}
-	var arr []int
+
 	for _, i := range e {
 		arr = append(arr, i.From)
 		arr = append(arr, i.To)
 	}
-	sort.Slice(arr, func(i, j int) bool { return arr[i] < arr[j] })
+	slices.Sort(arr)
 	return arr[len(arr)-1]
 }
 
-func (e EdgeList) Unique() (out EdgeList) {
-	e1 := e //.Copy()
-	for i := range e1.Sort() {
-		if i+1 == len(e1) {
-			out = append(out, e1[i])
-			break
-		}
-		if fmt.Sprint(e1[i]) != fmt.Sprint(e1[i+1]) {
-			out = append(out, e1[i])
-		}
+func (e EdgeList) Unique() EdgeList {
+	var out EdgeList
+	seen := make(map[string]int)
+
+	for i, edg := range e {
+		seen[fmt.Sprint(edg)] = i
+	}
+	for _, v := range seen {
+		out = append(out, e[v])
 	}
 	return out
 }
