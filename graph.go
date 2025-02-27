@@ -90,6 +90,8 @@ func (g Graph) EndPoints() (i, f int) {
 
 type Path []int
 
+//type Path = []int // will need to change methods to functions
+
 func (g Graph) AllPaths() (res []Path) {
 	var path Path
 	var paths []Path

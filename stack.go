@@ -10,6 +10,7 @@ import (
 )
 
 type Stack []int
+//type Stack = []int // will need to change methods to functions
 
 func (s Stack) Push(v int) Stack {
 	return append(s, v)

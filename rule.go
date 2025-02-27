@@ -14,10 +14,10 @@ import (
 )
 
 type Rule struct {
-	Exp         Expression
-	Is_public   bool
-	References  []string
-	Graph       Graph
+	Exp        Expression
+	Is_public  bool
+	References []string
+	Graph
 	Tokens      []Expression
 	productions []Expression
 }

@@ -15,6 +15,7 @@ import (
 )
 
 type Expression string
+//type Expression = string // will need to change methods to functions
 
 func (e Expression) str() string {
 	return string(e)

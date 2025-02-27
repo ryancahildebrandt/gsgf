@@ -170,4 +170,3 @@ func WriteToFile(b []byte, p string) error {
 // 	WriteToFile(j, "outputs/minimized_graph.dot")
 // 	j = []byte(ReferencesToDot(grammar))
 // 	WriteToFile(j, "outputs/references.dot")
-
