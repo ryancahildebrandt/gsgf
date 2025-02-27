@@ -45,7 +45,7 @@ func (r Rule) Copy() Rule {
 	copy(s.Tokens, r.Tokens)
 	s.productions = make([]Expression, len(r.productions))
 	copy(s.productions, r.productions)
-	s.Graph = r.Graph.Copy()
+	s.Graph = r.Graph //.Copy()
 
 	return s
 }

@@ -31,7 +31,7 @@ func NewGraph(e EdgeList, n []Expression) Graph {
 }
 
 func (g Graph) Copy() Graph {
-	e := g.Edges.Copy()
+	e := g.Edges //.Copy()
 	n := make([]Expression, len(g.Nodes))
 	copy(n, g.Nodes)
 	return NewGraph(e, n)
@@ -57,7 +57,7 @@ func (g Graph) AddEdge(e Edge) Graph {
 	if e.IsEmpty() {
 		return g
 	}
-	g.Edges = append(g.Edges, e.Copy())
+	g.Edges = append(g.Edges, e) //.Copy())
 	g.Children[e.From] = append(g.Children[e.From], e.To)
 	_, ok := g.Weights[e.From]
 	if !ok {
@@ -70,7 +70,7 @@ func (g Graph) AddEdge(e Edge) Graph {
 func (g Graph) EndPoints() (i, f int) {
 	var e1 = make(map[int]struct{})
 	var e2 = make(map[int]struct{})
-	edges := g.Edges.Copy().Sort()
+	edges := g.Edges.Sort() //.Copy().Sort()
 	for _, edge := range edges {
 		e1[edge.From] = struct{}{}
 		e2[edge.To] = struct{}{}
@@ -134,7 +134,7 @@ func ComposeGraphs(g Graph, h Graph, i int) (Graph, error) {
 	exp := append(g.Nodes, h.Nodes...)
 	edg := h.Edges
 	for _, edge := range g.Edges {
-		e := edge.Copy()
+		e := edge //.Copy()
 		if edge.From == i {
 			e.From = h_to
 		}

@@ -44,7 +44,7 @@ func (e EdgeList) Sort() EdgeList {
 func (e EdgeList) Copy() EdgeList {
 	var e1 EdgeList
 	for _, edge := range e {
-		e1 = append(e1, edge.Copy())
+		e1 = append(e1, edge) //.Copy())
 	}
 	return e1
 }
@@ -76,7 +76,7 @@ func (e EdgeList) Max() int {
 }
 
 func (e EdgeList) Unique() (out EdgeList) {
-	e1 := e.Copy()
+	e1 := e //.Copy()
 	for i := range e1.Sort() {
 		if i+1 == len(e1) {
 			out = append(out, e1[i])
