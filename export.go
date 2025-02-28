@@ -43,6 +43,7 @@ func RuleToJson(r Rule) RuleJson {
 	for _, i := range r.Tokens {
 		tokens = append(tokens, i.str())
 	}
+
 	return RuleJson{
 		Expression: r.Exp.str(), IsPublic: r.IsPublic, References: r.References, Graph: GraphToJson(r.Graph),
 		Tokens: tokens,
@@ -58,32 +59,38 @@ func GraphToJson(g Graph) GraphJson {
 	for _, i := range g.Nodes {
 		gj.Nodes = append(gj.Nodes, i.str())
 	}
+
 	for _, i := range g.AllPaths() {
 		gj.Paths = append(gj.Paths, i)
 	}
+
 	for _, i := range g.Edges {
 		gj.Edges = append(gj.Edges, EdgeToJson(i))
 	}
+
 	return gj
 }
 
 func GrammarToJson(g Grammar) GrammarJson {
 	imports := g.Imports
+
 	rules := make(map[string]RuleJson)
 	for k, v := range g.Rules {
 		rules[k] = RuleToJson(v)
 	}
-	return GrammarJson{Rules: rules, Imports: imports}
 
+	return GrammarJson{Rules: rules, Imports: imports}
 }
 
 func GraphToTxt(g Graph) (string, string) {
 	var nodes []string
+
 	var edges []string
 
 	for _, i := range g.Nodes {
 		nodes = append(nodes, fmt.Sprintf("\"%s\"", i.str()))
 	}
+
 	for _, i := range g.Edges {
 		edges = append(edges, fmt.Sprintf("%v,%v,%v", i.From, i.To, i.Weight))
 	}
@@ -93,35 +100,45 @@ func GraphToTxt(g Graph) (string, string) {
 
 func GraphToDot(g Graph) string {
 	var b strings.Builder
+
 	var entry string
+
 	var visited []int
 
 	b.WriteString("digraph {\n\n")
 	b.WriteString("\trankdir = \"LR\"\n\n")
+
 	for _, e := range g.Edges {
 		visited = append(visited, e.From)
 		visited = append(visited, e.To)
 	}
+
 	for i, n := range g.Nodes {
 		if slices.Contains(visited, i) {
 			entry = fmt.Sprintf("\t_%v [label=\"%s\"];\n", i, n)
 			b.WriteString(entry)
 		}
 	}
+
 	b.WriteString("\n")
+
 	for _, e := range g.Edges {
 		entry = fmt.Sprintf("\t_%v -> _%v [weight=%v];\n", e.From, e.To, e.Weight)
 		if e.Weight != 1.0 {
 			entry = fmt.Sprintf("\t_%v -> _%v [label=\"%v\",weight=%v];\n", e.From, e.To, fmt.Sprint(e.Weight), e.Weight)
 		}
+
 		b.WriteString(entry)
 	}
+
 	b.WriteString("\n}")
+
 	return b.String()
 }
 
 func ReferencesToDot(g Grammar) string {
 	var b strings.Builder
+
 	var entry string
 
 	b.WriteString("digraph {\n\n")
@@ -133,9 +150,10 @@ func ReferencesToDot(g Grammar) string {
 			b.WriteString(entry)
 		}
 	}
-	b.WriteString("\n}")
-	return b.String()
 
+	b.WriteString("\n}")
+
+	return b.String()
 }
 
 func WriteToFile(b []byte, p string) error {
@@ -143,6 +161,7 @@ func WriteToFile(b []byte, p string) error {
 	if err != nil {
 		return err
 	}
+
 	w := bufio.NewWriter(f)
 	w.Write(b)
 	w.Flush()

@@ -10,4 +10,17 @@ linters:
     - style
     - test
     - unused
+  disable:
+    - depguard
+    - prealloc
+    - godot
+    - lll
   fast: true
+
+issues:
+  exclude-rules:
+    # disable funlen for test funcs
+    - source: "^func Test"
+      linters:
+        - funlen
+        - dupl

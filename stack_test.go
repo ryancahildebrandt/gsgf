@@ -13,6 +13,7 @@ import (
 
 func TestStackPeek(t *testing.T) {
 	dummyError := errors.New("")
+
 	table := []struct {
 		s   Stack
 		exp int
@@ -29,6 +30,7 @@ func TestStackPeek(t *testing.T) {
 		if res != test.exp {
 			t.Errorf("test %v: %v.Peek()\nGOT %v\nEXP %v", i, test.s, res, test.exp)
 		}
+
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: %v.Peek()\nGOT %v\nEXP %v", i, test.s, err, test.err)
 		}
@@ -37,6 +39,7 @@ func TestStackPeek(t *testing.T) {
 
 func TestStackPop(t *testing.T) {
 	dummyError := errors.New("")
+
 	table := []struct {
 		s   Stack
 		t   int
@@ -54,9 +57,11 @@ func TestStackPop(t *testing.T) {
 		if top != test.t {
 			t.Errorf("test %v: %v.Pop()\nGOT %v\nEXP %v", i, test.s, t, test.t)
 		}
+
 		if !slices.Equal(bot, test.b) {
 			t.Errorf("test %v: %v.Pop()\nGOT %v\nEXP %v", i, test.s, bot, test.b)
 		}
+
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: %v.Pop()\nGOT %v\nEXP %v", i, test.s, err, test.err)
 		}

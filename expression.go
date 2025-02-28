@@ -16,85 +16,108 @@ import (
 
 type Expression string
 
-//type Expression = string // will need to change methods to functions
-
+// type Expression = string // will need to change methods to functions
 func (e Expression) str() string {
 	return string(e)
 }
 
 func (e Expression) ToTokens(lex *tokenizer.Tokenizer) []Expression {
 	var res string
+
 	var b strings.Builder
-	var out = []Expression{"<SOS>"}
+
+	out := []Expression{"<SOS>"}
 
 	if e.str() == "" {
 		return []Expression{}
 	}
+
 	stream := lex.ParseString(e.str())
 	for stream.IsValid() {
 		switch {
 		case stream.CurrentToken().Is(AngleOpen):
 			res = b.String()
 			b.Reset()
+
 			if res != "" {
 				out = append(out, Expression(res))
 			}
+
 			res, _ = captureString(stream, ">", true)
 			out = append(out, Expression(res))
+
 			stream.GoNext()
 		case stream.CurrentToken().Is(SquareOpen):
 			res = b.String()
 			b.Reset()
+
 			if res != "" {
 				out = append(out, Expression(res))
 			}
+
 			res = stream.CurrentToken().ValueUnescapedString()
 			out = append(out, Expression(res))
+
 			stream.GoNext()
 		case stream.CurrentToken().Is(SquareClose):
 			res = b.String()
 			b.Reset()
+
 			if res != "" {
 				out = append(out, Expression(res))
 			}
+
 			res = stream.CurrentToken().ValueUnescapedString()
 			out = append(out, Expression(res))
+
 			stream.GoNext()
 		case stream.CurrentToken().Is(ParenthesisOpen):
 			res = b.String()
 			b.Reset()
+
 			if res != "" {
 				out = append(out, Expression(res))
 			}
+
 			res = stream.CurrentToken().ValueUnescapedString()
 			out = append(out, Expression(res))
+
 			stream.GoNext()
 		case stream.CurrentToken().Is(ParenthesisClose):
 			res = b.String()
 			b.Reset()
+
 			if res != "" {
 				out = append(out, Expression(res))
 			}
+
 			res = stream.CurrentToken().ValueUnescapedString()
 			out = append(out, Expression(res))
+
 			stream.GoNext()
 		case stream.CurrentToken().Is(Alternate):
 			res = b.String()
 			b.Reset()
+
 			if res != "" {
 				out = append(out, Expression(res))
 			}
+
 			res = stream.CurrentToken().ValueUnescapedString()
 			out = append(out, Expression(res))
+
 			stream.GoNext()
 		case stream.CurrentToken().Is(Semicolon):
 			res = b.String()
 			b.Reset()
+
 			if res != "" {
 				out = append(out, Expression(res))
 			}
+
 			res = stream.CurrentToken().ValueUnescapedString()
 			out = append(out, Expression(res))
+
 			stream.GoNext()
 		case stream.CurrentToken().Is(BackSlash):
 			stream.GoNext()
@@ -103,33 +126,41 @@ func (e Expression) ToTokens(lex *tokenizer.Tokenizer) []Expression {
 		case stream.CurrentToken().Is(ForwardSlash):
 			stream.GoNext()
 			b.WriteString("/")
+
 			res, _ = captureString(stream, "/", true)
 			b.WriteString(res)
 			res = b.String()
 			b.Reset()
+
 			if res != "" {
 				out = append(out, Expression(res))
 			}
+
 			stream.GoNext()
 		case stream.CurrentToken().Is(CurlyOpen):
 			res, _ = captureString(stream, "}", true)
 			b.WriteString(res)
 			res = b.String()
 			b.Reset()
+
 			if res != "" {
 				out = append(out, Expression(res))
 			}
+
 			stream.GoNext()
 		default:
 			b.WriteString(stream.CurrentToken().ValueUnescapedString())
 			stream.GoNext()
 		}
 	}
+
 	res = b.String()
 	if res != "" {
 		out = append(out, Expression(res))
 	}
+
 	out = append(out, Expression("<EOS>"))
+
 	return out
 }
 
