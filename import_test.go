@@ -86,16 +86,10 @@ func TestCreateNameSpace(t *testing.T) {
 			err: nil,
 		},
 		{
-			d: "data/tests/test6.jsgf",
-			e: ".jsgf",
-			r: map[string]string{
-				"<request>": "[(could|will|would) you] please <brew>;",
-				"<brew>":    "(make|brew|whip up) <quant>;",
-				"<order>":   "i'd like [to order|a|<quant>];",
-				"<teatype>": "red|sweet|green|jasmine|milk;",
-				"<quant>":   "some|a (cup|glass) of;",
-			},
-			err: nil,
+			d:   "data/tests/test6.jsgf",
+			e:   ".jsgf",
+			r:   map[string]string{},
+			err: dummyError,
 		},
 		{
 			d:   "data/tests/a.jsgf",
@@ -161,7 +155,6 @@ func TestFindGrammar(t *testing.T) {
 		exp string
 		err error
 	}{
-		{p: "./data/tests", t: "test0", e: ".jsgf", exp: "data/tests/test0.jsgf", err: nil},
 		{p: "./data/tests/.jsgf", t: "test0", e: ".jsgf", exp: "data/tests/test0.jsgf", err: nil},
 		{p: "./data/tests/test0.jsgf", t: "test0", e: ".jsgf", exp: "data/tests/test0.jsgf", err: nil},
 		{p: "./data/tests/test0.jsgf", t: "a", e: ".jsgf", exp: "data/tests/a.jsgf", err: nil},
@@ -169,10 +162,9 @@ func TestFindGrammar(t *testing.T) {
 		{p: "./data/tests/a.jsgf", t: "a", e: ".jsgf", exp: "data/tests/a.jsgf", err: nil},
 		{p: "./data/tests/dir0/dir1/c.jsgf", t: "d", e: ".jsgf", exp: "data/tests/dir0/dir1/d.jsgf", err: nil},
 		{p: "./data/tests/dir0/dir1/c.jsgf", t: "e", e: ".jsgf", exp: "data/tests/dir0/dir1/dir2/e.jsgf", err: nil},
-		{
-			p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "e", e: ".jsgf", exp: "data/tests/dir0/dir1/dir2/e.jsgf",
-			err: nil,
-		},
+		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "e", e: ".jsgf", exp: "data/tests/dir0/dir1/dir2/e.jsgf", err: nil},
+
+		{p: "./data/tests", t: "test0", e: ".jsgf", exp: "", err: dummyError},
 		{p: "./data/tests/dir0/dir1/c.jsgf", t: "b", e: ".jsgf", exp: "", err: dummyError},
 		{p: "./data/tests/test0.jsgf", t: "f", e: ".jsgf", exp: "", err: dummyError},
 		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "d", e: ".jsgf", exp: "", err: dummyError},
@@ -198,16 +190,16 @@ func TestImportOrder(t *testing.T) {
 	}{
 		{p: "./data/tests", e: ".jsgf", exp: []string{}, err: dummyError},
 		{p: "./data/tests/.jsgf", e: ".jsgf", exp: []string{}, err: dummyError},
-		{p: "./data/tests/test0.jsgf", e: ".jsgf", exp: []string{"import <a.*>"}, err: nil},
-		{p: "./data/tests/test1.jsgf", e: ".jsgf", exp: []string{"import <c.brew>"}, err: nil},
-		{p: "./data/tests/test3.jsgf", e: ".jsgf", exp: []string{"import <e.dne>"}, err: nil},
+		{p: "./data/tests/test0.jsgf", e: ".jsgf", exp: []string{"import <a.*>;"}, err: nil},
+		{p: "./data/tests/test1.jsgf", e: ".jsgf", exp: []string{"import <c.brew>;"}, err: nil},
+		{p: "./data/tests/test3.jsgf", e: ".jsgf", exp: []string{"import <e.dne>;"}, err: nil},
 		{
 			p: "./data/tests/test4.jsgf", e: ".jsgf",
-			exp: []string{"import <a.order>", "import <c.teatype>", "import <d.*>"}, err: nil,
+			exp: []string{"import <a.order>;", "import <c.teatype>;", "import <d.*>;"}, err: nil,
 		},
-		{p: "./data/tests/test5.jsgf", e: ".jsgf", exp: []string{"import <b.request>", "import <c.brew>"}, err: nil},
+		{p: "./data/tests/test5.jsgf", e: ".jsgf", exp: []string{"import <b.request>;", "import <c.brew>;"}, err: nil},
 		{p: "./data/tests/a.jsgf", e: ".jsgf", exp: []string{}, err: nil},
-		{p: "./data/tests/b.jsgf", e: ".jsgf", exp: []string{"import <c.brew>"}, err: nil},
+		{p: "./data/tests/b.jsgf", e: ".jsgf", exp: []string{"import <c.brew>;"}, err: nil},
 		{p: "./data/tests/dir0/c.jsgf", e: ".jsgf", exp: []string{}, err: nil},
 		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", e: ".jsgf", exp: []string{}, err: nil},
 		{p: "./data/tests/test2.jsgf", e: ".jsgf", exp: []string{}, err: dummyError},

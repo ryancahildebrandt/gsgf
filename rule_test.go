@@ -19,7 +19,6 @@ func TestRuleResolveReferences(t *testing.T) {
 		"<a>": {
 			Exp:      "123;",
 			IsPublic: false,
-
 			Graph: NewGraph(EdgeList{
 				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 			}, []Expression{"<SOS>", "123", ";", "<EOS>"}),
@@ -27,7 +26,6 @@ func TestRuleResolveReferences(t *testing.T) {
 		"<b>": {
 			Exp:      "1|2|3;",
 			IsPublic: false,
-
 			Graph: NewGraph(EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
 				{From: 0, To: 3, Weight: 1.0},
@@ -41,7 +39,6 @@ func TestRuleResolveReferences(t *testing.T) {
 		"<c>": {
 			Exp:      "1[2]3;",
 			IsPublic: false,
-
 			Graph: NewGraph(EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
 				{From: 1, To: 2, Weight: 1.0},
@@ -56,7 +53,6 @@ func TestRuleResolveReferences(t *testing.T) {
 		"<d>": {
 			Exp:      "1(2)3;",
 			IsPublic: false,
-
 			Graph: NewGraph(EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
 				{From: 1, To: 2, Weight: 1.0},
@@ -70,7 +66,6 @@ func TestRuleResolveReferences(t *testing.T) {
 		"<e>": {
 			Exp:      "1(2[3]);",
 			IsPublic: false,
-
 			Graph: NewGraph(EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
 				{From: 1, To: 2, Weight: 1.0},
@@ -94,14 +89,12 @@ func TestRuleResolveReferences(t *testing.T) {
 			r: Rule{
 				Exp:      "",
 				IsPublic: false,
-
-				Graph: NewGraph(EdgeList{}, []Expression{}),
+				Graph:    NewGraph(EdgeList{}, []Expression{}),
 			},
 			exp: Rule{
 				Exp:      "",
 				IsPublic: false,
-
-				Graph: NewGraph(EdgeList{}, []Expression{}),
+				Graph:    NewGraph(EdgeList{}, []Expression{}),
 			},
 			err: nil,
 		},

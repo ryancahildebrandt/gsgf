@@ -27,7 +27,7 @@ func (s Stack) Top() (t int, err error) {
 func (s Stack) Pop() (t int, b Stack, err error) {
 	t, err = s.Top()
 	if err != nil {
-		return 0, Stack{}, errors.New("cannot pop from empty stack")
+		return 0, Stack{}, err
 	}
 	b = s[:len(s)-1]
 

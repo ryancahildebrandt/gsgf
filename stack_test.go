@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestStackPeek(t *testing.T) {
+func TestStackTop(t *testing.T) {
 	dummyError := errors.New("")
 	table := []struct {
 		s   Stack
@@ -27,10 +27,10 @@ func TestStackPeek(t *testing.T) {
 	for i, test := range table {
 		res, err := test.s.Top()
 		if res != test.exp {
-			t.Errorf("test %v: %v.Peek()\nGOT %v\nEXP %v", i, test.s, res, test.exp)
+			t.Errorf("test %v: %v.Top()\nGOT %v\nEXP %v", i, test.s, res, test.exp)
 		}
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
-			t.Errorf("test %v: %v.Peek()\nGOT %v\nEXP %v", i, test.s, err, test.err)
+			t.Errorf("test %v: %v.Top()\nGOT %v\nEXP %v", i, test.s, err, test.err)
 		}
 	}
 }

@@ -30,7 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	namespace, err := CreateNameSpace(grammar.Path, ext)
+	namespace, err := CreateNameSpace(basepath, ext)
 	if err != nil {
 		log.Fatal(err)
 	}

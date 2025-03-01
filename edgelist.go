@@ -42,9 +42,10 @@ func Sort(e EdgeList) EdgeList {
 func Increment(e EdgeList, n int) EdgeList {
 	var e1 EdgeList
 	e1 = append(e1, e...)
+
 	for i := range e1 {
-		e1[i].From = e1[i].From + n
-		e1[i].To = e1[i].To + n
+		e1[i].From += n
+		e1[i].To += n
 	}
 
 	return e1
@@ -56,23 +57,24 @@ func (e EdgeList) IsEmpty() bool {
 
 func (e EdgeList) Max() int {
 	var arr []int
+
 	if e.IsEmpty() {
 		return 0
 	}
-	for _, i := range e {
-		arr = append(arr, i.From)
-		arr = append(arr, i.To)
+	for _, edg := range e {
+		arr = append(arr, edg.From)
+		arr = append(arr, edg.To)
 	}
-	slices.Sort(arr)
 
-	return arr[len(arr)-1]
+	return slices.Max(arr)
 }
 
 func Unique(e EdgeList) EdgeList {
 	var out EdgeList
 	seen := make(map[string]int)
-	for i, edg := range e {
-		seen[fmt.Sprint(edg)] = i
+
+	for i := range e {
+		seen[fmt.Sprint(e[i])] = i
 	}
 	for _, v := range seen {
 		out = append(out, e[v])

@@ -89,7 +89,7 @@ func CreateNameSpace(p string, e string) (map[string]string, error) {
 		if err != nil {
 			return make(map[string]string), err
 		}
-		rules, err := PeekRules(path)
+		_, _, rules, err := PeekGrammar(path)
 		if err != nil {
 			return make(map[string]string), err
 		}
@@ -101,62 +101,48 @@ func CreateNameSpace(p string, e string) (map[string]string, error) {
 	return rs, nil
 }
 
-func PeekName(p string) (string, error) {
+func PeekGrammar(p string) (string, []string, map[string]string, error) {
+	var (
+		err     error
+		name    string
+		imports []string
+	)
+
+	rules := make(map[string]string)
 	f, err := os.Open(p)
 	if err != nil {
-		return "", errors.New("file does not exist")
+		return name, imports, rules, errors.New(fmt.Sprint("unable to open grammar ", p))
 	}
+	info, err := f.Stat()
+	if err != nil {
+		return name, imports, rules, errors.New(fmt.Sprint("unable to open grammar ", p))
+	}
+	if info.IsDir() {
+		return name, imports, rules, errors.New(fmt.Sprint("provided path is a directory", p))
+	}
+
 	s := bufio.NewScanner(f)
 	for s.Scan() {
 		line := s.Text()
+
 		switch {
 		case strings.HasPrefix(line, "grammar "):
-			return CleanGrammarStatement(line), nil
-		default:
-			continue
-		}
-	}
-
-	return "", errors.New("grammar does not contain name declaration")
-}
-
-func PeekImports(p string) ([]string, error) {
-	var imports []string
-	if !strings.HasSuffix(p, ".jsgf") {
-		return []string{}, errors.New("not a grammar file")
-	}
-	f, err := os.Open(p)
-	if err != nil {
-		return []string{}, errors.New("file does not exist")
-	}
-	s := bufio.NewScanner(f)
-	for s.Scan() {
-		line := s.Text()
-		switch {
+			err = ValidateJSGFName(line)
+			if err != nil {
+				return name, imports, rules, err
+			}
+			name = CleanGrammarStatement(line)
 		case strings.HasPrefix(line, "import <"):
-			imports = append(imports, CleanGrammarStatement(line))
-		default:
-			continue
-		}
-	}
-
-	return imports, nil
-}
-
-func PeekRules(p string) (map[string]string, error) {
-	rules := make(map[string]string)
-	if !strings.HasSuffix(p, ".jsgf") {
-		return make(map[string]string), errors.New("not a grammar file")
-	}
-	f, err := os.Open(p)
-	if err != nil {
-		return make(map[string]string), errors.New("file does not exist")
-	}
-	s := bufio.NewScanner(f)
-	for s.Scan() {
-		line := s.Text()
-		switch {
+			err = ValidateJSGFImport(line)
+			if err != nil {
+				return name, imports, rules, err
+			}
+			imports = append(imports, line)
 		case strings.HasPrefix(line, "<") || strings.HasPrefix(line, "public <"):
+			err = ValidateJSGFRule(line)
+			if err != nil {
+				return name, imports, rules, err
+			}
 			name, rule, _ := strings.Cut(line, "=")
 			name = strings.TrimSpace(name)
 			name = strings.TrimPrefix(name, "public ")
@@ -166,7 +152,7 @@ func PeekRules(p string) (map[string]string, error) {
 		}
 	}
 
-	return rules, nil
+	return name, imports, rules, nil
 }
 
 func FindGrammar(p string, t string, e string) (string, error) {
@@ -176,7 +162,7 @@ func FindGrammar(p string, t string, e string) (string, error) {
 	)
 	err := filepath.Walk(filepath.Dir(p), func(path string, info os.FileInfo, err error) error {
 		if filepath.Ext(path) == e {
-			name, err := PeekName(path)
+			name, _, _, err := PeekGrammar(path)
 			if err != nil {
 				return err
 			}
@@ -209,7 +195,7 @@ func ImportOrder(p string, e string) ([]string, error) {
 		imp     string
 		res     []string
 	)
-	imports, err := PeekImports(p)
+	_, imports, _, err := PeekGrammar(p)
 	if err != nil {
 		return imports, err
 	}
@@ -220,7 +206,7 @@ func ImportOrder(p string, e string) ([]string, error) {
 		if err != nil {
 			return []string{}, err
 		}
-		imps, err := PeekImports(path)
+		_, imps, _, err := PeekGrammar(path)
 		if err != nil {
 			return []string{}, err
 		}

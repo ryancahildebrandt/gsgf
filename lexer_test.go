@@ -114,7 +114,7 @@ func TestParseRule(t *testing.T) {
 		},
 		{
 			l: "<rule> = test \"expression\" 123;", n: "<rule>", r: Rule{
-				Exp: Expression("test expression 123;"), IsPublic: false,
+				Exp: Expression("test \"expression\" 123;"), IsPublic: false,
 			},
 			err: nil,
 		},
@@ -126,7 +126,7 @@ func TestParseRule(t *testing.T) {
 		},
 		{
 			l: "public <rule> = test \"expression\" 123;", n: "<rule>", r: Rule{
-				Exp: Expression("test expression 123;"), IsPublic: true,
+				Exp: Expression("test \"expression\" 123;"), IsPublic: true,
 			},
 			err: nil,
 		},
@@ -156,7 +156,7 @@ func TestParseRule(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		n, r, err := ParseRule(lexer, test.l)
+		n, r, err := ParseRule(test.l, lexer)
 		if n != test.n {
 			t.Errorf("test %v: ParseRule(jsgflexer, %v)\nGOT %v\nEXP %v", i, test.l, n, test.n)
 		}

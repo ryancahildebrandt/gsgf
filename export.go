@@ -6,9 +6,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"slices"
 	"strings"
 )
@@ -18,9 +16,9 @@ type GrammarJson struct {
 	Imports []string            `json:"imports"`
 }
 type GraphJson struct {
-	Nodes []string   `json:"nodes"`
-	Edges []EdgeJson `json:"edges"`
-	Paths [][]int    `json:"paths"`
+	Tokens []string   `json:"tokens"`
+	Edges  []EdgeJson `json:"edges"`
+	Paths  [][]int    `json:"paths"`
 }
 type EdgeJson struct {
 	From   int     `json:"source"`
@@ -47,28 +45,27 @@ func EdgeToJson(e Edge) EdgeJson {
 }
 
 func GraphToJson(g Graph) GraphJson {
-	gj := GraphJson{}
+	var j GraphJson
 	for _, i := range g.Tokens {
-		gj.Nodes = append(gj.Nodes, i)
+		j.Tokens = append(j.Tokens, i)
 	}
 	for _, i := range AllPaths(g) {
-		gj.Paths = append(gj.Paths, i)
+		j.Paths = append(j.Paths, i)
 	}
 	for _, i := range g.Edges {
-		gj.Edges = append(gj.Edges, EdgeToJson(i))
+		j.Edges = append(j.Edges, EdgeToJson(i))
 	}
 
-	return gj
+	return j
 }
 
 func GrammarToJson(g Grammar) GrammarJson {
-	imports := g.Imports
 	rules := make(map[string]RuleJson)
 	for k, v := range g.Rules {
 		rules[k] = RuleToJson(v)
 	}
 
-	return GrammarJson{Rules: rules, Imports: imports}
+	return GrammarJson{Rules: rules, Imports: g.Imports}
 }
 
 func GraphToTxt(g Graph) (string, string) {
@@ -85,9 +82,12 @@ func GraphToTxt(g Graph) (string, string) {
 }
 
 func GraphToDot(g Graph) string {
-	var b strings.Builder
-	var entry string
-	var visited []int
+	var (
+		b       strings.Builder
+		entry   string
+		visited []int
+	)
+
 	b.WriteString("digraph {\n\n")
 	b.WriteString("\trankdir = \"LR\"\n\n")
 	for _, e := range g.Edges {
@@ -116,6 +116,7 @@ func GraphToDot(g Graph) string {
 func ReferencesToDot(g Grammar) string {
 	var b strings.Builder
 	var entry string
+
 	b.WriteString("digraph {\n\n")
 	b.WriteString("\trankdir = \"LR\"\n\n")
 	for k, v := range g.Rules {
@@ -128,33 +129,3 @@ func ReferencesToDot(g Grammar) string {
 
 	return b.String()
 }
-
-func WriteToFile(b []byte, p string) error {
-	f, err := os.Create(p)
-	if err != nil {
-		return err
-	}
-	w := bufio.NewWriter(f)
-	w.Write(b)
-	w.Flush()
-
-	return nil
-}
-
-// ns, es := GraphToTxt(grammar.Rules["<main>"].Graph)
-// 	WriteToFile([]byte(ns), "outputs/nodes.txt")
-// 	WriteToFile([]byte(es), "outputs/edges.txt")// 	var j []byte
-// 	j, err = json.MarshalIndent(GraphToJson(grammar.Rules["<main>"].Graph), "", "\t")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	WriteToFile(j, "outputs/graph.json")// 	j, err = json.MarshalIndent(GrammarToJson(grammar), "", "\t")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	WriteToFile(j, "outputs/grammar.json")// 	j = []byte(GraphToDot(grammar.Rules["<main>"].Graph))
-// 	WriteToFile(j, "outputs/full_graph.dot")
-// 	j = []byte(GraphToDot(grammar.Rules["<main>"].Graph.Minimize()))
-// 	WriteToFile(j, "outputs/minimized_graph.dot")
-// 	j = []byte(ReferencesToDot(grammar))
-// 	WriteToFile(j, "outputs/references.dot")

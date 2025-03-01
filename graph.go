@@ -22,14 +22,12 @@ type Graph struct {
 
 func NewGraph(e EdgeList, n []Expression) Graph {
 	g := Graph{}
+	g.Tokens = n
 	g.Children = make(map[int][]int)
 	g.Weights = make(map[int]map[int]float64)
-
 	for _, edge := range e {
 		g = g.AddEdge(edge)
 	}
-
-	g.Tokens = n
 
 	return g
 }
@@ -56,15 +54,12 @@ func (g Graph) AddEdge(e Edge) Graph {
 	if e.IsEmpty() {
 		return g
 	}
-
 	g.Edges = append(g.Edges, e)
 	g.Children[e.From] = append(g.Children[e.From], e.To)
 	_, ok := g.Weights[e.From]
-
 	if !ok {
 		g.Weights[e.From] = make(map[int]float64)
 	}
-
 	g.Weights[e.From][e.To] = e.Weight
 
 	return g
@@ -105,21 +100,17 @@ func (g Graph) DropNode(i int) Graph {
 
 func EndPoints(g Graph) (i, f int) {
 	e1 := make(map[int]struct{})
-
 	e2 := make(map[int]struct{})
-
 	edges := Sort(g.Edges)
 	for _, edge := range edges {
 		e1[edge.From] = struct{}{}
 		e2[edge.To] = struct{}{}
 	}
-
 	for _, edge := range edges {
 		_, ok := e2[edge.From]
 		if !ok {
 			i = edge.From
 		}
-
 		_, ok = e1[edge.To]
 		if !ok {
 			f = edge.To
@@ -142,18 +133,14 @@ func AllPaths(g Graph) (res []Path) {
 	)
 
 	f, t = EndPoints(g)
-
 	paths = []Path{{f}}
 	for len(paths) > 0 {
 		path, paths = paths[0], paths[1:]
 		node = path[len(path)-1]
-
 		if node == t {
 			res = append(res, path)
-
 			continue
 		}
-
 		for _, n := range g.From(node) {
 			p = make(Path, len(path)+1)
 			copy(p, path)
@@ -185,11 +172,9 @@ func ComposeGraphs(g Graph, h Graph, i int) (Graph, error) {
 		if edge.From == i {
 			e.From = hTo
 		}
-
 		if edge.To == i {
 			e.To = hFrom
 		}
-
 		edg = append(edg, e)
 	}
 
@@ -200,11 +185,9 @@ func ChooseNext(c []int, w []float64) (int, error) {
 	if len(c) == 0 || len(w) == 0 {
 		return -1, errors.New("length of choices c and/or weights w is 0")
 	}
-
 	if len(c) != len(w) {
 		return -1, errors.New("length of choices c and weights w do not match")
 	}
-
 	i, ok := sampleuv.NewWeighted(w, nil).Take()
 	if !ok {
 		return -1, errors.New("sampleuv.NewWeighted could not sample from choices c and weights w")
@@ -228,23 +211,19 @@ func RandomPath(g Graph) (Path, error) {
 		switch len(n) {
 		case 0:
 			return Path{}, errors.New("cannot proceed further down path")
-
 		case 1:
 			choice = n[0]
 			res = append(res, choice)
 			p = choice
-
 		default:
 			w := make([]float64, len(n))
 			for i, dest := range n {
 				w[i] = g.Weight(f, dest)
 			}
-
 			choice, err := ChooseNext(g.From(p), w)
 			if err != nil {
 				return Path{}, err
 			}
-
 			res = append(res, choice)
 			p = choice
 		}
@@ -258,7 +237,6 @@ func Minimize(g Graph) Graph {
 
 	f := []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}
 	g1 = g
-
 	for i, t := range g1.Tokens {
 		if slices.Contains(f, t) {
 			g1 = g1.DropNode(i)
@@ -275,10 +253,8 @@ func WeightEdges(r Rule) (Rule, error) {
 			if err != nil {
 				return r, err
 			}
-
 			r.Tokens[i] = e
 			r.Graph.Tokens[i] = e
-
 			for j, edge := range r.Graph.Edges {
 				if edge.To == i {
 					r.Graph.Edges[j].Weight = w
@@ -290,7 +266,8 @@ func WeightEdges(r Rule) (Rule, error) {
 	return r, nil
 }
 
-func Productions(r Rule) (out []string) { // to graph
+func Productions(r Rule) []string { // to graph
+	var out []string
 	for _, path := range AllPaths(r.Graph) {
 		prod := singleProduction(path, FilterTerminals(Tokens(r), []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"}))
 		if prod != "" {
@@ -301,11 +278,10 @@ func Productions(r Rule) (out []string) { // to graph
 	return out
 }
 
-func singleProduction(p Path, a []Expression) string { // to graph
+func singleProduction(p Path, a []Expression) string {
 	if len(p) == 0 || len(a) == 0 {
 		return ""
 	}
-
 	var b strings.Builder
 	for _, i := range p {
 		b.WriteString(a[i])

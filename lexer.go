@@ -50,7 +50,7 @@ func NewJSGFLexer() *tokenizer.Tokenizer {
 	lexer.DefineTokens(Alternate, []string{"|"})
 	lexer.DefineTokens(Comment, []string{"//", "/*", "*/"})
 	lexer.DefineTokens(Semicolon, []string{";", " ;", "; ", " ; "})
-	lexer.DefineTokens(Assignment, []string{"=", " =", "= ", " = "})
+	lexer.DefineTokens(Assignment, []string{"="})
 	lexer.DefineTokens(Modifier, []string{"*", "+"})
 	lexer.DefineTokens(SequenceStart, []string{"<SOS>"})
 	lexer.DefineTokens(SequenceEnd, []string{"<EOS>"})
@@ -62,6 +62,7 @@ func NewJSGFLexer() *tokenizer.Tokenizer {
 
 func captureString(s *tokenizer.Stream, end string, includeEnd bool) (string, error) {
 	var b strings.Builder
+	
 	// really high value here because s doesn't have a "show me whats left in the string" method
 	r := s.GetSnippetAsString(0, 1000000, 0)
 	if !strings.Contains(r, end) {
@@ -75,7 +76,6 @@ func captureString(s *tokenizer.Stream, end string, includeEnd bool) (string, er
 			if includeEnd {
 				b.WriteString(s.CurrentToken().ValueUnescapedString())
 			}
-
 			break
 		}
 		b.WriteString(s.CurrentToken().ValueUnescapedString())

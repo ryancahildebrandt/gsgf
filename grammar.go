@@ -8,80 +8,21 @@ package main
 import (
 	"bufio"
 	"errors"
-	"fmt"
-	"os"
-	"regexp"
 	"strings"
 
 	"github.com/bzick/tokenizer"
 )
 
 type Grammar struct {
-	Path    string
 	Rules   map[string]Rule
 	Imports []string
 }
 
 func NewGrammar(p string) Grammar {
 	g := Grammar{}
-	g.Path = p
 	g.Rules = make(map[string]Rule)
 
 	return g
-}
-
-func PeekGrammar(g Grammar) (string, []string, map[string][]string, error) {
-	var (
-		err     error
-		name    string
-		imports []string
-	)
-
-	rules := make(map[string][]string)
-
-	f, err := os.Open(g.Path)
-	if err != nil {
-		return name, imports, rules, errors.New(fmt.Sprint("unable to open grammar from import: ", g.Path))
-	}
-
-	s := bufio.NewScanner(f)
-	for s.Scan() {
-		line := s.Text()
-
-		switch {
-		case strings.HasPrefix(line, "grammar "):
-			err = ValidateJSGFName(line)
-			if err != nil {
-				return name, imports, rules, err
-			}
-
-			name = CleanGrammarStatement(line)
-		case strings.HasPrefix(line, "import <"):
-			err = ValidateJSGFImport(line)
-			if err != nil {
-				return name, imports, rules, err
-			}
-
-			imports = append(imports, line)
-		case strings.HasPrefix(line, "<") || strings.HasPrefix(line, "public <"):
-			err = ValidateJSGFRule(line)
-			if err != nil {
-				return name, imports, rules, err
-			}
-
-			name, rule, _ := strings.Cut(line, "=")
-			name = UnwrapRule(name)
-			rules[name] = []string{}
-
-			for _, ref := range regexp.MustCompile(`<.*?>`).FindAllString(rule, -1) {
-				ref = UnwrapRule(ref)
-				rules[name] = append(rules[name], ref)
-			}
-		default:
-		}
-	}
-
-	return name, imports, rules, nil
 }
 
 func CompositionOrder(g Grammar) []string {
@@ -134,8 +75,6 @@ func ResolveRules(g Grammar, lex *tokenizer.Tokenizer) (Grammar, error) {
 			if err != nil {
 				return g, err
 			}
-
-			// r2.productions = FilterTerminals(r2.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[rname] = r2
 		}
 	}
@@ -144,36 +83,26 @@ func ResolveRules(g Grammar, lex *tokenizer.Tokenizer) (Grammar, error) {
 }
 
 func ImportLines(g Grammar, s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar, error) {
-	var err error
-
 	for s.Scan() {
 		line := s.Text()
-
 		switch {
 		case strings.HasPrefix(line, "import <"):
-			err = ValidateJSGFImport(line)
+			err := ValidateJSGFImport(line)
 			if err != nil {
 				return NewGrammar(""), err
 			}
-
-			s := line
-			s = strings.TrimPrefix(s, "import <")
-			s = strings.TrimSuffix(s, ">")
-			g.Imports = append(g.Imports, CleanImportStatement(s))
+			g.Imports = append(g.Imports, CleanImportStatement(line))
 		case strings.HasPrefix(line, "public <"), strings.HasPrefix(line, "<"):
 			err := ValidateJSGFRule(line)
 			if err != nil {
 				return NewGrammar(""), err
 			}
-
-			name, rule, err := ParseRule(lex, line)
+			name, rule, err := ParseRule(line, lex)
 			if err != nil {
 				return NewGrammar(""), err
 			}
-
 			rule.Tokens = ToTokens(rule.Exp, lex)
 			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
-			// rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[name] = rule
 		default:
 			continue
@@ -188,9 +117,7 @@ func ImportNameSpace(g Grammar, r map[string]string, lex *tokenizer.Tokenizer) G
 		rule := NewRule(Expression(v), false)
 		rule.Tokens = ToTokens(rule.Exp, lex)
 		rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
-		// rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 		_, ok := g.Rules[k]
-
 		if !ok {
 			g.Rules[k] = rule
 		}
@@ -211,21 +138,3 @@ func ValidateGrammarCompleteness(g Grammar) error {
 
 	return nil
 }
-
-// basepath := "./data/tests/dir2/dir1/dir0/test.jsgf"
-// 	// path := "./data/test.jsgf"
-// 	f, err := os.Open(basepath)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	scanner := bufio.NewScanner(f)
-// 	lexer := NewJSGFLexer()
-// 	grammar := NewGrammar()
-// 	grammar, err = grammar.ReadLines(scanner, lexer)
-// 	// if err != nil {
-// 	// 	log.Fatal(err)
-// 	// }
-// 	// grammar, err = grammar.Resolve(lexer)
-// 	// if err != nil {
-// 	// 	log.Fatal(err)
-// 	// }
