@@ -30,12 +30,12 @@ func NewGrammar(p string) Grammar {
 	return g
 }
 
-func (g Grammar) Peek() (string, []string, map[string][]string, error) {
-	var err error
-
-	var name string
-
-	var imports []string
+func PeekGrammar(g Grammar) (string, []string, map[string][]string, error) {
+	var (
+		err     error
+		name    string
+		imports []string
+	)
 
 	rules := make(map[string][]string)
 
@@ -84,12 +84,12 @@ func (g Grammar) Peek() (string, []string, map[string][]string, error) {
 	return name, imports, rules, nil
 }
 
-func (g Grammar) CompositionOrder() []string {
-	var rules []string
-
-	var rule string
-
-	var res []string
+func CompositionOrder(g Grammar) []string {
+	var (
+		rules []string
+		rule  string
+		res   []string
+	)
 
 	for k, v := range g.Rules {
 		if v.IsPublic {
@@ -99,27 +99,27 @@ func (g Grammar) CompositionOrder() []string {
 
 	for len(rules) > 0 {
 		rule, rules = rules[0], rules[1:]
-		rules = append(rules, g.Rules[rule].References...)
+		rules = append(rules, References(g.Rules[rule])...)
 		res = append(res, rule)
 	}
 
 	return res
 }
 
-func (g Grammar) Productions() []string {
+func AllProductions(g Grammar) []string {
 	var out []string
 
 	for _, v := range g.Rules {
 		if v.IsPublic {
-			out = append(out, v.Productions()...)
+			out = append(out, Productions(v)...)
 		}
 	}
 
 	return out
 }
 
-func (g Grammar) Resolve(lex *tokenizer.Tokenizer) (Grammar, error) {
-	ord := g.CompositionOrder()
+func ResolveRules(g Grammar, lex *tokenizer.Tokenizer) (Grammar, error) {
+	ord := CompositionOrder(g)
 	seen := make(map[string]struct{})
 
 	for i := len(ord) - 1; i >= 0; i-- {
@@ -130,12 +130,12 @@ func (g Grammar) Resolve(lex *tokenizer.Tokenizer) (Grammar, error) {
 		if !ok {
 			seen[rname] = struct{}{}
 
-			r2, err := r1.ResolveReferences(g.Rules, lex)
+			r2, err := ResolveReferences(r1, g.Rules, lex)
 			if err != nil {
 				return g, err
 			}
 
-			r2.productions = FilterTerminals(r2.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
+			// r2.productions = FilterTerminals(r2.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[rname] = r2
 		}
 	}
@@ -143,7 +143,7 @@ func (g Grammar) Resolve(lex *tokenizer.Tokenizer) (Grammar, error) {
 	return g, nil
 }
 
-func (g Grammar) ReadLines(s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar, error) {
+func ImportLines(g Grammar, s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar, error) {
 	var err error
 
 	for s.Scan() {
@@ -171,9 +171,9 @@ func (g Grammar) ReadLines(s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar,
 				return NewGrammar(""), err
 			}
 
-			rule.Tokens = rule.Exp.ToTokens(lex)
+			rule.Tokens = ToTokens(rule.Exp, lex)
 			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
-			rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
+			// rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[name] = rule
 		default:
 			continue
@@ -183,12 +183,12 @@ func (g Grammar) ReadLines(s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar,
 	return g, nil
 }
 
-func (g Grammar) ReadNameSpace(r map[string]string, lex *tokenizer.Tokenizer) Grammar {
+func ImportNameSpace(g Grammar, r map[string]string, lex *tokenizer.Tokenizer) Grammar {
 	for k, v := range r {
 		rule := NewRule(Expression(v), false)
-		rule.Tokens = rule.Exp.ToTokens(lex)
+		rule.Tokens = ToTokens(rule.Exp, lex)
 		rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
-		rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
+		// rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 		_, ok := g.Rules[k]
 
 		if !ok {
@@ -201,7 +201,7 @@ func (g Grammar) ReadNameSpace(r map[string]string, lex *tokenizer.Tokenizer) Gr
 
 func ValidateGrammarCompleteness(g Grammar) error {
 	for _, v := range g.Rules {
-		for _, ref := range v.References {
+		for _, ref := range References(v) {
 			_, ok := g.Rules[ref]
 			if !ok {
 				return errors.New("grammar references rule not present in namespace")

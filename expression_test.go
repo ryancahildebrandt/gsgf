@@ -127,9 +127,8 @@ func TestExpressionToTokens(t *testing.T) {
 			exp: []Expression{"<SOS>", "test expression 123 ", "(", "ab{1.1/1}", "|", "c{1.1/1}", ")", " ", "|", " ", "[", "de", "|", "f", "]", ";", "<EOS>"},
 		},
 	}
-
 	for i, test := range table {
-		res := test.e.ToTokens(lexer)
+		res := ToTokens(test.e, lexer)
 		if !slices.Equal(res, test.exp) {
 			t.Errorf("test %v: %v.ToTokens(jsgflexer)\nGOT %v\nEXP %v", i, test.e, res, test.exp)
 		}
@@ -138,7 +137,6 @@ func TestExpressionToTokens(t *testing.T) {
 
 func TestExpressionParseWeight(t *testing.T) {
 	dummyError := errors.New("")
-
 	table := []struct {
 		e   Expression
 		ee  Expression
@@ -152,7 +150,6 @@ func TestExpressionParseWeight(t *testing.T) {
 		{e: Expression("abc"), ee: Expression("abc"), ef: 0.0, err: dummyError},
 		{e: Expression("abc//"), ee: Expression("abc//"), ef: 0.0, err: dummyError},
 		{e: Expression("/aaa/"), ee: Expression("/aaa/"), ef: 0.0, err: dummyError},
-
 		{e: Expression("/1.0/"), ee: Expression(""), ef: 1.0, err: nil},
 		{e: Expression("abc/1.0/"), ee: Expression("abc"), ef: 1.0, err: nil},
 		{e: Expression("abc/0.1/"), ee: Expression("abc"), ef: 0.1, err: nil},
@@ -165,15 +162,13 @@ func TestExpressionParseWeight(t *testing.T) {
 		{e: Expression("abc/0/"), ee: Expression("abc"), ef: 0.0, err: nil},
 	}
 	for i, test := range table {
-		e, f, err := test.e.ParseWeight()
+		e, f, err := ParseWeight(test.e)
 		if test.ee != e {
 			t.Errorf("test %v: ParseWeight(%v)\nGOT %v\nEXP %v", i, test.e, e, test.ee)
 		}
-
 		if test.ef != f {
 			t.Errorf("test %v: ParseWeight(%v)\nGOT %v\nEXP %v", i, test.e, f, test.ef)
 		}
-
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: ParseWeight(%v)\nGOT %v\nEXP %v", i, test.e, err, test.err)
 		}

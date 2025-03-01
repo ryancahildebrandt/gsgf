@@ -35,7 +35,6 @@ const (
 
 func NewJSGFLexer() *tokenizer.Tokenizer {
 	lexer := tokenizer.New()
-
 	lexer.SetWhiteSpaces([]byte{})
 	lexer.DefineStringToken(DoubleQuote, `"`, `"`).SetEscapeSymbol(BackSlash).AddSpecialStrings(tokenizer.DefaultSpecialString)
 	// lexer.DefineStringToken(SingleQuote, `'`, `'`).SetSpecialSymbols(tokenizer.DefaultStringEscapes).SetEscapeSymbol(BackSlash)
@@ -68,11 +67,9 @@ func captureString(s *tokenizer.Stream, end string, includeEnd bool) (string, er
 	if !strings.Contains(r, end) {
 		return "", errors.New("close token not found in remaining string")
 	}
-
 	if r == "" {
 		return "", errors.New("cannot capture from empty string")
 	}
-
 	for s.IsValid() {
 		if s.CurrentToken().ValueUnescapedString() == end {
 			if includeEnd {
@@ -81,7 +78,6 @@ func captureString(s *tokenizer.Stream, end string, includeEnd bool) (string, er
 
 			break
 		}
-
 		b.WriteString(s.CurrentToken().ValueUnescapedString())
 		s.GoNext()
 	}

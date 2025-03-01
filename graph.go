@@ -8,12 +8,13 @@ package main
 import (
 	"errors"
 	"slices"
+	"strings"
 
 	"gonum.org/v1/gonum/stat/sampleuv"
 )
 
 type Graph struct {
-	Nodes    []Expression
+	Tokens   []Expression
 	Edges    EdgeList
 	Children map[int][]int
 	Weights  map[int]map[int]float64
@@ -28,7 +29,7 @@ func NewGraph(e EdgeList, n []Expression) Graph {
 		g = g.AddEdge(edge)
 	}
 
-	g.Nodes = n
+	g.Tokens = n
 
 	return g
 }
@@ -69,12 +70,45 @@ func (g Graph) AddEdge(e Edge) Graph {
 	return g
 }
 
-func (g Graph) EndPoints() (i, f int) {
+func (g Graph) DropNode(i int) Graph {
+	var (
+		from  []int
+		to    []int
+		edg   EdgeList
+		start int
+		end   int
+	)
+
+	start, end = EndPoints(g)
+
+	for _, edge := range g.Edges {
+		switch i {
+		case start, end:
+			edg = append(edg, edge)
+		case edge.From:
+			to = append(to, edge.To)
+		case edge.To:
+			from = append(from, edge.From)
+		default:
+			edg = append(edg, edge)
+		}
+	}
+
+	for _, f := range from {
+		for _, t := range to {
+			edg = append(edg, Edge{From: f, To: t, Weight: 1.0})
+		}
+	}
+
+	return NewGraph(Unique(edg), g.Tokens)
+}
+
+func EndPoints(g Graph) (i, f int) {
 	e1 := make(map[int]struct{})
 
 	e2 := make(map[int]struct{})
 
-	edges := g.Edges.Sort()
+	edges := Sort(g.Edges)
 	for _, edge := range edges {
 		e1[edge.From] = struct{}{}
 		e2[edge.To] = struct{}{}
@@ -95,23 +129,19 @@ func (g Graph) EndPoints() (i, f int) {
 	return i, f
 }
 
-type Path []int
+type Path = []int
 
-// type Path = []int // will need to change methods to functions
-func (g Graph) AllPaths() (res []Path) {
-	var path Path
+func AllPaths(g Graph) (res []Path) {
+	var (
+		path  Path
+		paths []Path
+		p     Path
+		node  int
+		f     int
+		t     int
+	)
 
-	var paths []Path
-
-	var p Path
-
-	var node int
-
-	var f int
-
-	var t int
-
-	f, t = g.EndPoints()
+	f, t = EndPoints(g)
 
 	paths = []Path{{f}}
 	for len(paths) > 0 {
@@ -145,9 +175,9 @@ func ComposeGraphs(g Graph, h Graph, i int) (Graph, error) {
 		return Graph{}, errors.New("cannot insert EdgeList a at index greater than EdgeList g.Max()")
 	}
 
-	h.Edges = h.Edges.Increment(g.Edges.Max() + 1)
-	hFrom, hTo := h.EndPoints()
-	exp := append(g.Nodes, h.Nodes...)
+	h.Edges = Increment(h.Edges, g.Edges.Max()+1)
+	hFrom, hTo := EndPoints(h)
+	exp := append(g.Tokens, h.Tokens...)
 	edg := h.Edges
 
 	for _, edge := range g.Edges {
@@ -183,12 +213,13 @@ func ChooseNext(c []int, w []float64) (int, error) {
 	return c[i], nil
 }
 
-func (g Graph) RandomPath() (Path, error) {
-	var res Path
+func RandomPath(g Graph) (Path, error) {
+	var (
+		res    Path
+		choice int
+	)
 
-	var choice int
-
-	f, t := g.EndPoints()
+	f, t := EndPoints(g)
 	res = append(res, f)
 
 	p := f
@@ -222,14 +253,14 @@ func (g Graph) RandomPath() (Path, error) {
 	return res, nil
 }
 
-func (g Graph) Minimize() Graph {
+func Minimize(g Graph) Graph {
 	var g1 Graph
 
 	f := []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}
 	g1 = g
 
-	for i, t := range g1.Nodes {
-		if slices.Contains(f, t.str()) {
+	for i, t := range g1.Tokens {
+		if slices.Contains(f, t) {
 			g1 = g1.DropNode(i)
 		}
 	}
@@ -237,37 +268,67 @@ func (g Graph) Minimize() Graph {
 	return g1
 }
 
-func (g Graph) DropNode(i int) Graph {
-	var from []int
+func WeightEdges(r Rule) (Rule, error) {
+	for i, t := range r.Tokens {
+		if IsWeighted(t) {
+			e, w, err := ParseWeight(t)
+			if err != nil {
+				return r, err
+			}
 
-	var to []int
+			r.Tokens[i] = e
+			r.Graph.Tokens[i] = e
 
-	var edg EdgeList
-
-	var start int
-
-	var end int
-
-	start, end = g.EndPoints()
-
-	for _, edge := range g.Edges {
-		switch i {
-		case start, end:
-			edg = append(edg, edge)
-		case edge.From:
-			to = append(to, edge.To)
-		case edge.To:
-			from = append(from, edge.From)
-		default:
-			edg = append(edg, edge)
+			for j, edge := range r.Graph.Edges {
+				if edge.To == i {
+					r.Graph.Edges[j].Weight = w
+				}
+			}
 		}
 	}
 
-	for _, f := range from {
-		for _, t := range to {
-			edg = append(edg, Edge{From: f, To: t, Weight: 1.0})
+	return r, nil
+}
+
+func Productions(r Rule) (out []string) { // to graph
+	for _, path := range AllPaths(r.Graph) {
+		prod := singleProduction(path, FilterTerminals(Tokens(r), []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"}))
+		if prod != "" {
+			out = append(out, prod)
 		}
 	}
 
-	return NewGraph(edg.Unique(), g.Nodes)
+	return out
+}
+
+func singleProduction(p Path, a []Expression) string { // to graph
+	if len(p) == 0 || len(a) == 0 {
+		return ""
+	}
+
+	var b strings.Builder
+	for _, i := range p {
+		b.WriteString(a[i])
+	}
+
+	return b.String()
+}
+
+func FilterTerminals(a []Expression, f []string) []Expression {
+	filter := make(map[string]struct{})
+	for _, s := range f {
+		filter[s] = struct{}{}
+	}
+
+	a1 := make([]Expression, len(a))
+	copy(a1, a)
+
+	for i, e := range a1 {
+		_, ok := filter[e]
+		if ok {
+			a1[i] = ""
+		}
+	}
+
+	return a1
 }

@@ -24,7 +24,7 @@ func (e Edge) IsEmpty() bool {
 
 type EdgeList []Edge
 
-func (e EdgeList) Sort() EdgeList {
+func Sort(e EdgeList) EdgeList {
 	sort.Slice(e, func(i, j int) bool {
 		switch {
 		case e[i].From < e[j].From:
@@ -39,10 +39,9 @@ func (e EdgeList) Sort() EdgeList {
 	return e
 }
 
-func (e EdgeList) Increment(n int) EdgeList {
+func Increment(e EdgeList, n int) EdgeList {
 	var e1 EdgeList
 	e1 = append(e1, e...)
-
 	for i := range e1 {
 		e1[i].From = e1[i].From + n
 		e1[i].To = e1[i].To + n
@@ -57,30 +56,24 @@ func (e EdgeList) IsEmpty() bool {
 
 func (e EdgeList) Max() int {
 	var arr []int
-
 	if e.IsEmpty() {
 		return 0
 	}
-
 	for _, i := range e {
 		arr = append(arr, i.From)
 		arr = append(arr, i.To)
 	}
-
 	slices.Sort(arr)
 
 	return arr[len(arr)-1]
 }
 
-func (e EdgeList) Unique() EdgeList {
+func Unique(e EdgeList) EdgeList {
 	var out EdgeList
-
 	seen := make(map[string]int)
-
 	for i, edg := range e {
 		seen[fmt.Sprint(edg)] = i
 	}
-
 	for _, v := range seen {
 		out = append(out, e[v])
 	}
@@ -97,7 +90,6 @@ func BuildEdgeList(arr []Expression) (edges EdgeList) {
 	)
 
 	groupMap := make(map[int][]int)
-
 	for i, token := range arr {
 		switch token {
 		case "<EOS>":
@@ -108,48 +100,39 @@ func BuildEdgeList(arr []Expression) (edges EdgeList) {
 			groupMap[i] = []int{}
 		case ";":
 			edges = append(edges, Edge{From: f, To: i, Weight: 1.0})
-
 			for _, values := range groupMap {
 				for _, v := range values {
 					edges = append(edges, Edge{From: v, To: i, Weight: 1.0})
 				}
 			}
-
 			f = i
 		case "(", "[":
 			groupStack = groupStack.Push(i)
 			groupMap[i] = []int{}
-
 			edges = append(edges, Edge{From: f, To: i, Weight: 1.0})
 			f = i
 		case ")":
-			g, err = groupStack.Peek()
+			g, err = groupStack.Top()
 			if err != nil {
 				log.Fatal(err)
 			}
-
 			for _, v := range groupMap[g] {
 				edges = append(edges, Edge{From: v, To: i, Weight: 1.0})
 			}
-
 			groupStack = groupStack.Drop(g)
 			delete(groupMap, g)
-
 			edges = append(edges, Edge{From: f, To: i, Weight: 1.0})
 			f = i
 		case "]":
-			g, err := groupStack.Peek()
+			g, err := groupStack.Top()
 			if err != nil {
 				log.Fatal(err)
 			}
-
 			for _, v := range groupMap[g] {
 				edges = append(edges, Edge{From: v, To: i, Weight: 1.0})
 			}
-
 			groupStack = groupStack.Drop(g)
 			delete(groupMap, g)
-
 			edges = append(edges, Edge{From: f, To: i, Weight: 1.0})
 			edges = append(edges, Edge{From: g, To: i, Weight: 1.0})
 			f = i
@@ -158,7 +141,6 @@ func BuildEdgeList(arr []Expression) (edges EdgeList) {
 			if err != nil {
 				log.Fatal(err)
 			}
-
 			groupStack = groupStack.Push(g)
 			groupMap[g] = append(groupMap[g], f)
 			f = g
@@ -168,5 +150,5 @@ func BuildEdgeList(arr []Expression) (edges EdgeList) {
 		}
 	}
 
-	return edges.Unique()
+	return Unique(edges)
 }

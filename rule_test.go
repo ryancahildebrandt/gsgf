@@ -17,19 +17,17 @@ func TestRuleResolveReferences(t *testing.T) {
 	lexer := NewJSGFLexer()
 	m := map[string]Rule{
 		"<a>": {
-			Exp:        "123;",
-			IsPublic:   false,
-			References: []string{},
+			Exp:      "123;",
+			IsPublic: false,
+
 			Graph: NewGraph(EdgeList{
 				{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 			}, []Expression{"<SOS>", "123", ";", "<EOS>"}),
-			Tokens:      []Expression{"<SOS>", "123", ";", "<EOS>"},
-			productions: []Expression{},
 		},
 		"<b>": {
-			Exp:        "1|2|3;",
-			IsPublic:   false,
-			References: []string{},
+			Exp:      "1|2|3;",
+			IsPublic: false,
+
 			Graph: NewGraph(EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
 				{From: 0, To: 3, Weight: 1.0},
@@ -39,13 +37,11 @@ func TestRuleResolveReferences(t *testing.T) {
 				{From: 5, To: 6, Weight: 1.0},
 				{From: 6, To: 7, Weight: 1.0},
 			}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}),
-			Tokens:      []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"},
-			productions: []Expression{},
 		},
 		"<c>": {
-			Exp:        "1[2]3;",
-			IsPublic:   false,
-			References: []string{},
+			Exp:      "1[2]3;",
+			IsPublic: false,
+
 			Graph: NewGraph(EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
 				{From: 1, To: 2, Weight: 1.0},
@@ -56,13 +52,11 @@ func TestRuleResolveReferences(t *testing.T) {
 				{From: 5, To: 6, Weight: 1.0},
 				{From: 6, To: 7, Weight: 1.0},
 			}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}),
-			Tokens:      []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"},
-			productions: []Expression{},
 		},
 		"<d>": {
-			Exp:        "1(2)3;",
-			IsPublic:   false,
-			References: []string{},
+			Exp:      "1(2)3;",
+			IsPublic: false,
+
 			Graph: NewGraph(EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
 				{From: 1, To: 2, Weight: 1.0},
@@ -72,13 +66,11 @@ func TestRuleResolveReferences(t *testing.T) {
 				{From: 5, To: 6, Weight: 1.0},
 				{From: 6, To: 7, Weight: 1.0},
 			}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}),
-			Tokens:      []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"},
-			productions: []Expression{},
 		},
 		"<e>": {
-			Exp:        "1(2[3]);",
-			IsPublic:   false,
-			References: []string{},
+			Exp:      "1(2[3]);",
+			IsPublic: false,
+
 			Graph: NewGraph(EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
 				{From: 1, To: 2, Weight: 1.0},
@@ -91,8 +83,6 @@ func TestRuleResolveReferences(t *testing.T) {
 				{From: 7, To: 8, Weight: 1.0},
 				{From: 8, To: 9, Weight: 1.0},
 			}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
-			Tokens:      []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"},
-			productions: []Expression{},
 		},
 	}
 	table := []struct {
@@ -102,112 +92,97 @@ func TestRuleResolveReferences(t *testing.T) {
 	}{
 		{
 			r: Rule{
-				Exp:         "",
-				IsPublic:    false,
-				References:  []string{},
-				Graph:       NewGraph(EdgeList{}, []Expression{}),
-				Tokens:      []Expression{},
-				productions: []Expression{},
+				Exp:      "",
+				IsPublic: false,
+
+				Graph: NewGraph(EdgeList{}, []Expression{}),
 			},
 			exp: Rule{
-				Exp:         "",
-				IsPublic:    false,
-				References:  []string{},
-				Graph:       NewGraph(EdgeList{}, []Expression{}),
-				Tokens:      []Expression{},
-				productions: []Expression{},
+				Exp:      "",
+				IsPublic: false,
+
+				Graph: NewGraph(EdgeList{}, []Expression{}),
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "", IsPublic: true, References: []string{}, Graph: NewGraph(EdgeList{}, []Expression{}),
-				Tokens: []Expression{}, productions: []Expression{},
+				Exp: "", IsPublic: true, Graph: NewGraph(EdgeList{}, []Expression{}),
 			},
 			exp: Rule{
-				Exp: "", IsPublic: true, References: []string{}, Graph: NewGraph(EdgeList{}, []Expression{}),
-				Tokens: []Expression{}, productions: []Expression{},
+				Exp: "", IsPublic: true, Graph: NewGraph(EdgeList{}, []Expression{}),
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "<f>;", IsPublic: false, References: []string{"<f>"},
+				Exp: "<f>;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "<f>", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "<f>", ";", "<EOS>"}, productions: []Expression{},
 			},
 			exp: Rule{
-				Exp: "<f>;", IsPublic: false, References: []string{"<f>"},
+				Exp: "<f>;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "<f>", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "<f>", ";", "<EOS>"}, productions: []Expression{},
 			},
 			err: dummyError,
 		},
 		{
 			r: Rule{
-				Exp: "<f>;", IsPublic: true, References: []string{"<f>"},
+				Exp: "<f>;", IsPublic: true,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "<f>", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "<f>", ";", "<EOS>"}, productions: []Expression{},
 			},
 			exp: Rule{
-				Exp: "<f>;", IsPublic: true, References: []string{"<f>"},
+				Exp: "<f>;", IsPublic: true,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "<f>", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "<f>", ";", "<EOS>"}, productions: []Expression{},
 			},
 			err: dummyError,
 		},
 		{
 			r: Rule{
-				Exp: "abc;", IsPublic: false, References: []string{""},
+				Exp: "abc;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "abc", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "abc", ";", "<EOS>"}, productions: []Expression{},
 			},
 			exp: Rule{
-				Exp: "abc;", IsPublic: false, References: []string{""},
+				Exp: "abc;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "abc", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "abc", ";", "<EOS>"}, productions: []Expression{},
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "abc;", IsPublic: true, References: []string{""},
+				Exp: "abc;", IsPublic: true,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "abc", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "abc", ";", "<EOS>"}, productions: []Expression{},
 			},
 			exp: Rule{
-				Exp: "abc;", IsPublic: true, References: []string{""},
+				Exp: "abc;", IsPublic: true,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "abc", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "abc", ";", "<EOS>"}, productions: []Expression{},
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "<a>bc;", IsPublic: false, References: []string{"<a>"},
+				Exp: "<a>bc;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}, productions: []Expression{},
 			},
 			exp: Rule{
-				Exp: "<a>bc;", IsPublic: false, References: []string{"<a>"},
+				Exp: "<a>bc;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 3, To: 4, Weight: 1.0},
@@ -215,21 +190,19 @@ func TestRuleResolveReferences(t *testing.T) {
 					{From: 5, To: 2, Weight: 1.0},
 				}, []Expression{
 					"<SOS>", "<a>", "bc", ";", "<EOS>", "<SOS>", "123", ";", "<EOS>",
-				}), Tokens: []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>", "<SOS>", "123", ";", "<EOS>"},
-				productions: []Expression{},
+				}),
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "<a>bc;", IsPublic: true, References: []string{"<a>"},
+				Exp: "<a>bc;", IsPublic: true,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}, productions: []Expression{},
 			},
 			exp: Rule{
-				Exp: "<a>bc;", IsPublic: true, References: []string{"<a>"},
+				Exp: "<a>bc;", IsPublic: true,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 3, To: 4, Weight: 1.0},
@@ -237,14 +210,13 @@ func TestRuleResolveReferences(t *testing.T) {
 					{From: 5, To: 2, Weight: 1.0},
 				}, []Expression{
 					"<SOS>", "<a>", "bc", ";", "<EOS>", "<SOS>", "123", ";", "<EOS>",
-				}), Tokens: []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>", "<SOS>", "123", ";", "<EOS>"},
-				productions: []Expression{},
+				}),
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "a<b>c;", IsPublic: false, References: []string{"<b>"},
+				Exp: "a<b>c;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
@@ -252,10 +224,10 @@ func TestRuleResolveReferences(t *testing.T) {
 					{From: 3, To: 4, Weight: 1.0},
 				}, []Expression{
 					"<SOS>", "a", "<b>", "c", ";", "<EOS>",
-				}), Tokens: []Expression{"<SOS>", "a", "<b>", "c", ";", "<EOS>"}, productions: []Expression{},
+				}),
 			},
 			exp: Rule{
-				Exp: "a<b>c;", IsPublic: false, References: []string{"<b>"}, Graph: NewGraph(EdgeList{
+				Exp: "a<b>c;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 5, Weight: 1.0},
 					{From: 10, To: 11, Weight: 1.0},
@@ -270,16 +242,12 @@ func TestRuleResolveReferences(t *testing.T) {
 				}, []Expression{
 					"<SOS>", "a", "<b>", "c", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
 				}),
-				Tokens: []Expression{
-					"<SOS>", "a", "<b>", "c", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
-				},
-				productions: []Expression{},
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "a<b>c;", IsPublic: true, References: []string{"<b>"},
+				Exp: "a<b>c;", IsPublic: true,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
@@ -287,10 +255,10 @@ func TestRuleResolveReferences(t *testing.T) {
 					{From: 3, To: 4, Weight: 1.0},
 				}, []Expression{
 					"<SOS>", "a", "<b>", "c", ";", "<EOS>",
-				}), Tokens: []Expression{"<SOS>", "a", "<b>", "c", ";", "<EOS>"}, productions: []Expression{},
+				}),
 			},
 			exp: Rule{
-				Exp: "a<b>c;", IsPublic: true, References: []string{"<b>"}, Graph: NewGraph(EdgeList{
+				Exp: "a<b>c;", IsPublic: true, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 5, Weight: 1.0},
 					{From: 10, To: 11, Weight: 1.0},
@@ -305,16 +273,12 @@ func TestRuleResolveReferences(t *testing.T) {
 				}, []Expression{
 					"<SOS>", "a", "<b>", "c", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
 				}),
-				Tokens: []Expression{
-					"<SOS>", "a", "<b>", "c", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
-				},
-				productions: []Expression{},
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "a<b><c><d><e>;", IsPublic: false, References: []string{"<b>", "<c>", "<d>", "<e>"},
+				Exp: "a<b><c><d><e>;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
@@ -324,11 +288,9 @@ func TestRuleResolveReferences(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"},
-				productions: []Expression{},
 			},
 			exp: Rule{
-				Exp: "a<b><c><d><e>;", IsPublic: false, References: []string{"<b>", "<c>", "<d>", "<e>"},
+				Exp: "a<b><c><d><e>;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 8, Weight: 1.0},
@@ -373,17 +335,13 @@ func TestRuleResolveReferences(t *testing.T) {
 					"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";",
 					"<EOS>", "<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>", "<SOS>", "1", "(", "2", ")", "3", ";",
 					"<EOS>", "<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>",
-				}), Tokens: []Expression{
-					"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";",
-					"<EOS>", "<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>", "<SOS>", "1", "(", "2", ")", "3", ";",
-					"<EOS>", "<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>",
-				}, productions: []Expression{},
+				}),
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "a<b><c><d><e>;", IsPublic: true, References: []string{"<b>", "<c>", "<d>", "<e>"},
+				Exp: "a<b><c><d><e>;", IsPublic: true,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
@@ -393,11 +351,9 @@ func TestRuleResolveReferences(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"},
-				productions: []Expression{},
 			},
 			exp: Rule{
-				Exp: "a<b><c><d><e>;", IsPublic: true, References: []string{"<b>", "<c>", "<d>", "<e>"},
+				Exp: "a<b><c><d><e>;", IsPublic: true,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 8, Weight: 1.0},
@@ -442,17 +398,13 @@ func TestRuleResolveReferences(t *testing.T) {
 					"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";",
 					"<EOS>", "<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>", "<SOS>", "1", "(", "2", ")", "3", ";",
 					"<EOS>", "<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>",
-				}), Tokens: []Expression{
-					"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";",
-					"<EOS>", "<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>", "<SOS>", "1", "(", "2", ")", "3", ";",
-					"<EOS>", "<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>",
-				}, productions: []Expression{},
+				}),
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "a<b><b><b>;", IsPublic: false, References: []string{"<b>"}, Graph: NewGraph(EdgeList{
+				Exp: "a<b><b><b>;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -460,10 +412,9 @@ func TestRuleResolveReferences(t *testing.T) {
 					{From: 4, To: 5, Weight: 1.0},
 					{From: 5, To: 6, Weight: 1.0},
 				}, []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}, productions: []Expression{},
 			},
 			exp: Rule{
-				Exp: "a<b><b><b>;", IsPublic: false, References: []string{"<b>"}, Graph: NewGraph(EdgeList{
+				Exp: "a<b><b><b>;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 7, Weight: 1.0},
 					{From: 7, To: 8, Weight: 1.0},
@@ -494,16 +445,13 @@ func TestRuleResolveReferences(t *testing.T) {
 				}, []Expression{
 					"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
 					"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
-				}), Tokens: []Expression{
-					"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
-					"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
-				}, productions: []Expression{},
+				}),
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "a<b><b><b>;", IsPublic: true, References: []string{"<b>"}, Graph: NewGraph(EdgeList{
+				Exp: "a<b><b><b>;", IsPublic: true, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -511,10 +459,9 @@ func TestRuleResolveReferences(t *testing.T) {
 					{From: 4, To: 5, Weight: 1.0},
 					{From: 5, To: 6, Weight: 1.0},
 				}, []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}, productions: []Expression{},
 			},
 			exp: Rule{
-				Exp: "a<b><b><b>;", IsPublic: true, References: []string{"<b>"}, Graph: NewGraph(EdgeList{
+				Exp: "a<b><b><b>;", IsPublic: true, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 7, Weight: 1.0},
 					{From: 7, To: 8, Weight: 1.0},
@@ -545,37 +492,28 @@ func TestRuleResolveReferences(t *testing.T) {
 				}, []Expression{
 					"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
 					"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
-				}), Tokens: []Expression{
-					"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
-					"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>", "<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>",
-				}, productions: []Expression{},
+				}),
 			},
 			err: nil,
 		},
 	}
-
 	for i, test := range table {
-		res, err := test.r.ResolveReferences(m, lexer)
+		res, err := ResolveReferences(test.r, m, lexer)
 		if test.exp.IsPublic != res.IsPublic {
 			t.Errorf("test %v: %v.ResolveReferences().Is_public\nGOT %v\nEXP %v", i, test.r, res.IsPublic, test.exp.IsPublic)
 		}
-
-		if !slices.Equal(test.exp.References, res.References) {
-			t.Errorf("test %v: %v.ResolveReferences().References\nGOT %v\nEXP %v", i, test.r, res.References, test.exp.References)
+		if !slices.Equal(References(res), References(test.exp)) {
+			t.Errorf("test %v: %v.ResolveReferences().References\nGOT %v\nEXP %v", i, test.r, References(res), References(test.exp))
 		}
-
-		if !slices.Equal(test.exp.Graph.Edges.Sort(), res.Graph.Edges.Sort()) {
-			t.Errorf("test %v: %v.ResolveReferences().edges\nGOT %v\nEXP %v", i, test.r, res.Graph.Edges.Sort(), test.exp.Graph.Edges.Sort())
+		if !slices.Equal(Sort(test.exp.Graph.Edges), Sort(res.Graph.Edges)) {
+			t.Errorf("test %v: %v.ResolveReferences().edges\nGOT %v\nEXP %v", i, test.r, Sort(res.Graph.Edges), Sort(test.exp.Graph.Edges))
 		}
-
-		if !slices.Equal(test.exp.Graph.Nodes, res.Graph.Nodes) {
-			t.Errorf("test %v: %v.ResolveReferences().nodes\nGOT %v\nEXP %v", i, test.r, res.Graph.Nodes, test.exp.Graph.Nodes)
+		if !slices.Equal(test.exp.Graph.Tokens, res.Graph.Tokens) {
+			t.Errorf("test %v: %v.ResolveReferences().nodes\nGOT %v\nEXP %v", i, test.r, res.Graph.Tokens, test.exp.Graph.Tokens)
 		}
-
 		if !slices.Equal(test.exp.Tokens, res.Tokens) {
 			t.Errorf("test %v: %v.ResolveReferences().Tokens\nGOT %v\nEXP %v", i, test.r, res.Tokens, test.exp.Tokens)
 		}
-
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: %v.ResolveReferences().err\nGOT %v\nEXP %v", i, test.r, err, test.err)
 		}
@@ -589,34 +527,31 @@ func TestRuleProductions(t *testing.T) {
 	}{
 		{
 			r: Rule{
-				Exp: "", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{}, []Expression{}),
-				Tokens: []Expression{}, productions: []Expression{},
+				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
 			},
 			exp: []string{},
 		},
 		{
 			r: Rule{
-				Exp: ";", IsPublic: false, References: []string{},
+				Exp: ";", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", ";", "<EOS>"}, productions: []Expression{"", "", ""},
 			},
 			exp: []string{},
 		},
 		{
 			r: Rule{
-				Exp: "123;", IsPublic: false, References: []string{},
+				Exp: "123;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
 				}, []Expression{"<SOS>", "123", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "123", ";", "<EOS>"}, productions: []Expression{"", "123", "", ""},
 			},
 			exp: []string{"123"},
 		},
 		{
 			r: Rule{
-				Exp: "1|2|3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1|2|3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 0, To: 5, Weight: 1.0},
@@ -625,14 +560,12 @@ func TestRuleProductions(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", ""},
 			},
 			exp: []string{"1", "2", "3"},
 		},
 		{
 			r: Rule{
-				Exp: "1{}|2//|3/0.1/;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1{}|2//|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 0, To: 5, Weight: 1.0},
@@ -641,14 +574,12 @@ func TestRuleProductions(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"},
-				productions: []Expression{"", "1{}", "", "2//", "", "3/0.1/", "", ""},
 			},
 			exp: []string{"1{}", "2//", "3/0.1/"},
 		},
 		{
 			r: Rule{
-				Exp: "1[2]3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -658,14 +589,12 @@ func TestRuleProductions(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", ""},
 			},
 			exp: []string{"123", "13"},
 		},
 		{
 			r: Rule{
-				Exp: "1(2)3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1(2)3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -674,14 +603,12 @@ func TestRuleProductions(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", ""},
 			},
 			exp: []string{"123"},
 		},
 		{
 			r: Rule{
-				Exp: "1(2[3]);", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -693,17 +620,14 @@ func TestRuleProductions(t *testing.T) {
 					{From: 7, To: 8, Weight: 1.0},
 					{From: 8, To: 9, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", "", "", ""},
 			},
 			exp: []string{"12", "123"},
 		},
 	}
 	for i, test := range table {
-		res := test.r.Productions()
+		res := Productions(test.r)
 		sort.Strings(res)
 		sort.Strings(test.exp)
-
 		if !slices.Equal(res, test.exp) {
 			t.Errorf("test %v: %v.Productions()\nGOT %v\nEXP %v", i, test.r, res, test.exp)
 		}
@@ -711,8 +635,7 @@ func TestRuleProductions(t *testing.T) {
 }
 
 func TestRuleWeightEdges(t *testing.T) {
-	dummyError := errors.New("")
-
+	// dummyError := errors.New("")
 	table := []struct {
 		r   Rule
 		exp Rule
@@ -720,85 +643,75 @@ func TestRuleWeightEdges(t *testing.T) {
 	}{
 		{
 			r: Rule{
-				Exp: "/.//", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{}, []Expression{}),
-				Tokens: []Expression{"/.//"}, productions: []Expression{},
+				Exp: "/.//", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
 			},
 			exp: Rule{
-				Exp: "", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{}, []Expression{}),
-				Tokens: []Expression{"/.//"}, productions: []Expression{},
-			},
-			err: dummyError,
-		},
-		{
-			r: Rule{
-				Exp: "", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{}, []Expression{}),
-				Tokens: []Expression{}, productions: []Expression{},
-			},
-			exp: Rule{
-				Exp: "", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{}, []Expression{}),
-				Tokens: []Expression{}, productions: []Expression{},
+				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "/.99/;", IsPublic: false, References: []string{},
+				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+			},
+			exp: Rule{
+				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+			},
+			err: nil,
+		},
+		{
+			r: Rule{
+				Exp: "/.99/;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "/.99/", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "/.99/", ";", "<EOS>"}, productions: []Expression{"", "", ""},
 			},
 			exp: Rule{
-				Exp: "/.99/;", IsPublic: false, References: []string{},
+				Exp: "/.99/;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0},
 				}, []Expression{"<SOS>", "", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "", ";", "<EOS>"}, productions: []Expression{"", "", ""},
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "123/.99/;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "123/.99/;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
 				}, []Expression{
 					"<SOS>", "123/.99/", ";", "<EOS>",
-				}), Tokens: []Expression{"<SOS>", "123/.99/", ";", "<EOS>"},
-				productions: []Expression{"", "123", "", ""},
+				}),
 			},
 			exp: Rule{
-				Exp: "123/.99/;", IsPublic: false, References: []string{},
+				Exp: "123/.99/;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
 				}, []Expression{"<SOS>", "123", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "123", ";", "<EOS>"}, productions: []Expression{"", "123", "", ""},
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "<123>/.99/;", IsPublic: false, References: []string{},
+				Exp: "<123>/.99/;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
 				}, []Expression{
 					"<SOS>", "<123>/.99/", ";", "<EOS>",
-				}), Tokens: []Expression{"<SOS>", "<123>/.99/", ";", "<EOS>"},
-				productions: []Expression{"", "<123>", "", ""},
+				}),
 			},
 			exp: Rule{
-				Exp: "<123>/.99/;", IsPublic: false, References: []string{},
+				Exp: "<123>/.99/;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
 				}, []Expression{
 					"<SOS>", "<123>", ";", "<EOS>",
-				}), Tokens: []Expression{"<SOS>", "<123>", ";", "<EOS>"},
-				productions: []Expression{"", "<123>", "", ""},
+				}),
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "1|2|3/0.1/;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1|2|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 0, To: 5, Weight: 1.0},
@@ -807,11 +720,9 @@ func TestRuleWeightEdges(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "|", "2", "|", "3/0.1/", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "|", "2", "|", "3/0.1/", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", ""},
 			},
 			exp: Rule{
-				Exp: "1|2|3/0.1/;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1|2|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 0, To: 5, Weight: 0.1},
@@ -820,14 +731,12 @@ func TestRuleWeightEdges(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", ""},
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "1{}|2//|3/0.1/;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1{}|2//|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 0, To: 5, Weight: 1.0},
@@ -836,11 +745,9 @@ func TestRuleWeightEdges(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"},
-				productions: []Expression{"", "1{}", "", "2//", "", "3/0.1/", "", ""},
 			},
 			exp: Rule{
-				Exp: "1{}|2//|3/0.1/;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1{}|2//|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 0, To: 5, Weight: 0.1},
@@ -849,14 +756,12 @@ func TestRuleWeightEdges(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1{}", "|", "2//", "|", "3", ";", "<EOS>"},
-				productions: []Expression{"", "1{}", "", "2//", "", "3", "", ""},
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "1/0.1/[2]3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1/0.1/[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -866,11 +771,9 @@ func TestRuleWeightEdges(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1/1.01/", "[", "2", "]", "3", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1/1.01/", "[", "2", "]", "3", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", ""},
 			},
 			exp: Rule{
-				Exp: "1/0.1/[2]3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1/0.1/[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.01},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -880,14 +783,12 @@ func TestRuleWeightEdges(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", ""},
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "1(2/1.01/)3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1(2/1.01/)3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -896,11 +797,9 @@ func TestRuleWeightEdges(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "(", "2/1.01/", ")", "3", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "(", "2/1.01/", ")", "3", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", ""},
 			},
 			exp: Rule{
-				Exp: "1(2/1.01/)3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1(2/1.01/)3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.01},
@@ -909,14 +808,12 @@ func TestRuleWeightEdges(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", ""},
 			},
 			err: nil,
 		},
 		{
 			r: Rule{
-				Exp: "1/1.01/(2[3]);", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1/1.01/(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -928,11 +825,9 @@ func TestRuleWeightEdges(t *testing.T) {
 					{From: 7, To: 8, Weight: 1.0},
 					{From: 8, To: 9, Weight: 1.0},
 				}, []Expression{"<SOS>", "1/1.01/", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1/1.01/", "(", "2", "[", "3", "]", ")", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", "", "", ""},
 			},
 			exp: Rule{
-				Exp: "1/1.01/(2[3]);", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1/1.01/(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.01},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -944,34 +839,27 @@ func TestRuleWeightEdges(t *testing.T) {
 					{From: 7, To: 8, Weight: 1.0},
 					{From: 8, To: 9, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"},
-				productions: []Expression{"", "1", "", "2", "", "3", "", "", "", ""},
 			},
 			err: nil,
 		},
 	}
 	for i, test := range table {
-		res, err := test.r.WeightEdges()
+		res, err := WeightEdges(test.r)
 		if test.exp.IsPublic != res.IsPublic {
 			t.Errorf("test %v: %v.WeightEdges().Is_public\nGOT %v\nEXP %v", i, test.r, res.IsPublic, test.exp.IsPublic)
 		}
-
-		if !slices.Equal(test.exp.References, res.References) {
-			t.Errorf("test %v: %v.WeightEdges().References\nGOT %v\nEXP %v", i, test.r, res.References, test.exp.References)
+		if !slices.Equal(References(res), References(test.exp)) {
+			t.Errorf("test %v: %v.WeightEdges().References\nGOT %v\nEXP %v", i, test.r, References(res), References(test.exp))
 		}
-
-		if !slices.Equal(test.exp.Graph.Edges.Sort(), res.Graph.Edges.Sort()) {
-			t.Errorf("test %v: %v.WeightEdges().edges\nGOT %v\nEXP %v", i, test.r, res.Graph.Edges.Sort(), test.exp.Graph.Edges.Sort())
+		if !slices.Equal(Sort(test.exp.Graph.Edges), Sort(res.Graph.Edges)) {
+			t.Errorf("test %v: %v.WeightEdges().edges\nGOT %v\nEXP %v", i, test.r, Sort(res.Graph.Edges), Sort(test.exp.Graph.Edges))
 		}
-
-		if !slices.Equal(test.exp.Graph.Nodes, res.Graph.Nodes) {
-			t.Errorf("test %v: %v.WeightEdges().nodes\nGOT %v\nEXP %v", i, test.r, res.Graph.Nodes, test.exp.Graph.Nodes)
+		if !slices.Equal(test.exp.Graph.Tokens, res.Graph.Tokens) {
+			t.Errorf("test %v: %v.WeightEdges().nodes\nGOT %v\nEXP %v", i, test.r, res.Graph.Tokens, test.exp.Graph.Tokens)
 		}
-
 		if !slices.Equal(test.exp.Tokens, res.Tokens) {
 			t.Errorf("test %v: %v.WeightEdges().Tokens\nGOT %v\nEXP %v", i, test.r, res.Tokens, test.exp.Tokens)
 		}
-
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: %v.WeightEdges().err\nGOT %v\nEXP %v", i, test.r, err, test.err)
 		}

@@ -15,39 +15,29 @@ import (
 
 func main() {
 	start := time.Now()
-
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-
 	basepath := "./data/tests/test0.jsgf"
 	ext := ".jsgf"
-
 	fmt.Println(basepath)
 	grammar := NewGrammar(basepath)
-
 	f, err := os.Open(basepath)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	scanner := bufio.NewScanner(f)
 	lex := NewJSGFLexer()
-
-	grammar, err = grammar.ReadLines(scanner, lex)
+	grammar, err = ImportLines(grammar, scanner, lex)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	namespace, err := CreateNameSpace(grammar.Path, ext)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	grammar = grammar.ReadNameSpace(namespace, lex)
-
-	grammar, err = grammar.Resolve(lex)
+	grammar = ImportNameSpace(grammar, namespace, lex)
+	grammar, err = ResolveRules(grammar, lex)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Printf("Took %s", time.Since(start))
 }

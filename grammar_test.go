@@ -98,10 +98,9 @@ func TestGrammarCompositionOrder(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		res := test.g.CompositionOrder()
+		res := CompositionOrder(test.g)
 		sort.Strings(res)
 		sort.Strings(test.exp)
-
 		if !slices.Equal(res, test.exp) {
 			t.Errorf("test %v: %v.CompositionOrder()\nGOT %v\nEXP %v", i, test.g, res, test.exp)
 		}
@@ -111,7 +110,6 @@ func TestGrammarCompositionOrder(t *testing.T) {
 func TestGrammarProductions(t *testing.T) {
 	dummyError := errors.New("")
 	lexer := NewJSGFLexer()
-
 	table := []struct {
 		p   []string
 		exp []string
@@ -179,17 +177,15 @@ func TestGrammarProductions(t *testing.T) {
 		g := NewGrammar("")
 		g.Rules = map[string]Rule{
 			"<_>": {
-				Exp: "", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{}, []Expression{}),
-				Tokens: []Expression{}, productions: []Expression{},
+				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
 			},
 			"<a>": {
-				Exp: "123;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "123;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
-				}, []Expression{"<SOS>", "123", ";", "<EOS>"}), Tokens: []Expression{"<SOS>", "123", ";", "<EOS>"},
-				productions: []Expression{},
+				}, []Expression{"<SOS>", "123", ";", "<EOS>"}),
 			},
 			"<b>": {
-				Exp: "1|2|3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1|2|3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 0, To: 5, Weight: 1.0},
@@ -198,10 +194,9 @@ func TestGrammarProductions(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}, productions: []Expression{},
 			},
 			"<c>": {
-				Exp: "1[2]3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -211,10 +206,9 @@ func TestGrammarProductions(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}, productions: []Expression{},
 			},
 			"<d>": {
-				Exp: "1(2)3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1(2)3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -223,10 +217,9 @@ func TestGrammarProductions(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}, productions: []Expression{},
 			},
 			"<e>": {
-				Exp: "1(2[3]);", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -238,42 +231,36 @@ func TestGrammarProductions(t *testing.T) {
 					{From: 7, To: 8, Weight: 1.0},
 					{From: 8, To: 9, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"},
-				productions: []Expression{},
 			},
 			"<f>": {
-				Exp: "<l>;", IsPublic: false, References: []string{"<f>"}, Graph: NewGraph(EdgeList{
+				Exp: "<l>;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
-				}, []Expression{"<SOS>", "<f>", ";", "<EOS>"}), Tokens: []Expression{"<SOS>", "<f>", ";", "<EOS>"},
-				productions: []Expression{},
+				}, []Expression{"<SOS>", "<f>", ";", "<EOS>"}),
 			},
 			"<g>": {
-				Exp: "abc;", IsPublic: false, References: []string{""}, Graph: NewGraph(EdgeList{
+				Exp: "abc;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
-				}, []Expression{"<SOS>", "abc", ";", "<EOS>"}), Tokens: []Expression{"<SOS>", "abc", ";", "<EOS>"},
-				productions: []Expression{},
+				}, []Expression{"<SOS>", "abc", ";", "<EOS>"}),
 			},
 			"<h>": {
-				Exp: "<a>bc;", IsPublic: false, References: []string{"<a>"}, Graph: NewGraph(EdgeList{
+				Exp: "<a>bc;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
 					{From: 3, To: 4, Weight: 1.0},
 				}, []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}, productions: []Expression{},
 			},
 			"<i>": {
-				Exp: "a<b>c;", IsPublic: false, References: []string{"<b>"}, Graph: NewGraph(EdgeList{
+				Exp: "a<b>c;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
 					{From: 3, To: 4, Weight: 1.0},
 					{From: 4, To: 5, Weight: 1.0},
 				}, []Expression{"<SOS>", "a", "<b>", "c", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "a", "<b>", "c", ";", "<EOS>"}, productions: []Expression{},
 			},
 			"<j>": {
-				Exp: "a<b><c><d><e>;", IsPublic: false, References: []string{"<b>", "<c>", "<d>", "<e>"},
+				Exp: "a<b><c><d><e>;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
@@ -283,11 +270,9 @@ func TestGrammarProductions(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"},
-				productions: []Expression{},
 			},
 			"<k>": {
-				Exp: "a<b><b><b>;", IsPublic: false, References: []string{"<b>"}, Graph: NewGraph(EdgeList{
+				Exp: "a<b><b><b>;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -295,29 +280,22 @@ func TestGrammarProductions(t *testing.T) {
 					{From: 4, To: 5, Weight: 1.0},
 					{From: 5, To: 6, Weight: 1.0},
 				}, []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"},
-				productions: []Expression{},
 			},
 		}
-
 		for j, p := range test.p {
 			rule := NewRule(Expression(p), true)
-			rule.Tokens = rule.Exp.ToTokens(lexer)
+			rule.Tokens = ToTokens(rule.Exp, lexer)
 			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
-			rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
+			// rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[fmt.Sprintf("<pub_%v>", j)] = rule
 		}
-
-		g, err := g.Resolve(lexer)
-		res := g.Productions()
-
+		g, err := ResolveRules(g, lexer)
+		res := AllProductions(g)
 		sort.Strings(test.exp)
 		sort.Strings(res)
-
 		if !slices.Equal(res, test.exp) {
 			t.Errorf("test %v: %v.Productions()\nGOT len %v %v\nEXP len %v %v", i, test.p, len(res), res, len(test.exp), test.exp)
 		}
-
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: %v.Productions().err\nGOT %v\nEXP %v", i, test.p, err, test.err)
 		}
@@ -327,7 +305,6 @@ func TestGrammarProductions(t *testing.T) {
 func TestGrammarProductionsMinimized(t *testing.T) {
 	dummyError := errors.New("")
 	lexer := NewJSGFLexer()
-
 	table := []struct {
 		p   []string
 		exp []string
@@ -395,17 +372,15 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 		g := NewGrammar("")
 		g.Rules = map[string]Rule{
 			"<_>": {
-				Exp: "", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{}, []Expression{}),
-				Tokens: []Expression{}, productions: []Expression{},
+				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
 			},
 			"<a>": {
-				Exp: "123;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "123;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
-				}, []Expression{"<SOS>", "123", ";", "<EOS>"}), Tokens: []Expression{"<SOS>", "123", ";", "<EOS>"},
-				productions: []Expression{},
+				}, []Expression{"<SOS>", "123", ";", "<EOS>"}),
 			},
 			"<b>": {
-				Exp: "1|2|3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1|2|3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 0, To: 5, Weight: 1.0},
@@ -414,10 +389,9 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}, productions: []Expression{},
 			},
 			"<c>": {
-				Exp: "1[2]3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -427,10 +401,9 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}, productions: []Expression{},
 			},
 			"<d>": {
-				Exp: "1(2)3;", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1(2)3;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -439,10 +412,9 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}, productions: []Expression{},
 			},
 			"<e>": {
-				Exp: "1(2[3]);", IsPublic: false, References: []string{}, Graph: NewGraph(EdgeList{
+				Exp: "1(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -454,42 +426,36 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 					{From: 7, To: 8, Weight: 1.0},
 					{From: 8, To: 9, Weight: 1.0},
 				}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"},
-				productions: []Expression{},
 			},
 			"<f>": {
-				Exp: "<l>;", IsPublic: false, References: []string{"<f>"}, Graph: NewGraph(EdgeList{
+				Exp: "<l>;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
-				}, []Expression{"<SOS>", "<f>", ";", "<EOS>"}), Tokens: []Expression{"<SOS>", "<f>", ";", "<EOS>"},
-				productions: []Expression{},
+				}, []Expression{"<SOS>", "<f>", ";", "<EOS>"}),
 			},
 			"<g>": {
-				Exp: "abc;", IsPublic: false, References: []string{""}, Graph: NewGraph(EdgeList{
+				Exp: "abc;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
-				}, []Expression{"<SOS>", "abc", ";", "<EOS>"}), Tokens: []Expression{"<SOS>", "abc", ";", "<EOS>"},
-				productions: []Expression{},
+				}, []Expression{"<SOS>", "abc", ";", "<EOS>"}),
 			},
 			"<h>": {
-				Exp: "<a>bc;", IsPublic: false, References: []string{"<a>"}, Graph: NewGraph(EdgeList{
+				Exp: "<a>bc;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
 					{From: 3, To: 4, Weight: 1.0},
 				}, []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "<a>", "bc", ";", "<EOS>"}, productions: []Expression{},
 			},
 			"<i>": {
-				Exp: "a<b>c;", IsPublic: false, References: []string{"<b>"}, Graph: NewGraph(EdgeList{
+				Exp: "a<b>c;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
 					{From: 3, To: 4, Weight: 1.0},
 					{From: 4, To: 5, Weight: 1.0},
 				}, []Expression{"<SOS>", "a", "<b>", "c", ";", "<EOS>"}),
-				Tokens: []Expression{"<SOS>", "a", "<b>", "c", ";", "<EOS>"}, productions: []Expression{},
 			},
 			"<j>": {
-				Exp: "a<b><c><d><e>;", IsPublic: false, References: []string{"<b>", "<c>", "<d>", "<e>"},
+				Exp: "a<b><c><d><e>;", IsPublic: false,
 				Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
@@ -499,11 +465,9 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 6, To: 7, Weight: 1.0},
 				}, []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "a", "<b>", "<c>", "<d>", "<e>", ";", "<EOS>"},
-				productions: []Expression{},
 			},
 			"<k>": {
-				Exp: "a<b><b><b>;", IsPublic: false, References: []string{"<b>"}, Graph: NewGraph(EdgeList{
+				Exp: "a<b><b><b>;", IsPublic: false, Graph: NewGraph(EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -511,31 +475,22 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 					{From: 4, To: 5, Weight: 1.0},
 					{From: 5, To: 6, Weight: 1.0},
 				}, []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"}),
-				Tokens:      []Expression{"<SOS>", "a", "<b>", "<b>", "<b>", ";", "<EOS>"},
-				productions: []Expression{},
 			},
 		}
-
 		for j, p := range test.p {
 			rule := NewRule(Expression(p), true)
-			rule.Tokens = rule.Exp.ToTokens(lexer)
+			rule.Tokens = ToTokens(rule.Exp, lexer)
 			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
-			rule.productions = FilterTerminals(rule.Tokens, []string{
-				"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", "",
-			})
+			// rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", "",})
 			g.Rules[fmt.Sprintf("<pub_%v>", j)] = rule
 		}
-
-		g, err := g.Resolve(lexer)
-		res := g.Productions()
-
+		g, err := ResolveRules(g, lexer)
+		res := AllProductions(g)
 		sort.Strings(test.exp)
 		sort.Strings(res)
-
 		if !slices.Equal(res, test.exp) {
 			t.Errorf("test %v: %v.Productions()\nGOT len %v %v\nEXP len %v %v", i, test.p, len(res), res, len(test.exp), test.exp)
 		}
-
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: %v.Productions().err\nGOT %v\nEXP %v", i, test.p, err, test.err)
 		}
@@ -608,35 +563,28 @@ func TestGrammarPeek(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		name, imports, rules, err := NewGrammar(test.p).Peek()
+		name, imports, rules, err := PeekGrammar(NewGrammar(test.p))
 		if err != nil {
 			t.Errorf("test %v: Grammar(%v).Peek()\nGOT error %v", i, test.p, err)
 		}
-
 		if name != test.n {
 			t.Errorf("test %v: Grammar(%v).Peek().imports\nGOT %v\nEXP %v", i, test.p, name, test.n)
 		}
-
 		sort.Strings(imports)
 		sort.Strings(test.imports)
-
 		if !slices.Equal(imports, test.imports) {
 			t.Errorf("test %v: Grammar(%v).Peek().imports\nGOT %v\nEXP %v", i, test.p, imports, test.imports)
 		}
-
 		if len(rules) != len(test.rules) {
 			t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
 		}
-
 		for k1, v1 := range rules {
 			v2, ok := test.rules[k1]
 			if !ok {
 				t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
 			}
-
 			sort.Strings(v1)
 			sort.Strings(v2)
-
 			if !slices.Equal(v1, v2) {
 				t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
 			}
@@ -647,16 +595,12 @@ func TestGrammarPeek(t *testing.T) {
 func TestGrammarProductionsE2E(t *testing.T) {
 	dummyError := errors.New("")
 	lexer := NewJSGFLexer()
-
 	var productions []string
-
 	f, _ := os.Open("data/tests/productions.txt")
-
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		productions = append(productions, scanner.Text())
 	}
-
 	table := []struct {
 		p   string
 		exp []string
@@ -678,29 +622,24 @@ func TestGrammarProductionsE2E(t *testing.T) {
 	}
 	for i, test := range table {
 		var err error
-
 		grammar := NewGrammar(test.p)
 		f, err1 := os.Open(test.p)
 		scanner := bufio.NewScanner(f)
-		grammar, err2 := grammar.ReadLines(scanner, lexer)
+		grammar, err2 := ImportLines(grammar, scanner, lexer)
 		namespace, err3 := CreateNameSpace(grammar.Path, ".jsgf")
-		grammar = grammar.ReadNameSpace(namespace, lexer)
-		grammar, err4 := grammar.Resolve(lexer)
-		res := grammar.Productions()
-
+		grammar = ImportNameSpace(grammar, namespace, lexer)
+		grammar, err4 := ResolveRules(grammar, lexer)
+		res := AllProductions(grammar)
 		for _, e := range []error{err1, err2, err3, err4} {
 			if e != nil {
 				err = e
 			}
 		}
-
 		sort.Strings(test.exp)
 		sort.Strings(res)
-
 		if !slices.Equal(res, test.exp) {
 			t.Errorf("test %v: %v.Productions()\nGOT %v\nEXP %v", i, test.p, res, test.exp)
 		}
-
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: %v.Productions().err\nGOT %v\nEXP %v", i, test.p, err, test.err)
 		}

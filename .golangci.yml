@@ -15,12 +15,15 @@ linters:
     - prealloc
     - godot
     - lll
+    - wsl
   fast: true
 
 issues:
   exclude-rules:
     # disable funlen for test funcs
-    - source: "^func Test"
+    - path: _test.go
       linters:
         - funlen
         - dupl
+        - maintidx
+        - cyclop

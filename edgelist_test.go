@@ -448,15 +448,12 @@ func TestBuildEdgeList(t *testing.T) {
 			err: nil,
 		},
 	}
-
 	for i, test := range table {
 		_, v, err := ParseRule(lexer, test.r)
-
-		res := BuildEdgeList(v.Exp.ToTokens(lexer))
-		if !slices.Equal(res.Sort(), test.exp.Sort()) {
+		res := BuildEdgeList(ToTokens(v.Exp, lexer))
+		if !slices.Equal(Sort(res), Sort(test.exp)) {
 			t.Errorf("test %v: %v.toArray(lexer)\nGOT %v\nEXP %v", i, test.r, res, test.exp)
 		}
-
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: %v.toArray(lexer).err\nGOT %v\nEXP %v", i, test.r, err, test.err)
 		}
@@ -484,7 +481,7 @@ func TestEdgeListSort(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		res := test.e.Sort()
+		res := Sort(test.e)
 		if !slices.Equal(res, test.exp) {
 			t.Errorf("test %v: %v.Sort()\nGOT %v\nEXP %v", i, test.e, res, test.exp)
 		}
@@ -516,8 +513,8 @@ func TestEdgeListUnique(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		res := test.e.Unique()
-		if !slices.Equal(res.Sort(), test.exp.Sort()) {
+		res := Unique(test.e)
+		if !slices.Equal(Sort(res), Sort(test.exp)) {
 			t.Errorf("test %v: %v.Unique()\nGOT %v\nEXP %v", i, test.e, res, test.exp)
 		}
 	}
@@ -608,8 +605,8 @@ func TestEdgeListIncrement(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		res := test.e.Increment(test.n)
-		if !slices.Equal(res.Sort(), test.exp.Sort()) {
+		res := Increment(test.e, test.n)
+		if !slices.Equal(Sort(res), Sort(test.exp)) {
 			t.Errorf("test %v: %v,Increment(%v)\nGOT %v\nEXP %v", i, test.e, test.n, res, test.exp)
 		}
 	}
