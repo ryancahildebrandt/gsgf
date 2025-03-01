@@ -18,12 +18,12 @@ type Grammar struct {
 	Imports []string
 }
 
-func NewGrammar(p string) Grammar {
-	var g Grammar
+func NewGrammar() Grammar {
+	var grammar Grammar
 
-	g.Rules = make(map[string]Rule)
+	grammar.Rules = make(map[string]Rule)
 
-	return g
+	return grammar
 }
 
 func GetCompositionOrder(g Grammar) []string {
@@ -48,23 +48,23 @@ func GetCompositionOrder(g Grammar) []string {
 }
 
 func GetAllProductions(g Grammar) []string {
-	var out []string
+	var productions []string
 
 	for _, v := range g.Rules {
 		if v.IsPublic {
-			out = append(out, GetProductions(v)...)
+			productions = append(productions, GetProductions(v)...)
 		}
 	}
 
-	return out
+	return productions
 }
 
 func ResolveRules(g Grammar, lex *tokenizer.Tokenizer) (Grammar, error) {
-	var ord []string = GetCompositionOrder(g)
+	var order []string = GetCompositionOrder(g)
 	var seen map[string]struct{} = make(map[string]struct{})
 
-	for i := len(ord) - 1; i >= 0; i-- {
-		rname := ord[i]
+	for i := len(order) - 1; i >= 0; i-- {
+		rname := order[i]
 		r1 := g.Rules[rname]
 		_, ok := seen[rname]
 		if !ok {
@@ -88,17 +88,17 @@ func ImportLines(g Grammar, s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar
 		case strings.HasPrefix(line, "import <"):
 			err := ValidateJSGFImport(line)
 			if err != nil {
-				return NewGrammar(""), err
+				return NewGrammar(), err
 			}
 			g.Imports = append(g.Imports, CleanImportStatement(line))
 		case strings.HasPrefix(line, "public <"), strings.HasPrefix(line, "<"):
 			err := ValidateJSGFRule(line)
 			if err != nil {
-				return NewGrammar(""), err
+				return NewGrammar(), err
 			}
 			name, rule, err := ParseRule(line, lex)
 			if err != nil {
-				return NewGrammar(""), err
+				return NewGrammar(), err
 			}
 			rule.Tokens = ToTokens(rule.Exp, lex)
 			rule.Graph = NewGraph(ToEdgeList(rule.Tokens), rule.Tokens)
@@ -127,8 +127,8 @@ func ImportNameSpace(g Grammar, r map[string]string, lex *tokenizer.Tokenizer) G
 
 func ValidateGrammarCompleteness(g Grammar) error {
 	for _, v := range g.Rules {
-		for _, ref := range GetReferences(v) {
-			_, ok := g.Rules[ref]
+		for _, r := range GetReferences(v) {
+			_, ok := g.Rules[r]
 			if !ok {
 				return errors.New("grammar references rule not present in namespace")
 			}

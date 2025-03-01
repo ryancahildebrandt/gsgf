@@ -174,7 +174,7 @@ func TestGrammarProductions(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		g := NewGrammar("")
+		g := NewGrammar()
 		g.Rules = map[string]Rule{
 			"<_>": {
 				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
@@ -369,7 +369,7 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		g := NewGrammar("")
+		g := NewGrammar()
 		g.Rules = map[string]Rule{
 			"<_>": {
 				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
@@ -618,7 +618,7 @@ func TestGrammarProductionsE2E(t *testing.T) {
 	}
 	for i, test := range table {
 		var err error
-		grammar := NewGrammar(test.p)
+		grammar := NewGrammar()
 		f, err1 := os.Open(test.p)
 		scanner := bufio.NewScanner(f)
 		grammar, err2 := ImportLines(grammar, scanner, lexer)

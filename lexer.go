@@ -62,27 +62,28 @@ func NewJSGFLexer() *tokenizer.Tokenizer {
 }
 
 func CaptureString(s *tokenizer.Stream, end string, includeEnd bool) (string, error) {
-	var b strings.Builder
-	var r = s.GetSnippetAsString(0, 1000000, 0)
+	var builder strings.Builder
+	var remainder string = s.GetSnippetAsString(0, 1000000, 0)
 	// really high value here because s doesn't have a "show me whats left in the string" method
-	if !strings.Contains(r, end) {
+
+	if !strings.Contains(remainder, end) {
 		return "", errors.New("close token not found in remaining string")
 	}
-	if r == "" {
+	if remainder == "" {
 		return "", errors.New("cannot capture from empty string")
 	}
 
 	for s.IsValid() {
 		if s.CurrentToken().ValueUnescapedString() == end {
 			if includeEnd {
-				b.WriteString(s.CurrentToken().ValueUnescapedString())
+				builder.WriteString(s.CurrentToken().ValueUnescapedString())
 			}
 
 			break
 		}
-		b.WriteString(s.CurrentToken().ValueUnescapedString())
+		builder.WriteString(s.CurrentToken().ValueUnescapedString())
 		s.GoNext()
 	}
 
-	return b.String(), nil
+	return builder.String(), nil
 }

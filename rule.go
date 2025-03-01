@@ -34,13 +34,13 @@ func GetTokens(r Rule) []Expression {
 
 func GetReferences(r Rule) []string {
 	var refs []string
-	seen := make(map[string]struct{})
+	var seen map[string]struct{} = make(map[string]struct{})
 
-	for _, ref := range regexp.MustCompile(`<.*?>`).FindAllString(r.Exp, -1) {
-		_, ok := seen[ref]
+	for _, r := range regexp.MustCompile(`<.*?>`).FindAllString(r.Exp, -1) {
+		_, ok := seen[r]
 		if !ok {
-			seen[ref] = struct{}{}
-			refs = append(refs, ref)
+			seen[r] = struct{}{}
+			refs = append(refs, r)
 		}
 	}
 
@@ -78,21 +78,21 @@ func ResolveReferences(r Rule, m map[string]Rule, lex *tokenizer.Tokenizer) (Rul
 	return r1, nil
 }
 
-func SingleResolveReference(r Rule, ref string, rule Rule, lex *tokenizer.Tokenizer) (Rule, error) {
-	var r1 Rule = r
+func SingleResolveReference(r Rule, ref string, r1 Rule, lex *tokenizer.Tokenizer) (Rule, error) {
+	var r2 Rule = r
 
-	for i, t := range ToTokens(r1.Exp, lex) {
+	for i, t := range ToTokens(r2.Exp, lex) {
 		if t == ref {
-			g, err := ComposeGraphs(r1.Graph, rule.Graph, i)
+			g, err := ComposeGraphs(r2.Graph, r1.Graph, i)
 			if err != nil {
 				return r, err
 			}
-			r1.Graph = g
-			r1.Tokens = g.Tokens
+			r2.Graph = g
+			r2.Tokens = g.Tokens
 		}
 	}
 
-	return r1, nil
+	return r2, nil
 }
 
 func ParseRule(line string, lex *tokenizer.Tokenizer) (string, Rule, error) {

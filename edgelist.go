@@ -56,11 +56,11 @@ func (e EdgeList) IsEmpty() bool {
 }
 
 func (e EdgeList) Max() int {
-	var arr []int
-
 	if e.IsEmpty() {
 		return 0
 	}
+
+	var arr []int
 	for _, edg := range e {
 		arr = append(arr, edg.From)
 		arr = append(arr, edg.To)
@@ -87,8 +87,8 @@ func ToEdgeList(arr []Expression) EdgeList {
 	var (
 		edges      EdgeList
 		err        error
-		f          int
-		g          int
+		from       int
+		group      int
 		groupStack Stack
 		groupMap   = make(map[int][]int)
 	)
@@ -96,60 +96,60 @@ func ToEdgeList(arr []Expression) EdgeList {
 	for i, token := range arr {
 		switch token {
 		case "<EOS>":
-			edges = append(edges, Edge{From: f, To: i, Weight: 1.0})
+			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
 		case "<SOS>":
-			f = i
+			from = i
 			groupStack = groupStack.Push(i)
 			groupMap[i] = []int{}
 		case ";":
-			edges = append(edges, Edge{From: f, To: i, Weight: 1.0})
-			for _, values := range groupMap {
-				for _, v := range values {
-					edges = append(edges, Edge{From: v, To: i, Weight: 1.0})
+			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
+			for _, v := range groupMap {
+				for _, v1 := range v {
+					edges = append(edges, Edge{From: v1, To: i, Weight: 1.0})
 				}
 			}
-			f = i
+			from = i
 		case "(", "[":
 			groupStack = groupStack.Push(i)
 			groupMap[i] = []int{}
-			edges = append(edges, Edge{From: f, To: i, Weight: 1.0})
-			f = i
+			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
+			from = i
 		case ")":
-			g, err = groupStack.Top()
+			group, err = groupStack.Top()
 			if err != nil {
 				log.Fatal(err)
 			}
-			for _, v := range groupMap[g] {
+			for _, v := range groupMap[group] {
 				edges = append(edges, Edge{From: v, To: i, Weight: 1.0})
 			}
-			groupStack = groupStack.Drop(g)
-			delete(groupMap, g)
-			edges = append(edges, Edge{From: f, To: i, Weight: 1.0})
-			f = i
+			groupStack = groupStack.Drop(group)
+			delete(groupMap, group)
+			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
+			from = i
 		case "]":
-			g, err := groupStack.Top()
+			group, err := groupStack.Top()
 			if err != nil {
 				log.Fatal(err)
 			}
-			for _, v := range groupMap[g] {
+			for _, v := range groupMap[group] {
 				edges = append(edges, Edge{From: v, To: i, Weight: 1.0})
 			}
-			groupStack = groupStack.Drop(g)
-			delete(groupMap, g)
-			edges = append(edges, Edge{From: f, To: i, Weight: 1.0})
-			edges = append(edges, Edge{From: g, To: i, Weight: 1.0})
-			f = i
+			groupStack = groupStack.Drop(group)
+			delete(groupMap, group)
+			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
+			edges = append(edges, Edge{From: group, To: i, Weight: 1.0})
+			from = i
 		case "|":
-			g, groupStack, err = groupStack.Pop()
+			group, groupStack, err = groupStack.Pop()
 			if err != nil {
 				log.Fatal(err)
 			}
-			groupStack = groupStack.Push(g)
-			groupMap[g] = append(groupMap[g], f)
-			f = g
+			groupStack = groupStack.Push(group)
+			groupMap[group] = append(groupMap[group], from)
+			from = group
 		default:
-			edges = append(edges, Edge{From: f, To: i, Weight: 1.0})
-			f = i
+			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
+			from = i
 		}
 	}
 

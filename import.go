@@ -78,14 +78,14 @@ func ValidateJSGFImport(s string) error {
 }
 
 func CreateNameSpace(p string, e string) (map[string]string, error) {
-	var rs map[string]string = make(map[string]string)
+	var res map[string]string = make(map[string]string)
 
 	imports, err := GetImportOrder(p, e)
 	if err != nil {
 		return make(map[string]string), err
 	}
-	for _, t := range imports {
-		gram, _, _ := strings.Cut(CleanImportStatement(t), ".")
+	for _, imp := range imports {
+		gram, _, _ := strings.Cut(CleanImportStatement(imp), ".")
 		path, err := FindGrammar(p, gram, e)
 		if err != nil {
 			return make(map[string]string), err
@@ -95,11 +95,11 @@ func CreateNameSpace(p string, e string) (map[string]string, error) {
 			return make(map[string]string), err
 		}
 		for k, v := range rules {
-			rs[k] = v
+			res[k] = v
 		}
 	}
 
-	return rs, nil
+	return res, nil
 }
 
 func PeekGrammar(p string) (string, []string, map[string]string, error) {
@@ -112,20 +112,19 @@ func PeekGrammar(p string) (string, []string, map[string]string, error) {
 
 	f, err := os.Open(p)
 	if err != nil {
-		return name, imports, rules, errors.New(fmt.Sprint("unable to open grammar ", p))
+		return "", []string{}, map[string]string{}, errors.New(fmt.Sprint("unable to open grammar ", p))
 	}
 	info, err := f.Stat()
 	if err != nil {
-		return name, imports, rules, errors.New(fmt.Sprint("unable to open grammar ", p))
+		return "", []string{}, map[string]string{}, errors.New(fmt.Sprint("unable to open grammar ", p))
 	}
 	if info.IsDir() {
-		return name, imports, rules, errors.New(fmt.Sprint("provided path is a directory", p))
+		return "", []string{}, map[string]string{}, errors.New(fmt.Sprint("provided path is a directory", p))
 	}
 
-	s := bufio.NewScanner(f)
-	for s.Scan() {
-		line := s.Text()
-
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
 		switch {
 		case strings.HasPrefix(line, "grammar "):
 			err = ValidateJSGFName(line)
@@ -157,10 +156,9 @@ func PeekGrammar(p string) (string, []string, map[string]string, error) {
 }
 
 func FindGrammar(p string, t string, e string) (string, error) {
-	var (
-		target string
-		found  bool
-	)
+	var target string
+	var found bool
+
 	err := filepath.Walk(filepath.Dir(p), func(path string, info os.FileInfo, err error) error {
 		if filepath.Ext(path) == e {
 			name, _, _, err := PeekGrammar(path)

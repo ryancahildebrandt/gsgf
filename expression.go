@@ -18,9 +18,9 @@ type Expression = string
 
 func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
 	var (
-		res string
-		b   strings.Builder
-		out = []Expression{"<SOS>"}
+		res     string
+		builder strings.Builder
+		out     = []Expression{"<SOS>"}
 	)
 
 	if e == "" {
@@ -30,48 +30,48 @@ func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
 	for stream.IsValid() {
 		switch {
 		case stream.CurrentToken().Is(SquareOpen, SquareClose, ParenthesisOpen, ParenthesisClose, Alternate, Semicolon):
-			b, out = FlushBuilder(b, out)
+			builder, out = FlushBuilder(builder, out)
 			res = stream.CurrentToken().ValueUnescapedString()
 			out = append(out, res)
 			stream.GoNext()
 		case stream.CurrentToken().Is(BackSlash):
 			stream.GoNext()
-			b.WriteString(stream.CurrentToken().ValueUnescapedString())
+			builder.WriteString(stream.CurrentToken().ValueUnescapedString())
 			stream.GoNext()
 		case stream.CurrentToken().Is(ForwardSlash):
 			stream.GoNext()
-			b.WriteString("/")
+			builder.WriteString("/")
 			res, _ = CaptureString(stream, "/", true)
-			b.WriteString(res)
-			b, out = FlushBuilder(b, out)
+			builder.WriteString(res)
+			builder, out = FlushBuilder(builder, out)
 			stream.GoNext()
 		case stream.CurrentToken().Is(AngleOpen):
-			b, out = FlushBuilder(b, out)
+			builder, out = FlushBuilder(builder, out)
 			res, _ = CaptureString(stream, ">", true)
 			out = append(out, res)
 			stream.GoNext()
 		case stream.CurrentToken().Is(CurlyOpen):
 			res, _ = CaptureString(stream, "}", true)
-			b.WriteString(res)
-			b, out = FlushBuilder(b, out)
+			builder.WriteString(res)
+			builder, out = FlushBuilder(builder, out)
 			stream.GoNext()
 		default:
-			b.WriteString(stream.CurrentToken().ValueUnescapedString())
+			builder.WriteString(stream.CurrentToken().ValueUnescapedString())
 			stream.GoNext()
 		}
 	}
-	b, out = FlushBuilder(b, out)
+	builder, out = FlushBuilder(builder, out)
 	out = append(out, "<EOS>")
 
 	return out
 }
 
 func FlushBuilder(b strings.Builder, o []Expression) (strings.Builder, []Expression) {
-	var s string = b.String()
+	var str string = b.String()
 
 	b.Reset()
-	if s != "" {
-		o = append(o, s)
+	if str != "" {
+		o = append(o, str)
 	}
 
 	return b, o
@@ -86,10 +86,10 @@ func ParseWeight(e Expression) (Expression, float64, error) {
 	if len(split) != 3 {
 		return e, 0.0, errors.New("expression e not separable into expected 3 parts exp/weight/end. e may have the incorrect number of /")
 	}
-	f, err := strconv.ParseFloat(split[1], 64)
+	weight, err := strconv.ParseFloat(split[1], 64)
 	if err != nil {
 		return e, 0.0, errors.New("unable to parse weight in expression e to float64")
 	}
 
-	return split[0], f, nil
+	return split[0], weight, nil
 }

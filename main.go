@@ -19,7 +19,7 @@ func main() {
 	basepath := "./data/tests/test0.jsgf"
 	ext := ".jsgf"
 	fmt.Println(basepath)
-	grammar := NewGrammar(basepath)
+	grammar := NewGrammar()
 	f, err := os.Open(basepath)
 	if err != nil {
 		log.Fatal(err)

@@ -36,8 +36,8 @@ type RuleJSON struct {
 
 func RuleToJSON(r Rule) RuleJSON {
 	var tokens []string
-	for _, i := range r.Tokens {
-		tokens = append(tokens, i)
+	for _, t := range r.Tokens {
+		tokens = append(tokens, t)
 	}
 
 	return RuleJSON{Expression: r.Exp, IsPublic: r.IsPublic, Graph: GraphToJSON(r.Graph)}
@@ -89,49 +89,49 @@ func GraphToTXT(g Graph) (string, string) {
 
 func GraphToDOT(g Graph) string {
 	var (
-		b       strings.Builder
+		builder strings.Builder
 		entry   string
 		visited []int
 	)
 
-	b.WriteString("digraph {\n\n")
-	b.WriteString("\trankdir = \"LR\"\n\n")
+	builder.WriteString("digraph {\n\n")
+	builder.WriteString("\trankdir = \"LR\"\n\n")
 	for _, e := range g.Edges {
 		visited = append(visited, e.From)
 		visited = append(visited, e.To)
 	}
-	for i, n := range g.Tokens {
+	for i, t := range g.Tokens {
 		if slices.Contains(visited, i) {
-			entry = fmt.Sprintf("\t_%v [label=\"%s\"];\n", i, n)
-			b.WriteString(entry)
+			entry = fmt.Sprintf("\t_%v [label=\"%s\"];\n", i, t)
+			builder.WriteString(entry)
 		}
 	}
-	b.WriteString("\n")
+	builder.WriteString("\n")
 	for _, e := range g.Edges {
 		entry = fmt.Sprintf("\t_%v -> _%v [weight=%v];\n", e.From, e.To, e.Weight)
 		if e.Weight != 1.0 {
 			entry = fmt.Sprintf("\t_%v -> _%v [label=\"%v\",weight=%v];\n", e.From, e.To, fmt.Sprint(e.Weight), e.Weight)
 		}
-		b.WriteString(entry)
+		builder.WriteString(entry)
 	}
-	b.WriteString("\n}")
+	builder.WriteString("\n}")
 
-	return b.String()
+	return builder.String()
 }
 
 func ReferencesToDOT(g Grammar) string {
-	var b strings.Builder
+	var builder strings.Builder
 	var entry string
 
-	b.WriteString("digraph {\n\n")
-	b.WriteString("\trankdir = \"LR\"\n\n")
+	builder.WriteString("digraph {\n\n")
+	builder.WriteString("\trankdir = \"LR\"\n\n")
 	for k, v := range g.Rules {
-		for _, ref := range GetReferences(v) {
-			entry = fmt.Sprintf("\t%s -> %s;\n", ref, k)
-			b.WriteString(entry)
+		for _, r := range GetReferences(v) {
+			entry = fmt.Sprintf("\t%s -> %s;\n", r, k)
+			builder.WriteString(entry)
 		}
 	}
-	b.WriteString("\n}")
+	builder.WriteString("\n}")
 
-	return b.String()
+	return builder.String()
 }
