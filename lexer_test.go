@@ -33,7 +33,7 @@ func TestCaptureString(t *testing.T) {
 	}
 	for i, test := range table {
 		stream := lexer.ParseString(test.s)
-		res, err := captureString(stream, test.e, test.k)
+		res, err := CaptureString(stream, test.e, test.k)
 		if res != test.exp {
 			t.Errorf("test %v: captureString(%v, %v, %v)\nGOT %v\nEXP %v", i, test.s, test.e, test.k, res, test.exp)
 		}
@@ -54,103 +54,103 @@ func TestParseRule(t *testing.T) {
 	}{
 		{
 			l: "", n: "", r: Rule{
-				Exp: Expression(""), IsPublic: false,
+				Exp: "", IsPublic: false,
 			},
 			err: dummy_error,
 		},
 		{
 			l: ";", n: "", r: Rule{
-				Exp: Expression(""), IsPublic: false,
+				Exp: "", IsPublic: false,
 			},
 			err: dummy_error,
 		},
 		{
 			l: " ", n: "", r: Rule{
-				Exp: Expression(""), IsPublic: false,
+				Exp: "", IsPublic: false,
 			},
 			err: dummy_error,
 		},
 		{
 			l: "<rule> =", n: "", r: Rule{
-				Exp: Expression(""), IsPublic: false,
+				Exp: "", IsPublic: false,
 			},
 			err: dummy_error,
 		},
 		{
 			l: "<rule> = ", n: "", r: Rule{
-				Exp: Expression(""), IsPublic: false,
+				Exp: "", IsPublic: false,
 			},
 			err: dummy_error,
 		},
 		{
 			l: "public <rule> =", n: "", r: Rule{
-				Exp: Expression(""), IsPublic: false,
+				Exp: "", IsPublic: false,
 			},
 			err: dummy_error,
 		},
 		{
 			l: "public <rule> = ", n: "", r: Rule{
-				Exp: Expression(""), IsPublic: false,
+				Exp: "", IsPublic: false,
 			},
 			err: dummy_error,
 		},
 		{
 			l: "<rule> =;", n: "<rule>", r: Rule{
-				Exp: Expression(";"), IsPublic: false,
+				Exp: ";", IsPublic: false,
 			},
 			err: nil,
 		},
 		{
 			l: "public <rule> =;", n: "<rule>", r: Rule{
-				Exp: Expression(";"), IsPublic: true,
+				Exp: ";", IsPublic: true,
 			},
 			err: nil,
 		},
 		{
 			l: "<rule> = test expression 123;", n: "<rule>", r: Rule{
-				Exp: Expression("test expression 123;"), IsPublic: false,
+				Exp: "test expression 123;", IsPublic: false,
 			},
 			err: nil,
 		},
 		{
 			l: "<rule> = test \"expression\" 123;", n: "<rule>", r: Rule{
-				Exp: Expression("test \"expression\" 123;"), IsPublic: false,
+				Exp: "test \"expression\" 123;", IsPublic: false,
 			},
 			err: nil,
 		},
 		{
 			l: "public <rule> = test expression 123;", n: "<rule>", r: Rule{
-				Exp: Expression("test expression 123;"), IsPublic: true,
+				Exp: "test expression 123;", IsPublic: true,
 			},
 			err: nil,
 		},
 		{
 			l: "public <rule> = test \"expression\" 123;", n: "<rule>", r: Rule{
-				Exp: Expression("test \"expression\" 123;"), IsPublic: true,
+				Exp: "test \"expression\" 123;", IsPublic: true,
 			},
 			err: nil,
 		},
 		{
 			l: "<rule> = test expression 123 <rule> (abc) [def];", n: "<rule>", r: Rule{
-				Exp: Expression("test expression 123 <rule> (abc) [def];"), IsPublic: false,
+				Exp: "test expression 123 <rule> (abc) [def];", IsPublic: false,
 			},
 			err: nil,
 		},
 		{
 			l: "public <rule> = test expression 123 <rule> (abc) [def];", n: "<rule>", r: Rule{
-				Exp: Expression("test expression 123 <rule> (abc) [def];"), IsPublic: true,
+				Exp: "test expression 123 <rule> (abc) [def];", IsPublic: true,
 			},
 			err: nil,
 		},
 		{
 			l: "<rule> = test expression 123 <rule1> <rule2> (abc) [def];", n: "<rule>", r: Rule{
-				Exp: Expression("test expression 123 <rule1> <rule2> (abc) [def];"), IsPublic: false,
+				Exp: "test expression 123 <rule1> <rule2> (abc) [def];", IsPublic: false,
 			},
 			err: nil,
 		},
 		{
 			l: "public <rule> = test expression 123 <rule1> <rule2> (abc) [def];", n: "<rule>", r: Rule{
-				Exp: Expression("test expression 123 <rule1> <rule2> (abc) [def];"), IsPublic: true,
+				Exp: "test expression 123 <rule1> <rule2> (abc) [def];", IsPublic: true,
 			},
 			err: nil,
 		},
@@ -166,8 +166,8 @@ func TestParseRule(t *testing.T) {
 		if r.IsPublic != test.r.IsPublic {
 			t.Errorf("test %v: ParseRule(jsgflexer, %v).Is_public\nGOT %v\nEXP %v", i, test.l, r, test.r)
 		}
-		if !slices.Equal(References(r), References(test.r)) {
-			t.Errorf("test %v: ParseRule(jsgflexer, %v).References\nGOT %v\nEXP %v", i, test.l, References(r), References(test.r))
+		if !slices.Equal(GetReferences(r), GetReferences(test.r)) {
+			t.Errorf("test %v: ParseRule(jsgflexer, %v).References\nGOT %v\nEXP %v", i, test.l, GetReferences(r), GetReferences(test.r))
 		}
 		sort.Slice(r.Tokens, func(i, j int) bool { return r.Tokens[i] < r.Tokens[j] })
 		sort.Slice(test.r.Tokens, func(i, j int) bool { return r.Tokens[i] < r.Tokens[j] })

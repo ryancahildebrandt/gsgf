@@ -206,7 +206,7 @@ func TestImportOrder(t *testing.T) {
 		{p: "./data/tests/dir0/dir1/d.jsgf", e: ".jsgf", exp: []string{}, err: dummyError},
 	}
 	for i, test := range table {
-		res, err := ImportOrder(test.p, test.e)
+		res, err := GetImportOrder(test.p, test.e)
 		sort.Strings(test.exp)
 		sort.Strings(res)
 		if !slices.Equal(res, test.exp) {

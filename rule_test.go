@@ -495,8 +495,8 @@ func TestRuleResolveReferences(t *testing.T) {
 		if test.exp.IsPublic != res.IsPublic {
 			t.Errorf("test %v: %v.ResolveReferences().Is_public\nGOT %v\nEXP %v", i, test.r, res.IsPublic, test.exp.IsPublic)
 		}
-		if !slices.Equal(References(res), References(test.exp)) {
-			t.Errorf("test %v: %v.ResolveReferences().References\nGOT %v\nEXP %v", i, test.r, References(res), References(test.exp))
+		if !slices.Equal(GetReferences(res), GetReferences(test.exp)) {
+			t.Errorf("test %v: %v.ResolveReferences().References\nGOT %v\nEXP %v", i, test.r, GetReferences(res), GetReferences(test.exp))
 		}
 		if !slices.Equal(Sort(test.exp.Graph.Edges), Sort(res.Graph.Edges)) {
 			t.Errorf("test %v: %v.ResolveReferences().edges\nGOT %v\nEXP %v", i, test.r, Sort(res.Graph.Edges), Sort(test.exp.Graph.Edges))
@@ -618,7 +618,7 @@ func TestRuleProductions(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		res := Productions(test.r)
+		res := GetProductions(test.r)
 		sort.Strings(res)
 		sort.Strings(test.exp)
 		if !slices.Equal(res, test.exp) {
@@ -841,8 +841,8 @@ func TestRuleWeightEdges(t *testing.T) {
 		if test.exp.IsPublic != res.IsPublic {
 			t.Errorf("test %v: %v.WeightEdges().Is_public\nGOT %v\nEXP %v", i, test.r, res.IsPublic, test.exp.IsPublic)
 		}
-		if !slices.Equal(References(res), References(test.exp)) {
-			t.Errorf("test %v: %v.WeightEdges().References\nGOT %v\nEXP %v", i, test.r, References(res), References(test.exp))
+		if !slices.Equal(GetReferences(res), GetReferences(test.exp)) {
+			t.Errorf("test %v: %v.WeightEdges().References\nGOT %v\nEXP %v", i, test.r, GetReferences(res), GetReferences(test.exp))
 		}
 		if !slices.Equal(Sort(test.exp.Graph.Edges), Sort(res.Graph.Edges)) {
 			t.Errorf("test %v: %v.WeightEdges().edges\nGOT %v\nEXP %v", i, test.r, Sort(res.Graph.Edges), Sort(test.exp.Graph.Edges))

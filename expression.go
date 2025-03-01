@@ -20,8 +20,8 @@ func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
 	var (
 		res string
 		b   strings.Builder
+		out = []Expression{"<SOS>"}
 	)
-	out := []Expression{"<SOS>"}
 
 	if e == "" {
 		return []Expression{}
@@ -30,11 +30,7 @@ func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
 	for stream.IsValid() {
 		switch {
 		case stream.CurrentToken().Is(SquareOpen, SquareClose, ParenthesisOpen, ParenthesisClose, Alternate, Semicolon):
-			res = b.String()
-			b.Reset()
-			if res != "" {
-				out = append(out, res)
-			}
+			b, out = FlushBuilder(b, out)
 			res = stream.CurrentToken().ValueUnescapedString()
 			out = append(out, res)
 			stream.GoNext()
@@ -45,44 +41,40 @@ func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
 		case stream.CurrentToken().Is(ForwardSlash):
 			stream.GoNext()
 			b.WriteString("/")
-			res, _ = captureString(stream, "/", true)
+			res, _ = CaptureString(stream, "/", true)
 			b.WriteString(res)
-			res = b.String()
-			b.Reset()
-			if res != "" {
-				out = append(out, res)
-			}
+			b, out = FlushBuilder(b, out)
 			stream.GoNext()
 		case stream.CurrentToken().Is(AngleOpen):
-			res = b.String()
-			b.Reset()
-			if res != "" {
-				out = append(out, res)
-			}
-			res, _ = captureString(stream, ">", true)
+			b, out = FlushBuilder(b, out)
+			res, _ = CaptureString(stream, ">", true)
 			out = append(out, res)
 			stream.GoNext()
 		case stream.CurrentToken().Is(CurlyOpen):
-			res, _ = captureString(stream, "}", true)
+			res, _ = CaptureString(stream, "}", true)
 			b.WriteString(res)
-			res = b.String()
-			b.Reset()
-			if res != "" {
-				out = append(out, res)
-			}
+			b, out = FlushBuilder(b, out)
 			stream.GoNext()
 		default:
 			b.WriteString(stream.CurrentToken().ValueUnescapedString())
 			stream.GoNext()
 		}
 	}
-	res = b.String()
-	if res != "" {
-		out = append(out, res)
-	}
+	b, out = FlushBuilder(b, out)
 	out = append(out, "<EOS>")
 
 	return out
+}
+
+func FlushBuilder(b strings.Builder, o []Expression) (strings.Builder, []Expression) {
+	var s string = b.String()
+
+	b.Reset()
+	if s != "" {
+		o = append(o, s)
+	}
+
+	return b, o
 }
 
 func IsWeighted(e Expression) bool {

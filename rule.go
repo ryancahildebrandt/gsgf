@@ -28,11 +28,11 @@ func NewRule(e Expression, isPublic bool) Rule {
 	return r
 }
 
-func Tokens(r Rule) []Expression {
+func GetTokens(r Rule) []Expression {
 	return r.Graph.Tokens
 }
 
-func References(r Rule) []string {
+func GetReferences(r Rule) []string {
 	var refs []string
 	seen := make(map[string]struct{})
 
@@ -48,18 +48,20 @@ func References(r Rule) []string {
 }
 
 func ResolveReferences(r Rule, m map[string]Rule, lex *tokenizer.Tokenizer) (Rule, error) {
-	var r1 Rule
-	var err error
-	if len(References(r)) == 0 {
+	if len(GetReferences(r)) == 0 {
 		return r, nil
 	}
 
-	r1 = r
-	rules := make(map[string]Rule)
+	var (
+		r1    Rule = r
+		err   error
+		rules map[string]Rule = make(map[string]Rule)
+	)
+
 	for k, v := range m {
 		rules[k] = v
 	}
-	for _, ref := range References(r) {
+	for _, ref := range GetReferences(r) {
 		if ref == "" {
 			continue
 		}
@@ -77,8 +79,8 @@ func ResolveReferences(r Rule, m map[string]Rule, lex *tokenizer.Tokenizer) (Rul
 }
 
 func SingleResolveReference(r Rule, ref string, rule Rule, lex *tokenizer.Tokenizer) (Rule, error) {
-	var r1 Rule
-	r1 = r
+	var r1 Rule = r
+
 	for i, t := range ToTokens(r1.Exp, lex) {
 		if t == ref {
 			g, err := ComposeGraphs(r1.Graph, rule.Graph, i)
@@ -94,17 +96,17 @@ func SingleResolveReference(r Rule, ref string, rule Rule, lex *tokenizer.Tokeni
 }
 
 func ParseRule(line string, lex *tokenizer.Tokenizer) (string, Rule, error) {
+	err := ValidateJSGFRule(line)
+	if err != nil {
+		return "", Rule{}, err
+	}
+
 	var name string
 	var exp string
 
-	err := ValidateJSGFRule(line)
-	if err != nil {
-		return name, Rule{}, err
-	}
-
 	name, exp, found := strings.Cut(line, "=")
 	if !found {
-		return name, Rule{}, errors.New("jsgf line does not contain required assignment =")
+		return "", Rule{}, errors.New("jsgf line does not contain required assignment =")
 	}
 	name = strings.TrimPrefix(name, "public ")
 	name = strings.TrimSpace(name)
@@ -114,15 +116,15 @@ func ParseRule(line string, lex *tokenizer.Tokenizer) (string, Rule, error) {
 }
 
 func ValidateRuleRecursion(r Rule, m map[string]Rule) error {
-	if len(References(r)) == 0 {
+	if len(GetReferences(r)) == 0 {
 		return nil
 	}
 
-	rules := make(map[string]Rule)
+	var rules map[string]Rule = make(map[string]Rule)
 	for k, v := range m {
 		rules[k] = v
 	}
-	for _, ref := range References(r) {
+	for _, ref := range GetReferences(r) {
 		if ref == "" {
 			continue
 		}

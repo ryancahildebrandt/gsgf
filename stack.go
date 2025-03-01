@@ -15,31 +15,38 @@ func (s Stack) Push(v int) Stack {
 	return append(s, v)
 }
 
-func (s Stack) Top() (t int, err error) {
+func (s Stack) Top() (int, error) {
+	var top int
+
 	if len(s) == 0 {
 		return 0, errors.New("no top value in empty stack")
 	}
-	t = s[len(s)-1]
+	top = s[len(s)-1]
 
-	return t, nil
+	return top, nil
 }
 
-func (s Stack) Pop() (t int, b Stack, err error) {
-	t, err = s.Top()
+func (s Stack) Pop() (int, Stack, error) {
+	var top int
+	var bot Stack
+
+	top, err := s.Top()
 	if err != nil {
 		return 0, Stack{}, err
 	}
-	b = s[:len(s)-1]
+	bot = s[:len(s)-1]
 
-	return t, b, nil
+	return top, bot, nil
 }
 
-func (s Stack) Drop(v int) (out Stack) {
+func (s Stack) Drop(v int) Stack {
+	var s1 Stack
+
 	for _, i := range s {
 		if i != v {
-			out = out.Push(i)
+			s1 = s1.Push(i)
 		}
 	}
 
-	return out
+	return s1
 }

@@ -71,7 +71,7 @@ func (e EdgeList) Max() int {
 
 func Unique(e EdgeList) EdgeList {
 	var out EdgeList
-	seen := make(map[string]int)
+	var seen map[string]int = make(map[string]int)
 
 	for i := range e {
 		seen[fmt.Sprint(e[i])] = i
@@ -83,15 +83,16 @@ func Unique(e EdgeList) EdgeList {
 	return out
 }
 
-func BuildEdgeList(arr []Expression) (edges EdgeList) {
+func ToEdgeList(arr []Expression) EdgeList {
 	var (
+		edges      EdgeList
 		err        error
 		f          int
 		g          int
 		groupStack Stack
+		groupMap   = make(map[int][]int)
 	)
 
-	groupMap := make(map[int][]int)
 	for i, token := range arr {
 		switch token {
 		case "<EOS>":

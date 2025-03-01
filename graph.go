@@ -32,7 +32,7 @@ func NewGraph(e EdgeList, n []Expression) Graph {
 	return g
 }
 
-func (g Graph) From(i int) []int {
+func (g Graph) GetFrom(i int) []int {
 	v, ok := g.Children[i]
 	if !ok {
 		return []int{}
@@ -41,7 +41,7 @@ func (g Graph) From(i int) []int {
 	return v
 }
 
-func (g Graph) Weight(f int, t int) float64 {
+func (g Graph) GetWeight(f int, t int) float64 {
 	v, ok := g.Weights[f][t]
 	if !ok {
 		return 1.0
@@ -74,7 +74,7 @@ func (g Graph) DropNode(i int) Graph {
 		end   int
 	)
 
-	start, end = EndPoints(g)
+	start, end = GetEndPoints(g)
 
 	for _, edge := range g.Edges {
 		switch i {
@@ -98,7 +98,7 @@ func (g Graph) DropNode(i int) Graph {
 	return NewGraph(Unique(edg), g.Tokens)
 }
 
-func EndPoints(g Graph) (i, f int) {
+func GetEndPoints(g Graph) (i, f int) {
 	e1 := make(map[int]struct{})
 	e2 := make(map[int]struct{})
 	edges := Sort(g.Edges)
@@ -122,26 +122,25 @@ func EndPoints(g Graph) (i, f int) {
 
 type Path = []int
 
-func AllPaths(g Graph) (res []Path) {
+func GetAllPaths(g Graph) []Path {
 	var (
+		f, t  int    = GetEndPoints(g)
+		paths []Path = []Path{{f}}
 		path  Path
-		paths []Path
+		res   []Path
 		p     Path
 		node  int
-		f     int
-		t     int
 	)
 
-	f, t = EndPoints(g)
-	paths = []Path{{f}}
 	for len(paths) > 0 {
 		path, paths = paths[0], paths[1:]
 		node = path[len(path)-1]
 		if node == t {
 			res = append(res, path)
+
 			continue
 		}
-		for _, n := range g.From(node) {
+		for _, n := range g.GetFrom(node) {
 			p = make(Path, len(path)+1)
 			copy(p, path)
 			p[len(path)] = n
@@ -163,7 +162,7 @@ func ComposeGraphs(g Graph, h Graph, i int) (Graph, error) {
 	}
 
 	h.Edges = Increment(h.Edges, g.Edges.Max()+1)
-	hFrom, hTo := EndPoints(h)
+	hFrom, hTo := GetEndPoints(h)
 	exp := append(g.Tokens, h.Tokens...)
 	edg := h.Edges
 
@@ -181,7 +180,7 @@ func ComposeGraphs(g Graph, h Graph, i int) (Graph, error) {
 	return NewGraph(edg, exp), nil
 }
 
-func ChooseNext(c []int, w []float64) (int, error) {
+func GetRandomChoice(c []int, w []float64) (int, error) {
 	if len(c) == 0 || len(w) == 0 {
 		return -1, errors.New("length of choices c and/or weights w is 0")
 	}
@@ -196,18 +195,17 @@ func ChooseNext(c []int, w []float64) (int, error) {
 	return c[i], nil
 }
 
-func RandomPath(g Graph) (Path, error) {
+func GetRandomPath(g Graph) (Path, error) {
 	var (
 		res    Path
 		choice int
+		f, t   int = GetEndPoints(g)
 	)
 
-	f, t := EndPoints(g)
 	res = append(res, f)
-
 	p := f
 	for p != t {
-		n := g.From(p)
+		n := g.GetFrom(p)
 		switch len(n) {
 		case 0:
 			return Path{}, errors.New("cannot proceed further down path")
@@ -218,9 +216,9 @@ func RandomPath(g Graph) (Path, error) {
 		default:
 			w := make([]float64, len(n))
 			for i, dest := range n {
-				w[i] = g.Weight(f, dest)
+				w[i] = g.GetWeight(f, dest)
 			}
-			choice, err := ChooseNext(g.From(p), w)
+			choice, err := GetRandomChoice(g.GetFrom(p), w)
 			if err != nil {
 				return Path{}, err
 			}
@@ -233,10 +231,9 @@ func RandomPath(g Graph) (Path, error) {
 }
 
 func Minimize(g Graph) Graph {
-	var g1 Graph
+	var g1 Graph = g
+	var f []string = []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}
 
-	f := []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}
-	g1 = g
 	for i, t := range g1.Tokens {
 		if slices.Contains(f, t) {
 			g1 = g1.DropNode(i)
@@ -266,10 +263,10 @@ func WeightEdges(r Rule) (Rule, error) {
 	return r, nil
 }
 
-func Productions(r Rule) []string { // to graph
+func GetProductions(r Rule) []string {
 	var out []string
-	for _, path := range AllPaths(r.Graph) {
-		prod := singleProduction(path, FilterTerminals(Tokens(r), []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"}))
+	for _, path := range GetAllPaths(r.Graph) {
+		prod := GetSingleProduction(path, FilterTerminals(GetTokens(r), []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"}))
 		if prod != "" {
 			out = append(out, prod)
 		}
@@ -278,11 +275,13 @@ func Productions(r Rule) []string { // to graph
 	return out
 }
 
-func singleProduction(p Path, a []Expression) string {
+func GetSingleProduction(p Path, a []Expression) string {
 	if len(p) == 0 || len(a) == 0 {
 		return ""
 	}
+
 	var b strings.Builder
+
 	for _, i := range p {
 		b.WriteString(a[i])
 	}
@@ -291,14 +290,13 @@ func singleProduction(p Path, a []Expression) string {
 }
 
 func FilterTerminals(a []Expression, f []string) []Expression {
-	filter := make(map[string]struct{})
+	var filter map[string]struct{} = make(map[string]struct{})
+	var a1 []Expression = make([]Expression, len(a))
+
+	copy(a1, a)
 	for _, s := range f {
 		filter[s] = struct{}{}
 	}
-
-	a1 := make([]Expression, len(a))
-	copy(a1, a)
-
 	for i, e := range a1 {
 		_, ok := filter[e]
 		if ok {

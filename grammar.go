@@ -19,13 +19,14 @@ type Grammar struct {
 }
 
 func NewGrammar(p string) Grammar {
-	g := Grammar{}
+	var g Grammar
+
 	g.Rules = make(map[string]Rule)
 
 	return g
 }
 
-func CompositionOrder(g Grammar) []string {
+func GetCompositionOrder(g Grammar) []string {
 	var (
 		rules []string
 		rule  string
@@ -37,22 +38,21 @@ func CompositionOrder(g Grammar) []string {
 			rules = append(rules, k)
 		}
 	}
-
 	for len(rules) > 0 {
 		rule, rules = rules[0], rules[1:]
-		rules = append(rules, References(g.Rules[rule])...)
+		rules = append(rules, GetReferences(g.Rules[rule])...)
 		res = append(res, rule)
 	}
 
 	return res
 }
 
-func AllProductions(g Grammar) []string {
+func GetAllProductions(g Grammar) []string {
 	var out []string
 
 	for _, v := range g.Rules {
 		if v.IsPublic {
-			out = append(out, Productions(v)...)
+			out = append(out, GetProductions(v)...)
 		}
 	}
 
@@ -60,13 +60,12 @@ func AllProductions(g Grammar) []string {
 }
 
 func ResolveRules(g Grammar, lex *tokenizer.Tokenizer) (Grammar, error) {
-	ord := CompositionOrder(g)
-	seen := make(map[string]struct{})
+	var ord []string = GetCompositionOrder(g)
+	var seen map[string]struct{} = make(map[string]struct{})
 
 	for i := len(ord) - 1; i >= 0; i-- {
 		rname := ord[i]
 		r1 := g.Rules[rname]
-
 		_, ok := seen[rname]
 		if !ok {
 			seen[rname] = struct{}{}
@@ -102,7 +101,7 @@ func ImportLines(g Grammar, s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar
 				return NewGrammar(""), err
 			}
 			rule.Tokens = ToTokens(rule.Exp, lex)
-			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
+			rule.Graph = NewGraph(ToEdgeList(rule.Tokens), rule.Tokens)
 			g.Rules[name] = rule
 		default:
 			continue
@@ -114,9 +113,9 @@ func ImportLines(g Grammar, s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar
 
 func ImportNameSpace(g Grammar, r map[string]string, lex *tokenizer.Tokenizer) Grammar {
 	for k, v := range r {
-		rule := NewRule(Expression(v), false)
+		rule := NewRule(v, false)
 		rule.Tokens = ToTokens(rule.Exp, lex)
-		rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
+		rule.Graph = NewGraph(ToEdgeList(rule.Tokens), rule.Tokens)
 		_, ok := g.Rules[k]
 		if !ok {
 			g.Rules[k] = rule
@@ -128,7 +127,7 @@ func ImportNameSpace(g Grammar, r map[string]string, lex *tokenizer.Tokenizer) G
 
 func ValidateGrammarCompleteness(g Grammar) error {
 	for _, v := range g.Rules {
-		for _, ref := range References(v) {
+		for _, ref := range GetReferences(v) {
 			_, ok := g.Rules[ref]
 			if !ok {
 				return errors.New("grammar references rule not present in namespace")

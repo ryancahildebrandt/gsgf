@@ -77,7 +77,7 @@ func TestGraphFrom(t *testing.T) {
 	}
 	for i, test := range table {
 		g := NewGraph(test.e, []Expression{})
-		res := g.From(test.n)
+		res := g.GetFrom(test.n)
 		if !slices.Equal(res, test.exp) {
 			t.Errorf("test %v: Graph(%v).From(%v)\nGOT %v\nEXP %v", i, test.e, test.n, res, test.exp)
 		}
@@ -171,7 +171,7 @@ func TestGraphWeight(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		res := test.g.Weight(test.f, test.t)
+		res := test.g.GetWeight(test.f, test.t)
 		if test.exp != res {
 			t.Errorf("test %v: %v.Weight(%v, %v)\nGOT %v\nEXP %v", i, test.g, test.f, test.t, res, test.exp)
 		}
@@ -388,7 +388,7 @@ func TestGraphEndPoints(t *testing.T) {
 	}
 	for i, test := range table {
 		g := NewGraph(test.e, []Expression{})
-		initial, final := EndPoints(g)
+		initial, final := GetEndPoints(g)
 		if initial != test.i || final != test.f {
 			t.Errorf("test %v: %v.EndPoints()\nGOT %v, %v\nEXP %v, %v", i, test.e, initial, final, test.i, test.f)
 		}
@@ -805,7 +805,7 @@ func TestGraphAllPaths(t *testing.T) {
 	}
 	for i, test := range table {
 		g := NewGraph(test.e, []Expression{})
-		res := AllPaths(g)
+		res := GetAllPaths(g)
 		sort.Slice(res, func(i, j int) bool { return fmt.Sprint(res[i]) < fmt.Sprint(res[j]) })
 		sort.Slice(test.exp, func(i, j int) bool { return fmt.Sprint(test.exp[i]) < fmt.Sprint(test.exp[j]) })
 		for n := range res {
@@ -1066,7 +1066,7 @@ func TestChooseNext(t *testing.T) {
 		if test.p {
 			choices := make(map[int]float64)
 			for range 1000 {
-				c, _ := ChooseNext(test.c, test.w)
+				c, _ := GetRandomChoice(test.c, test.w)
 				choices[c]++
 			}
 			res = test.c[0]
@@ -1076,7 +1076,7 @@ func TestChooseNext(t *testing.T) {
 				}
 			}
 		} else {
-			res, err = ChooseNext(test.c, test.w)
+			res, err = GetRandomChoice(test.c, test.w)
 		}
 		if res != test.exp {
 			t.Errorf("test %v: ChooseNext(%v, %v)\nGOT %v\nEXP %v", i, test.c, test.w, res, test.exp)
@@ -1549,7 +1549,7 @@ func TestGraphRandomPath(t *testing.T) {
 	}
 	for i, test := range table {
 		g := NewGraph(test.e, []Expression{})
-		res, err := RandomPath(g)
+		res, err := GetRandomPath(g)
 		found := false
 		for _, p := range test.exp {
 			if slices.Equal(res, p) {

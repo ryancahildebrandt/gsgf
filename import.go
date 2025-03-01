@@ -78,8 +78,9 @@ func ValidateJSGFImport(s string) error {
 }
 
 func CreateNameSpace(p string, e string) (map[string]string, error) {
-	rs := make(map[string]string)
-	imports, err := ImportOrder(p, e)
+	var rs map[string]string = make(map[string]string)
+
+	imports, err := GetImportOrder(p, e)
 	if err != nil {
 		return make(map[string]string), err
 	}
@@ -106,9 +107,9 @@ func PeekGrammar(p string) (string, []string, map[string]string, error) {
 		err     error
 		name    string
 		imports []string
+		rules   map[string]string = make(map[string]string)
 	)
 
-	rules := make(map[string]string)
 	f, err := os.Open(p)
 	if err != nil {
 		return name, imports, rules, errors.New(fmt.Sprint("unable to open grammar ", p))
@@ -189,7 +190,7 @@ func FindGrammar(p string, t string, e string) (string, error) {
 	return target, nil
 }
 
-func ImportOrder(p string, e string) ([]string, error) {
+func GetImportOrder(p string, e string) ([]string, error) {
 	var (
 		imports []string
 		imp     string

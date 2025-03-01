@@ -11,66 +11,72 @@ import (
 	"strings"
 )
 
-type GrammarJson struct {
-	Rules   map[string]RuleJson `json:"rules"`
+type GrammarJSON struct {
+	Rules   map[string]RuleJSON `json:"rules"`
 	Imports []string            `json:"imports"`
 }
-type GraphJson struct {
+
+type GraphJSON struct {
 	Tokens []string   `json:"tokens"`
-	Edges  []EdgeJson `json:"edges"`
+	Edges  []EdgeJSON `json:"edges"`
 	Paths  [][]int    `json:"paths"`
 }
-type EdgeJson struct {
+
+type EdgeJSON struct {
 	From   int     `json:"source"`
 	To     int     `json:"destination"`
 	Weight float64 `json:"weight"`
 }
-type RuleJson struct {
+
+type RuleJSON struct {
 	Expression string    `json:"expression"`
 	IsPublic   bool      `json:"is_public"`
-	Graph      GraphJson `json:"graph"`
+	Graph      GraphJSON `json:"graph"`
 }
 
-func RuleToJson(r Rule) RuleJson {
+func RuleToJSON(r Rule) RuleJSON {
 	var tokens []string
 	for _, i := range r.Tokens {
 		tokens = append(tokens, i)
 	}
 
-	return RuleJson{Expression: r.Exp, IsPublic: r.IsPublic, Graph: GraphToJson(r.Graph)}
+	return RuleJSON{Expression: r.Exp, IsPublic: r.IsPublic, Graph: GraphToJSON(r.Graph)}
 }
 
-func EdgeToJson(e Edge) EdgeJson {
-	return EdgeJson(e)
+func EdgeToJSON(e Edge) EdgeJSON {
+	return EdgeJSON(e)
 }
 
-func GraphToJson(g Graph) GraphJson {
-	var j GraphJson
+func GraphToJSON(g Graph) GraphJSON {
+	var j GraphJSON
+
 	for _, i := range g.Tokens {
 		j.Tokens = append(j.Tokens, i)
 	}
-	for _, i := range AllPaths(g) {
+	for _, i := range GetAllPaths(g) {
 		j.Paths = append(j.Paths, i)
 	}
 	for _, i := range g.Edges {
-		j.Edges = append(j.Edges, EdgeToJson(i))
+		j.Edges = append(j.Edges, EdgeToJSON(i))
 	}
 
 	return j
 }
 
-func GrammarToJson(g Grammar) GrammarJson {
-	rules := make(map[string]RuleJson)
+func GrammarToJSON(g Grammar) GrammarJSON {
+	var rules map[string]RuleJSON = make(map[string]RuleJSON)
+
 	for k, v := range g.Rules {
-		rules[k] = RuleToJson(v)
+		rules[k] = RuleToJSON(v)
 	}
 
-	return GrammarJson{Rules: rules, Imports: g.Imports}
+	return GrammarJSON{Rules: rules, Imports: g.Imports}
 }
 
-func GraphToTxt(g Graph) (string, string) {
+func GraphToTXT(g Graph) (string, string) {
 	var nodes []string
 	var edges []string
+
 	for _, i := range g.Tokens {
 		nodes = append(nodes, fmt.Sprintf("\"%s\"", i))
 	}
@@ -81,7 +87,7 @@ func GraphToTxt(g Graph) (string, string) {
 	return strings.Join(nodes, "\n"), strings.Join(edges, "\n")
 }
 
-func GraphToDot(g Graph) string {
+func GraphToDOT(g Graph) string {
 	var (
 		b       strings.Builder
 		entry   string
@@ -113,14 +119,14 @@ func GraphToDot(g Graph) string {
 	return b.String()
 }
 
-func ReferencesToDot(g Grammar) string {
+func ReferencesToDOT(g Grammar) string {
 	var b strings.Builder
 	var entry string
 
 	b.WriteString("digraph {\n\n")
 	b.WriteString("\trankdir = \"LR\"\n\n")
 	for k, v := range g.Rules {
-		for _, ref := range References(v) {
+		for _, ref := range GetReferences(v) {
 			entry = fmt.Sprintf("\t%s -> %s;\n", ref, k)
 			b.WriteString(entry)
 		}

@@ -98,7 +98,7 @@ func TestGrammarCompositionOrder(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		res := CompositionOrder(test.g)
+		res := GetCompositionOrder(test.g)
 		sort.Strings(res)
 		sort.Strings(test.exp)
 		if !slices.Equal(res, test.exp) {
@@ -283,14 +283,14 @@ func TestGrammarProductions(t *testing.T) {
 			},
 		}
 		for j, p := range test.p {
-			rule := NewRule(Expression(p), true)
+			rule := NewRule(p, true)
 			rule.Tokens = ToTokens(rule.Exp, lexer)
-			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
+			rule.Graph = NewGraph(ToEdgeList(rule.Tokens), rule.Tokens)
 			// rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"})
 			g.Rules[fmt.Sprintf("<pub_%v>", j)] = rule
 		}
 		g, err := ResolveRules(g, lexer)
-		res := AllProductions(g)
+		res := GetAllProductions(g)
 		sort.Strings(test.exp)
 		sort.Strings(res)
 		if !slices.Equal(res, test.exp) {
@@ -478,14 +478,13 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 			},
 		}
 		for j, p := range test.p {
-			rule := NewRule(Expression(p), true)
+			rule := NewRule(p, true)
 			rule.Tokens = ToTokens(rule.Exp, lexer)
-			rule.Graph = NewGraph(BuildEdgeList(rule.Tokens), rule.Tokens)
-			// rule.productions = FilterTerminals(rule.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", "",})
+			rule.Graph = NewGraph(ToEdgeList(rule.Tokens), rule.Tokens)
 			g.Rules[fmt.Sprintf("<pub_%v>", j)] = rule
 		}
 		g, err := ResolveRules(g, lexer)
-		res := AllProductions(g)
+		res := GetAllProductions(g)
 		sort.Strings(test.exp)
 		sort.Strings(res)
 		if !slices.Equal(res, test.exp) {
@@ -626,7 +625,7 @@ func TestGrammarProductionsE2E(t *testing.T) {
 		namespace, err3 := CreateNameSpace(test.p, ".jsgf")
 		grammar = ImportNameSpace(grammar, namespace, lexer)
 		grammar, err4 := ResolveRules(grammar, lexer)
-		res := AllProductions(grammar)
+		res := GetAllProductions(grammar)
 		for _, e := range []error{err1, err2, err3, err4} {
 			if e != nil {
 				err = e

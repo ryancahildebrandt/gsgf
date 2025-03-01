@@ -450,7 +450,7 @@ func TestBuildEdgeList(t *testing.T) {
 	}
 	for i, test := range table {
 		_, v, err := ParseRule(test.r, lexer)
-		res := BuildEdgeList(ToTokens(v.Exp, lexer))
+		res := ToEdgeList(ToTokens(v.Exp, lexer))
 		if !slices.Equal(Sort(res), Sort(test.exp)) {
 			t.Errorf("test %v: %v.toArray(lexer)\nGOT %v\nEXP %v", i, test.r, res, test.exp)
 		}
