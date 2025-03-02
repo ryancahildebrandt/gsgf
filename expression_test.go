@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestExpressionToTokens(t *testing.T) {
+func TestToTokens(t *testing.T) {
 	lexer := NewJSGFLexer()
 	table := []struct {
 		e   Expression
@@ -135,7 +135,7 @@ func TestExpressionToTokens(t *testing.T) {
 	}
 }
 
-func TestExpressionParseWeight(t *testing.T) {
+func TestParseWeight(t *testing.T) {
 	dummyError := errors.New("")
 	table := []struct {
 		e   Expression
@@ -172,5 +172,25 @@ func TestExpressionParseWeight(t *testing.T) {
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: ParseWeight(%v)\nGOT %v\nEXP %v", i, test.e, err, test.err)
 		}
+	}
+}
+
+func TestIsWeighted(t *testing.T) {
+	type args struct {
+		e Expression
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsWeighted(tt.args.e); got != tt.want {
+				t.Errorf("IsWeighted() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestBuildEdgeList(t *testing.T) {
+func TestToEdgeList(t *testing.T) {
 	dummyError := errors.New("")
 	lexer := NewJSGFLexer()
 	table := []struct {

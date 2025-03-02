@@ -10,12 +10,15 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"slices"
 	"sort"
 	"testing"
+
+	"github.com/bzick/tokenizer"
 )
 
-func TestGrammarCompositionOrder(t *testing.T) {
+func TestGetCompositionOrder(t *testing.T) {
 	table := []struct {
 		g   Grammar
 		exp []string
@@ -107,7 +110,7 @@ func TestGrammarCompositionOrder(t *testing.T) {
 	}
 }
 
-func TestGrammarProductions(t *testing.T) {
+func TestGetAllProductions(t *testing.T) {
 	dummyError := errors.New("")
 	lexer := NewJSGFLexer()
 	table := []struct {
@@ -302,7 +305,7 @@ func TestGrammarProductions(t *testing.T) {
 	}
 }
 
-func TestGrammarProductionsMinimized(t *testing.T) {
+func TestGetAllProductionsMinimized(t *testing.T) {
 	dummyError := errors.New("")
 	lexer := NewJSGFLexer()
 	table := []struct {
@@ -496,101 +499,7 @@ func TestGrammarProductionsMinimized(t *testing.T) {
 	}
 }
 
-func TestGrammarPeek(t *testing.T) {
-	table := []struct {
-		p       string
-		n       string
-		imports []string
-		rules   map[string][]string
-	}{
-		{
-			p: "data/tests/test0.jsgf", n: "test0", imports: []string{"import <a.*>;"}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "quant": {}, "teatype": {}, "brew": {"quant"},
-			},
-		},
-		{
-			p: "data/tests/test1.jsgf", n: "test1", imports: []string{"import <c.brew>;"}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {},
-				"teatype": {},
-			},
-		},
-		{
-			p: "data/tests/test2.jsgf", n: "test2", imports: []string{"import <a1.*>;"}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {},
-				"teatype": {}, "brew": {"quant"},
-			},
-		},
-		{
-			p: "data/tests/test3.jsgf", n: "test3", imports: []string{"import <e.dne>;"}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {},
-				"teatype": {}, "brew": {"quant"},
-			},
-		},
-		{
-			p: "data/tests/test4.jsgf", n: "test4", imports: []string{"import <d.*>;"}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "quant": {}, "brew": {"quant"},
-			},
-		},
-		{
-			p: "data/tests/test5.jsgf", n: "test5", imports: []string{"import <b.request>;"},
-			rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "order": {"quant"}, "quant": {}, "teatype": {},
-				"brew": {"quant"},
-			},
-		},
-		{
-			p: "data/tests/a.jsgf", n: "a", imports: []string{},
-			rules: map[string][]string{"request": {"brew"}, "order": {"quant"}, "brew": {"quant"}, "quant": {}},
-		},
-		{
-			p: "data/tests/b.jsgf", n: "b", imports: []string{"import <c.brew>;"},
-			rules: map[string][]string{"request": {"brew"}, "order": {"quant"}, "quant": {}},
-		},
-		{
-			p: "data/tests/dir0/c.jsgf", n: "c", imports: []string{},
-			rules: map[string][]string{"teatype": {}, "brew": {"quant"}, "quant": {}},
-		},
-		{
-			p: "data/tests/dir0/dir1/d.jsgf", n: "d", imports: []string{"import <c.teatype>;", "import <a.order>;"},
-			rules: map[string][]string{},
-		},
-		{
-			p: "data/tests/dir0/dir1/dir2/e.jsgf", n: "e", imports: []string{}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {},
-				"teatype": {}, "brew": {"quant"},
-			},
-		},
-	}
-	for i, test := range table {
-		name, imports, rules, err := PeekGrammar(test.p)
-		if err != nil {
-			t.Errorf("test %v: Grammar(%v).Peek()\nGOT error %v", i, test.p, err)
-		}
-		if name != test.n {
-			t.Errorf("test %v: Grammar(%v).Peek().imports\nGOT %v\nEXP %v", i, test.p, name, test.n)
-		}
-		sort.Strings(imports)
-		sort.Strings(test.imports)
-		if !slices.Equal(imports, test.imports) {
-			t.Errorf("test %v: Grammar(%v).Peek().imports\nGOT %v\nEXP %v", i, test.p, imports, test.imports)
-		}
-		if len(rules) != len(test.rules) {
-			t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
-		}
-		// for k1, v1 := range rules {
-		// 	v2, ok := test.rules[k1]
-		// 	if !ok {
-		// 		t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
-		// 	}
-		// 	fmt.Println(v1, v2)
-		// 	// if !slices.Equal(v1, v2) {
-		// 	// 	t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
-		// 	// }
-		// }
-	}
-}
-
-func TestGrammarProductionsE2E(t *testing.T) {
+func TestGetAllProductionsE2E(t *testing.T) {
 	dummyError := errors.New("")
 	lexer := NewJSGFLexer()
 	var productions []string
@@ -639,5 +548,102 @@ func TestGrammarProductionsE2E(t *testing.T) {
 		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
 			t.Errorf("test %v: %v.Productions().err\nGOT %v\nEXP %v", i, test.p, err, test.err)
 		}
+	}
+}
+
+func TestValidateGrammarCompleteness(t *testing.T) {
+	type args struct {
+		g Grammar
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := ValidateGrammarCompleteness(tt.args.g); (err != nil) != tt.wantErr {
+				t.Errorf("ValidateGrammarCompleteness() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestImportLines(t *testing.T) {
+	type args struct {
+		g   Grammar
+		s   *bufio.Scanner
+		lex *tokenizer.Tokenizer
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    Grammar
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ImportLines(tt.args.g, tt.args.s, tt.args.lex)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ImportLines() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ImportLines() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestImportNameSpace(t *testing.T) {
+	type args struct {
+		g   Grammar
+		r   map[string]string
+		lex *tokenizer.Tokenizer
+	}
+	tests := []struct {
+		name string
+		args args
+		want Grammar
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ImportNameSpace(tt.args.g, tt.args.r, tt.args.lex); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ImportNameSpace() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestResolveRules(t *testing.T) {
+	type args struct {
+		g   Grammar
+		lex *tokenizer.Tokenizer
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    Grammar
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ResolveRules(tt.args.g, tt.args.lex)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ResolveRules() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ResolveRules() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

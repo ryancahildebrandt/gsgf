@@ -35,11 +35,6 @@ type RuleJSON struct {
 }
 
 func RuleToJSON(r Rule) RuleJSON {
-	var tokens []string
-	for _, t := range r.Tokens {
-		tokens = append(tokens, t)
-	}
-
 	return RuleJSON{Expression: r.Exp, IsPublic: r.IsPublic, Graph: GraphToJSON(r.Graph)}
 }
 
@@ -50,12 +45,8 @@ func EdgeToJSON(e Edge) EdgeJSON {
 func GraphToJSON(g Graph) GraphJSON {
 	var j GraphJSON
 
-	for _, i := range g.Tokens {
-		j.Tokens = append(j.Tokens, i)
-	}
-	for _, i := range GetAllPaths(g) {
-		j.Paths = append(j.Paths, i)
-	}
+	j.Tokens = append(j.Tokens, g.Tokens...)
+	j.Paths = append(j.Paths, GetAllPaths(g)...)
 	for _, i := range g.Edges {
 		j.Edges = append(j.Edges, EdgeToJSON(i))
 	}

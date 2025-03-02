@@ -9,12 +9,13 @@ import (
 	"errors"
 	"fmt"
 	"maps"
+	"reflect"
 	"slices"
 	"sort"
 	"testing"
 )
 
-func TestGraphFrom(t *testing.T) {
+func TestGetFrom(t *testing.T) {
 	table := []struct {
 		e   EdgeList
 		n   int
@@ -84,7 +85,7 @@ func TestGraphFrom(t *testing.T) {
 	}
 }
 
-func TestGraphWeight(t *testing.T) {
+func TestGetWeight(t *testing.T) {
 	table := []struct {
 		g   Graph
 		f   int
@@ -178,7 +179,7 @@ func TestGraphWeight(t *testing.T) {
 	}
 }
 
-func TestGraphAddEdge(t *testing.T) {
+func TestAddEdge(t *testing.T) {
 	table := []struct {
 		e   EdgeList
 		edg Edge
@@ -320,7 +321,7 @@ func TestGraphAddEdge(t *testing.T) {
 	}
 }
 
-func TestGraphEndPoints(t *testing.T) {
+func TestGetEndPoints(t *testing.T) {
 	table := []struct {
 		e EdgeList
 		i int
@@ -395,7 +396,7 @@ func TestGraphEndPoints(t *testing.T) {
 	}
 }
 
-func TestGraphAllPaths(t *testing.T) {
+func TestGetAllPaths(t *testing.T) {
 	table := []struct {
 		e   EdgeList
 		exp []Path
@@ -816,7 +817,7 @@ func TestGraphAllPaths(t *testing.T) {
 	}
 }
 
-func TestGraphCompose(t *testing.T) {
+func TestComposeGraphs(t *testing.T) {
 	dummyError := errors.New("")
 	table := []struct {
 		g   Graph
@@ -1041,7 +1042,7 @@ func TestGraphCompose(t *testing.T) {
 	}
 }
 
-func TestChooseNext(t *testing.T) {
+func TestGetRandomChoice(t *testing.T) {
 	dummyError := errors.New("")
 	table := []struct {
 		c   []int
@@ -1087,7 +1088,7 @@ func TestChooseNext(t *testing.T) {
 	}
 }
 
-func TestGraphRandomPath(t *testing.T) {
+func TestGetRandomPath(t *testing.T) {
 	table := []struct {
 		e   EdgeList
 		exp []Path
@@ -1986,5 +1987,446 @@ func TestGraphMinimize(t *testing.T) {
 		if !slices.Equal(Sort(res.Edges), Sort(test.exp)) {
 			t.Errorf("test %v: (%v, %v).Minimize\nGOT %v\nEXP %v", i, test.e, test.n, Sort(res.Edges), Sort(test.exp))
 		}
+	}
+}
+
+func TestGraph_DropNode(t *testing.T) {
+	type fields struct {
+		Tokens   []Expression
+		Edges    EdgeList
+		Children map[int][]int
+		Weights  map[int]map[int]float64
+	}
+	type args struct {
+		i int
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   Graph
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := Graph{
+				Tokens:   tt.fields.Tokens,
+				Edges:    tt.fields.Edges,
+				Children: tt.fields.Children,
+				Weights:  tt.fields.Weights,
+			}
+			if got := g.DropNode(tt.args.i); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Graph.DropNode() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMinimize(t *testing.T) {
+	type args struct {
+		g Graph
+	}
+	tests := []struct {
+		name string
+		args args
+		want Graph
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Minimize(tt.args.g); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Minimize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRuleWeightEdges(t *testing.T) {
+	// dummyError := errors.New("")
+	table := []struct {
+		r   Rule
+		exp Rule
+		err error
+	}{
+		{
+			r: Rule{
+				Exp: "/.//", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+			},
+			exp: Rule{
+				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+			},
+			err: nil,
+		},
+		{
+			r: Rule{
+				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+			},
+			exp: Rule{
+				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+			},
+			err: nil,
+		},
+		{
+			r: Rule{
+				Exp: "/.99/;", IsPublic: false,
+				Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
+				}, []Expression{"<SOS>", "/.99/", ";", "<EOS>"}),
+			},
+			exp: Rule{
+				Exp: "/.99/;", IsPublic: false,
+				Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0},
+				}, []Expression{"<SOS>", "", ";", "<EOS>"}),
+			},
+			err: nil,
+		},
+		{
+			r: Rule{
+				Exp: "123/.99/;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				}, []Expression{
+					"<SOS>", "123/.99/", ";", "<EOS>",
+				}),
+			},
+			exp: Rule{
+				Exp: "123/.99/;", IsPublic: false,
+				Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				}, []Expression{"<SOS>", "123", ";", "<EOS>"}),
+			},
+			err: nil,
+		},
+		{
+			r: Rule{
+				Exp: "<123>/.99/;", IsPublic: false,
+				Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				}, []Expression{
+					"<SOS>", "<123>/.99/", ";", "<EOS>",
+				}),
+			},
+			exp: Rule{
+				Exp: "<123>/.99/;", IsPublic: false,
+				Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				}, []Expression{
+					"<SOS>", "<123>", ";", "<EOS>",
+				}),
+			},
+			err: nil,
+		},
+		{
+			r: Rule{
+				Exp: "1|2|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 0, To: 3, Weight: 1.0},
+					{From: 0, To: 5, Weight: 1.0},
+					{From: 1, To: 6, Weight: 1.0},
+					{From: 3, To: 6, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1", "|", "2", "|", "3/0.1/", ";", "<EOS>"}),
+			},
+			exp: Rule{
+				Exp: "1|2|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 0, To: 3, Weight: 1.0},
+					{From: 0, To: 5, Weight: 0.1},
+					{From: 1, To: 6, Weight: 1.0},
+					{From: 3, To: 6, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}),
+			},
+			err: nil,
+		},
+		{
+			r: Rule{
+				Exp: "1{}|2//|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 0, To: 3, Weight: 1.0},
+					{From: 0, To: 5, Weight: 1.0},
+					{From: 1, To: 6, Weight: 1.0},
+					{From: 3, To: 6, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"}),
+			},
+			exp: Rule{
+				Exp: "1{}|2//|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 0, To: 3, Weight: 1.0},
+					{From: 0, To: 5, Weight: 0.1},
+					{From: 1, To: 6, Weight: 1.0},
+					{From: 3, To: 6, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3", ";", "<EOS>"}),
+			},
+			err: nil,
+		},
+		{
+			r: Rule{
+				Exp: "1/0.1/[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 2, To: 4, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1/1.01/", "[", "2", "]", "3", ";", "<EOS>"}),
+			},
+			exp: Rule{
+				Exp: "1/0.1/[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.01},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 2, To: 4, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}),
+			},
+			err: nil,
+		},
+		{
+			r: Rule{
+				Exp: "1(2/1.01/)3;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1", "(", "2/1.01/", ")", "3", ";", "<EOS>"}),
+			},
+			exp: Rule{
+				Exp: "1(2/1.01/)3;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.01},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}),
+			},
+			err: nil,
+		},
+		{
+			r: Rule{
+				Exp: "1/1.01/(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 4, To: 6, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+					{From: 7, To: 8, Weight: 1.0},
+					{From: 8, To: 9, Weight: 1.0},
+				}, []Expression{"<SOS>", "1/1.01/", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
+			},
+			exp: Rule{
+				Exp: "1/1.01/(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.01},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 4, To: 6, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+					{From: 7, To: 8, Weight: 1.0},
+					{From: 8, To: 9, Weight: 1.0},
+				}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
+			},
+			err: nil,
+		},
+	}
+	for i, test := range table {
+		res, err := WeightEdges(test.r)
+		if test.exp.IsPublic != res.IsPublic {
+			t.Errorf("test %v: %v.WeightEdges().Is_public\nGOT %v\nEXP %v", i, test.r, res.IsPublic, test.exp.IsPublic)
+		}
+		if !slices.Equal(GetReferences(res), GetReferences(test.exp)) {
+			t.Errorf("test %v: %v.WeightEdges().References\nGOT %v\nEXP %v", i, test.r, GetReferences(res), GetReferences(test.exp))
+		}
+		if !slices.Equal(Sort(test.exp.Graph.Edges), Sort(res.Graph.Edges)) {
+			t.Errorf("test %v: %v.WeightEdges().edges\nGOT %v\nEXP %v", i, test.r, Sort(res.Graph.Edges), Sort(test.exp.Graph.Edges))
+		}
+		if !slices.Equal(test.exp.Graph.Tokens, res.Graph.Tokens) {
+			t.Errorf("test %v: %v.WeightEdges().nodes\nGOT %v\nEXP %v", i, test.r, res.Graph.Tokens, test.exp.Graph.Tokens)
+		}
+		if !slices.Equal(test.exp.Tokens, res.Tokens) {
+			t.Errorf("test %v: %v.WeightEdges().Tokens\nGOT %v\nEXP %v", i, test.r, res.Tokens, test.exp.Tokens)
+		}
+		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
+			t.Errorf("test %v: %v.WeightEdges().err\nGOT %v\nEXP %v", i, test.r, err, test.err)
+		}
+	}
+}
+
+func TestGetProductions(t *testing.T) {
+	table := []struct {
+		r   Rule
+		exp []string
+	}{
+		{
+			r: Rule{
+				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+			},
+			exp: []string{},
+		},
+		{
+			r: Rule{
+				Exp: ";", IsPublic: false,
+				Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
+				}, []Expression{"<SOS>", ";", "<EOS>"}),
+			},
+			exp: []string{},
+		},
+		{
+			r: Rule{
+				Exp: "123;", IsPublic: false,
+				Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+				}, []Expression{"<SOS>", "123", ";", "<EOS>"}),
+			},
+			exp: []string{"123"},
+		},
+		{
+			r: Rule{
+				Exp: "1|2|3;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 0, To: 3, Weight: 1.0},
+					{From: 0, To: 5, Weight: 1.0},
+					{From: 1, To: 6, Weight: 1.0},
+					{From: 3, To: 6, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}),
+			},
+			exp: []string{"1", "2", "3"},
+		},
+		{
+			r: Rule{
+				Exp: "1{}|2//|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 0, To: 3, Weight: 1.0},
+					{From: 0, To: 5, Weight: 1.0},
+					{From: 1, To: 6, Weight: 1.0},
+					{From: 3, To: 6, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"}),
+			},
+			exp: []string{"1{}", "2//", "3/0.1/"},
+		},
+		{
+			r: Rule{
+				Exp: "1[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 2, To: 4, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}),
+			},
+			exp: []string{"123", "13"},
+		},
+		{
+			r: Rule{
+				Exp: "1(2)3;", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+				}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}),
+			},
+			exp: []string{"123"},
+		},
+		{
+			r: Rule{
+				Exp: "1(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 4, To: 6, Weight: 1.0},
+					{From: 5, To: 6, Weight: 1.0},
+					{From: 6, To: 7, Weight: 1.0},
+					{From: 7, To: 8, Weight: 1.0},
+					{From: 8, To: 9, Weight: 1.0},
+				}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
+			},
+			exp: []string{"12", "123"},
+		},
+	}
+	for i, test := range table {
+		res := GetProductions(test.r)
+		sort.Strings(res)
+		sort.Strings(test.exp)
+		if !slices.Equal(res, test.exp) {
+			t.Errorf("test %v: %v.Productions()\nGOT %v\nEXP %v", i, test.r, res, test.exp)
+		}
+	}
+}
+
+func TestGetSingleProduction(t *testing.T) {
+	type args struct {
+		p Path
+		a []Expression
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GetSingleProduction(tt.args.p, tt.args.a); got != tt.want {
+				t.Errorf("GetSingleProduction() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFilterTerminals(t *testing.T) {
+	type args struct {
+		a []Expression
+		f []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []Expression
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FilterTerminals(tt.args.a, tt.args.f); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FilterTerminals() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
