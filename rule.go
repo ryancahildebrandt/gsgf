@@ -8,6 +8,7 @@ package main
 import (
 	"errors"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/bzick/tokenizer"
@@ -115,22 +116,18 @@ func ParseRule(line string, lex *tokenizer.Tokenizer) (string, Rule, error) {
 	return name, NewRule(exp, strings.HasPrefix(line, "public")), nil
 }
 
-func ValidateRuleRecursion(r Rule, m map[string]Rule) error {
-	if len(GetReferences(r)) == 0 {
+func ValidateRuleRecursion(n string, r Rule, m map[string]Rule) error {
+	refs := GetReferences(r)
+
+	if len(refs) == 0 {
 		return nil
 	}
-
-	var rules map[string]Rule = make(map[string]Rule)
-	for k, v := range m {
-		rules[k] = v
+	if slices.Contains(refs, n) {
+		return errors.New("rule references self")
 	}
-	for _, ref := range GetReferences(r) {
-		if ref == "" {
-			continue
-		}
-		_, ok := rules[ref]
-		if !ok {
-			return errors.New("referenced rule does not exist in grammar")
+	for _, v := range m {
+		if slices.Contains(GetReferences(v), n) {
+			return errors.New("rule references self")
 		}
 	}
 

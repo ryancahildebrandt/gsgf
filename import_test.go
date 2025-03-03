@@ -6,20 +6,17 @@
 package main
 
 import (
-	"errors"
 	"slices"
 	"sort"
 	"testing"
 )
 
 func TestCreateNameSpace(t *testing.T) {
-	dummyError := errors.New("")
-
 	table := []struct {
-		d   string
-		e   string
-		r   map[string]string
-		err error
+		d       string
+		e       string
+		r       map[string]string
+		wantErr bool
 	}{
 		{
 			d: "data/tests/test0.jsgf",
@@ -30,7 +27,7 @@ func TestCreateNameSpace(t *testing.T) {
 				"<quant>":   "some|a (cup|glass) of;",
 				"<brew>":    "(make|brew|whip up) <quant>;",
 			},
-			err: nil,
+			wantErr: false,
 		},
 		{
 			d: "data/tests/test1.jsgf",
@@ -40,13 +37,13 @@ func TestCreateNameSpace(t *testing.T) {
 				"<teatype>": "red|sweet|green|jasmine|milk;",
 				"<quant>":   "some|a (cup|glass) of;",
 			},
-			err: nil,
+			wantErr: false,
 		},
 		{
-			d:   "data/tests/test2.jsgf",
-			e:   ".jsgf",
-			r:   map[string]string{},
-			err: dummyError,
+			d:       "data/tests/test2.jsgf",
+			e:       ".jsgf",
+			r:       map[string]string{},
+			wantErr: true,
 		},
 		{
 			d: "data/tests/test3.jsgf",
@@ -59,7 +56,7 @@ func TestCreateNameSpace(t *testing.T) {
 				"<brew>":    "(make|brew|whip up) <quant>;",
 				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
 			},
-			err: nil,
+			wantErr: false,
 		},
 		{
 			d: "data/tests/test4.jsgf",
@@ -71,7 +68,7 @@ func TestCreateNameSpace(t *testing.T) {
 				"<request>": "[(could|will|would) you] please <brew>;",
 				"<brew>":    "(make|brew|whip up) <quant>;",
 			},
-			err: nil,
+			wantErr: false,
 		},
 		{
 			d: "data/tests/test5.jsgf",
@@ -83,19 +80,25 @@ func TestCreateNameSpace(t *testing.T) {
 				"<teatype>": "red|sweet|green|jasmine|milk;",
 				"<quant>":   "some|a (cup|glass) of;",
 			},
-			err: nil,
+			wantErr: false,
 		},
 		{
-			d:   "data/tests/test6.jsgf",
-			e:   ".jsgf",
-			r:   map[string]string{},
-			err: dummyError,
+			d: "data/tests/test6.jsgf",
+			e: ".jsgf",
+			r: map[string]string{
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<brew>":    "(make|brew|whip up) <quant>;",
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<quant>":   "some|a (cup|glass) of;",
+			},
+			wantErr: false,
 		},
 		{
-			d:   "data/tests/a.jsgf",
-			e:   ".jsgf",
-			r:   map[string]string{},
-			err: nil,
+			d:       "data/tests/a.jsgf",
+			e:       ".jsgf",
+			r:       map[string]string{},
+			wantErr: false,
 		},
 		{
 			d: "data/tests/b.jsgf",
@@ -105,115 +108,109 @@ func TestCreateNameSpace(t *testing.T) {
 				"<teatype>": "red|sweet|green|jasmine|milk;",
 				"<quant>":   "some|a (cup|glass) of;",
 			},
-			err: nil,
+			wantErr: false,
 		},
 		{
-			d:   "data/tests/dir0/c.jsgf",
-			e:   ".jsgf",
-			r:   map[string]string{},
-			err: nil,
+			d:       "data/tests/dir0/c.jsgf",
+			e:       ".jsgf",
+			r:       map[string]string{},
+			wantErr: false,
 		},
 		{
-			d:   "data/tests/dir0/dir1/d.jsgf",
-			e:   ".jsgf",
-			r:   map[string]string{},
-			err: dummyError,
+			d:       "data/tests/dir0/dir1/d.jsgf",
+			e:       ".jsgf",
+			r:       map[string]string{},
+			wantErr: true,
 		},
 		{
-			d:   "data/tests/dir0/dir1/dir2/e.jsgf",
-			e:   ".jsgf",
-			r:   map[string]string{},
-			err: nil,
+			d:       "data/tests/dir0/dir1/dir2/e.jsgf",
+			e:       ".jsgf",
+			r:       map[string]string{},
+			wantErr: false,
 		},
 	}
 	for i, test := range table {
 		rules, err := CreateNameSpace(test.d, test.e)
 		if len(rules) != len(test.r) {
-			t.Errorf("test %v: CreateNameSpace(%v, %v).rules\nGOT %v\nEXP %v", i, test.d, test.e, rules, test.r)
+			t.Errorf("test %v: CreateNameSpace(%v, %v).rules\nGOT %v\nWANT %v", i, test.d, test.e, rules, test.r)
 		}
 		for k1, v1 := range rules {
 			v2, ok := test.r[k1]
 			if !ok {
-				t.Errorf("test %v: CreateNameSpace(%v, %v).rules\nGOT %v\nEXP %v", i, test.d, test.e, v1, v2)
+				t.Errorf("test %v: CreateNameSpace(%v, %v).rules\nGOT %v\nWANT %v", i, test.d, test.e, v1, v2)
 			}
 			if v1 != v2 {
-				t.Errorf("test %v: CreateNameSpace(%v, %v).rules\nGOT %v\nEXP %v", i, test.d, test.e, v1, v2)
+				t.Errorf("test %v: CreateNameSpace(%v, %v).rules\nGOT %v\nWANT %v", i, test.d, test.e, v1, v2)
 			}
 		}
-		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
-			t.Errorf("test %v: CreateNameSpace(%v, %v).err\nGOT %v\nEXP %v", i, test.d, test.e, err, test.err)
+		if (err != nil) != test.wantErr {
+			t.Errorf("test %v: CreateNameSpace(%v, %v).err\nGOT %v\nWANT %v", i, test.d, test.e, err, test.wantErr)
 		}
 	}
 }
 
 func TestFindGrammar(t *testing.T) {
-	dummyError := errors.New("")
 	table := []struct {
-		p   string
-		t   string
-		e   string
-		exp string
-		err error
+		p       string
+		t       string
+		e       string
+		want    string
+		wantErr bool
 	}{
-		{p: "./data/tests/.jsgf", t: "test0", e: ".jsgf", exp: "data/tests/test0.jsgf", err: nil},
-		{p: "./data/tests/test0.jsgf", t: "test0", e: ".jsgf", exp: "data/tests/test0.jsgf", err: nil},
-		{p: "./data/tests/test0.jsgf", t: "a", e: ".jsgf", exp: "data/tests/a.jsgf", err: nil},
-		{p: "./data/tests/test0.jsgf", t: "e", e: ".jsgf", exp: "data/tests/dir0/dir1/dir2/e.jsgf", err: nil},
-		{p: "./data/tests/a.jsgf", t: "a", e: ".jsgf", exp: "data/tests/a.jsgf", err: nil},
-		{p: "./data/tests/dir0/dir1/c.jsgf", t: "d", e: ".jsgf", exp: "data/tests/dir0/dir1/d.jsgf", err: nil},
-		{p: "./data/tests/dir0/dir1/c.jsgf", t: "e", e: ".jsgf", exp: "data/tests/dir0/dir1/dir2/e.jsgf", err: nil},
-		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "e", e: ".jsgf", exp: "data/tests/dir0/dir1/dir2/e.jsgf", err: nil},
-
-		{p: "./data/tests", t: "test0", e: ".jsgf", exp: "", err: dummyError},
-		{p: "./data/tests/dir0/dir1/c.jsgf", t: "b", e: ".jsgf", exp: "", err: dummyError},
-		{p: "./data/tests/test0.jsgf", t: "f", e: ".jsgf", exp: "", err: dummyError},
-		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "d", e: ".jsgf", exp: "", err: dummyError},
+		{p: "./data/tests/.jsgf", t: "test0", e: ".jsgf", want: "data/tests/test0.jsgf", wantErr: false},
+		{p: "./data/tests/test0.jsgf", t: "test0", e: ".jsgf", want: "data/tests/test0.jsgf", wantErr: false},
+		{p: "./data/tests/test0.jsgf", t: "a", e: ".jsgf", want: "data/tests/a.jsgf", wantErr: false},
+		{p: "./data/tests/test0.jsgf", t: "e", e: ".jsgf", want: "data/tests/dir0/dir1/dir2/e.jsgf", wantErr: false},
+		{p: "./data/tests/a.jsgf", t: "a", e: ".jsgf", want: "data/tests/a.jsgf", wantErr: false},
+		{p: "./data/tests/dir0/dir1/c.jsgf", t: "d", e: ".jsgf", want: "data/tests/dir0/dir1/d.jsgf", wantErr: false},
+		{p: "./data/tests/dir0/dir1/c.jsgf", t: "e", e: ".jsgf", want: "data/tests/dir0/dir1/dir2/e.jsgf", wantErr: false},
+		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "e", e: ".jsgf", want: "data/tests/dir0/dir1/dir2/e.jsgf", wantErr: false},
+		{p: "./data/tests", t: "test0", e: ".jsgf", want: "", wantErr: true},
+		{p: "./data/tests/dir0/dir1/c.jsgf", t: "b", e: ".jsgf", want: "", wantErr: true},
+		{p: "./data/tests/test0.jsgf", t: "f", e: ".jsgf", want: "", wantErr: true},
+		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "d", e: ".jsgf", want: "", wantErr: true},
 	}
 	for i, test := range table {
-		res, err := FindGrammar(test.p, test.t, test.e)
-		if res != test.exp {
-			t.Errorf("test %v: FindGrammar(%v, %v, %v)\nGOT %v\nEXP %v", i, test.p, test.t, test.e, res, test.exp)
+		got, err := FindGrammar(test.p, test.t, test.e)
+		if got != test.want {
+			t.Errorf("test %v: FindGrammar(%v, %v, %v)\nGOT %v\nWANT %v", i, test.p, test.t, test.e, got, test.want)
 		}
-		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
-			t.Errorf("test %v: FindGrammar(%v, %v, %v).err\nGOT %v\nEXP %v", i, test.p, test.t, test.e, err, test.err)
+		if (err != nil) != test.wantErr {
+			t.Errorf("test %v: FindGrammar(%v, %v, %v).err\nGOT %v\nWANT %v", i, test.p, test.t, test.e, err, test.wantErr)
 		}
 	}
 }
 
 func TestImportOrder(t *testing.T) {
-	dummyError := errors.New("")
 	table := []struct {
-		p   string
-		e   string
-		exp []string
-		err error
+		p       string
+		e       string
+		want    []string
+		wantErr bool
 	}{
-		{p: "./data/tests", e: ".jsgf", exp: []string{}, err: dummyError},
-		{p: "./data/tests/.jsgf", e: ".jsgf", exp: []string{}, err: dummyError},
-		{p: "./data/tests/test0.jsgf", e: ".jsgf", exp: []string{"import <a.*>;"}, err: nil},
-		{p: "./data/tests/test1.jsgf", e: ".jsgf", exp: []string{"import <c.brew>;"}, err: nil},
-		{p: "./data/tests/test3.jsgf", e: ".jsgf", exp: []string{"import <e.dne>;"}, err: nil},
-		{
-			p: "./data/tests/test4.jsgf", e: ".jsgf",
-			exp: []string{"import <a.order>;", "import <c.teatype>;", "import <d.*>;"}, err: nil,
-		},
-		{p: "./data/tests/test5.jsgf", e: ".jsgf", exp: []string{"import <b.request>;", "import <c.brew>;"}, err: nil},
-		{p: "./data/tests/a.jsgf", e: ".jsgf", exp: []string{}, err: nil},
-		{p: "./data/tests/b.jsgf", e: ".jsgf", exp: []string{"import <c.brew>;"}, err: nil},
-		{p: "./data/tests/dir0/c.jsgf", e: ".jsgf", exp: []string{}, err: nil},
-		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", e: ".jsgf", exp: []string{}, err: nil},
-		{p: "./data/tests/test2.jsgf", e: ".jsgf", exp: []string{}, err: dummyError},
-		{p: "./data/tests/dir0/dir1/d.jsgf", e: ".jsgf", exp: []string{}, err: dummyError},
+		{p: "./data/tests", e: ".jsgf", want: []string{}, wantErr: true},
+		{p: "./data/tests/.jsgf", e: ".jsgf", want: []string{}, wantErr: true},
+		{p: "./data/tests/test0.jsgf", e: ".jsgf", want: []string{"import <a.*>;"}, wantErr: false},
+		{p: "./data/tests/test1.jsgf", e: ".jsgf", want: []string{"import <c.brew>;"}, wantErr: false},
+		{p: "./data/tests/test3.jsgf", e: ".jsgf", want: []string{"import <e.dne>;"}, wantErr: false},
+		{p: "./data/tests/test4.jsgf", e: ".jsgf", want: []string{"import <a.order>;", "import <c.teatype>;", "import <d.*>;"}, wantErr: false},
+		{p: "./data/tests/test5.jsgf", e: ".jsgf", want: []string{"import <b.request>;", "import <c.brew>;"}, wantErr: false},
+		{p: "./data/tests/a.jsgf", e: ".jsgf", want: []string{}, wantErr: false},
+		{p: "./data/tests/b.jsgf", e: ".jsgf", want: []string{"import <c.brew>;"}, wantErr: false},
+		{p: "./data/tests/dir0/c.jsgf", e: ".jsgf", want: []string{}, wantErr: false},
+		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", e: ".jsgf", want: []string{}, wantErr: false},
+		{p: "./data/tests/test2.jsgf", e: ".jsgf", want: []string{}, wantErr: true},
+		{p: "./data/tests/dir0/dir1/d.jsgf", e: ".jsgf", want: []string{}, wantErr: true},
 	}
 	for i, test := range table {
-		res, err := GetImportOrder(test.p, test.e)
-		sort.Strings(test.exp)
-		sort.Strings(res)
-		if !slices.Equal(res, test.exp) {
-			t.Errorf("test %v: ImportOrder(%v, %v)\nGOT %v\nEXP %v", i, test.p, test.e, res, test.exp)
+		got, err := GetImportOrder(test.p, test.e)
+		sort.Strings(test.want)
+		sort.Strings(got)
+		if !slices.Equal(got, test.want) {
+			t.Errorf("test %v: ImportOrder(%v, %v)\nGOT %v\nWANT %v", i, test.p, test.e, got, test.want)
 		}
-		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
-			t.Errorf("test %v: ImportOrder(%v, %v).err\nGOT %v\nEXP %v", i, test.p, test.e, err, test.err)
+		if (err != nil) != test.wantErr {
+			t.Errorf("test %v: ImportOrder(%v, %v).err\nGOT %v\nWANT %v", i, test.p, test.e, err, test.wantErr)
 		}
 	}
 }
@@ -223,240 +220,243 @@ func TestPeekGrammar(t *testing.T) {
 		p       string
 		n       string
 		imports []string
-		rules   map[string][]string
+		rules   map[string]string
 	}{
 		{
-			p: "data/tests/test0.jsgf", n: "test0", imports: []string{"import <a.*>;"}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "quant": {}, "teatype": {}, "brew": {"quant"},
+			p: "data/tests/test0.jsgf", n: "test0", imports: []string{"import <a.*>;"}, rules: map[string]string{
+				"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<quant>": "some|a (cup|glass) of;", "<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;",
 			},
 		},
 		{
-			p: "data/tests/test1.jsgf", n: "test1", imports: []string{"import <c.brew>;"}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {},
-				"teatype": {},
+			p: "data/tests/test1.jsgf", n: "test1", imports: []string{"import <c.brew>;"}, rules: map[string]string{
+				"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;", "<teatype>": "red|sweet|green|jasmine|milk;",
 			},
 		},
 		{
-			p: "data/tests/test2.jsgf", n: "test2", imports: []string{"import <a1.*>;"}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {},
-				"teatype": {}, "brew": {"quant"},
+			p: "data/tests/test2.jsgf", n: "test2", imports: []string{"import <a1.*>;"}, rules: map[string]string{
+				"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;",
 			},
 		},
 		{
-			p: "data/tests/test3.jsgf", n: "test3", imports: []string{"import <e.dne>;"}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {},
-				"teatype": {}, "brew": {"quant"},
+			p: "data/tests/test3.jsgf", n: "test3", imports: []string{"import <e.dne>;"}, rules: map[string]string{
+				"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;",
 			},
 		},
 		{
-			p: "data/tests/test4.jsgf", n: "test4", imports: []string{"import <d.*>;"}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "quant": {}, "brew": {"quant"},
-			},
+			p: "data/tests/test4.jsgf", n: "test4", imports: []string{"import <d.*>;"},
+			rules: map[string]string{"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<request>": "[(could|will|would) you] please <brew>;", "<quant>": "some|a (cup|glass) of;", "<brew>": "(make|brew|whip up) <quant>;"},
 		},
 		{
 			p: "data/tests/test5.jsgf", n: "test5", imports: []string{"import <b.request>;"},
-			rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "order": {"quant"}, "quant": {}, "teatype": {},
-				"brew": {"quant"},
-			},
+			rules: map[string]string{"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;", "<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;"},
 		},
 		{
 			p: "data/tests/a.jsgf", n: "a", imports: []string{},
-			rules: map[string][]string{"request": {"brew"}, "order": {"quant"}, "brew": {"quant"}, "quant": {}},
+			rules: map[string]string{"<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<brew>": "(make|brew|whip up) <quant>;", "<quant>": "some|a (cup|glass) of;"},
 		},
 		{
 			p: "data/tests/b.jsgf", n: "b", imports: []string{"import <c.brew>;"},
-			rules: map[string][]string{"request": {"brew"}, "order": {"quant"}, "quant": {}},
+			rules: map[string]string{"<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;"},
 		},
 		{
 			p: "data/tests/dir0/c.jsgf", n: "c", imports: []string{},
-			rules: map[string][]string{"teatype": {}, "brew": {"quant"}, "quant": {}},
+			rules: map[string]string{"<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;", "<quant>": "some|a (cup|glass) of;"},
 		},
 		{
 			p: "data/tests/dir0/dir1/d.jsgf", n: "d", imports: []string{"import <c.teatype>;", "import <a.order>;"},
-			rules: map[string][]string{},
+			rules: map[string]string{},
 		},
 		{
-			p: "data/tests/dir0/dir1/dir2/e.jsgf", n: "e", imports: []string{}, rules: map[string][]string{
-				"main": {"request", "order", "quant", "teatype"}, "request": {"brew"}, "order": {"quant"}, "quant": {},
-				"teatype": {}, "brew": {"quant"},
+			p: "data/tests/dir0/dir1/dir2/e.jsgf", n: "e", imports: []string{}, rules: map[string]string{
+				"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;",
 			},
 		},
 	}
 	for i, test := range table {
 		name, imports, rules, err := PeekGrammar(test.p)
 		if err != nil {
-			t.Errorf("test %v: Grammar(%v).Peek()\nGOT error %v", i, test.p, err)
+			t.Errorf("test %v: PeekGrammar(%v)\nGOT error %v", i, test.p, err)
 		}
 		if name != test.n {
-			t.Errorf("test %v: Grammar(%v).Peek().imports\nGOT %v\nEXP %v", i, test.p, name, test.n)
+			t.Errorf("test %v: PeekGrammar(%v).imports\nGOT %v\nWANT %v", i, test.p, name, test.n)
 		}
 		sort.Strings(imports)
 		sort.Strings(test.imports)
 		if !slices.Equal(imports, test.imports) {
-			t.Errorf("test %v: Grammar(%v).Peek().imports\nGOT %v\nEXP %v", i, test.p, imports, test.imports)
+			t.Errorf("test %v: PeekGrammar(%v)imports\nGOT %v\nWANT %v", i, test.p, imports, test.imports)
 		}
 		if len(rules) != len(test.rules) {
-			t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
+			t.Errorf("test %v: PeekGrammar(%v).rules\nGOT %v\nWANT %v", i, test.p, rules, test.rules)
 		}
-		// for k1, v1 := range rules {
-		// 	v2, ok := test.rules[k1]
-		// 	if !ok {
-		// 		t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
-		// 	}
-		// 	fmt.Println(v1, v2)
-		// 	// if !slices.Equal(v1, v2) {
-		// 	// 	t.Errorf("test %v: Grammar(%v).Peek().rules\nGOT %v\nEXP %v", i, test.p, rules, test.rules)
-		// 	// }
-		// }
+		for k1, v1 := range rules {
+			v2, ok := test.rules[k1]
+			if !ok {
+				t.Errorf("test %v: PeekGrammar(%v).rules\nGOT %v\nWANT %v", i, test.p, ok, k1)
+			}
+			if v1 != v2 {
+				t.Errorf("test %v: PeekGrammar(%v).rules\nGOT %v\nWANT %v", i, test.p, v1, v2)
+			}
+		}
 	}
 }
 
 func TestWrapRule(t *testing.T) {
-	type args struct {
-		s string
-	}
 	tests := []struct {
-		name string
-		args args
+		s    string
 		want string
 	}{
-		// TODO: Add test cases.
+		{"", "<>"},
+		{" ", "< >"},
+		{"<>", "<<>>"},
+		{"abc", "<abc>"},
+		{"<abc>", "<<abc>>"},
+		{"abc def", "<abc def>"},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := WrapRule(tt.args.s); got != tt.want {
-				t.Errorf("WrapRule() = %v, want %v", got, tt.want)
-			}
-		})
+	for i, test := range tests {
+		got := WrapRule(test.s)
+		if got != test.want {
+			t.Errorf("test %v: WrapRule(%v)\nGOT %v\nWANT %v", i, test.s, got, test.want)
+		}
 	}
 }
 
 func TestUnwrapRule(t *testing.T) {
-	type args struct {
-		s string
-	}
 	tests := []struct {
-		name string
-		args args
+		s    string
 		want string
 	}{
-		// TODO: Add test cases.
+		{"", ""},
+		{" ", ""},
+		{"public<>", ""},
+		{"public abc", "abc"},
+		{"<abc>", "abc"},
+		{"  <abc> ", "abc"},
+		{"public <def>", "def"},
+		{"public <<def>>", "<def>"},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := UnwrapRule(tt.args.s); got != tt.want {
-				t.Errorf("UnwrapRule() = %v, want %v", got, tt.want)
-			}
-		})
+	for i, test := range tests {
+		got := UnwrapRule(test.s)
+		if got != test.want {
+			t.Errorf("test %v: UnwrapRule(%v)\nGOT %v\nWANT %v", i, test.s, got, test.want)
+		}
 	}
 }
 
 func TestCleanImportStatement(t *testing.T) {
-	type args struct {
-		s string
-	}
 	tests := []struct {
-		name string
-		args args
+		s    string
 		want string
 	}{
-		// TODO: Add test cases.
+		{"", ""},
+		{" ", ""},
+		{"import<>;", ""},
+		{"import abc;", "abc"},
+		{"<abc.r>", "abc.r"},
+		{"  <abc.>", "abc."},
+		{"import <.def>;", ".def"},
+		{"import <<.def.abc>>;", "<.def.abc>"},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := CleanImportStatement(tt.args.s); got != tt.want {
-				t.Errorf("CleanImportStatement() = %v, want %v", got, tt.want)
-			}
-		})
+	for i, test := range tests {
+		got := CleanImportStatement(test.s)
+		if got != test.want {
+			t.Errorf("test %v: CleanImportStatement(%v)\nGOT %v\nWANT %v", i, test.s, got, test.want)
+		}
 	}
 }
 
 func TestCleanGrammarStatement(t *testing.T) {
-	type args struct {
-		s string
-	}
 	tests := []struct {
-		name string
-		args args
+		s    string
 		want string
 	}{
-		// TODO: Add test cases.
+		{"", ""},
+		{" ", ""},
+		{"grammar<>;", "<>"},
+		{"grammar abc;", "abc"},
+		{"<abc.r>", "<abc.r>"},
+		{"  <abc.>", "<abc.>"},
+		{"grammar <.def>;", "<.def>"},
+		{"grammar <<.def.abc>>;", "<<.def.abc>>"},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := CleanGrammarStatement(tt.args.s); got != tt.want {
-				t.Errorf("CleanGrammarStatement() = %v, want %v", got, tt.want)
-			}
-		})
+	for i, test := range tests {
+		got := CleanGrammarStatement(test.s)
+		if got != test.want {
+			t.Errorf("test %v: CleanGrammarStatement(%v)\nGOT %v\nWANT %v", i, test.s, got, test.want)
+		}
 	}
 }
 
 func TestValidateJSGFName(t *testing.T) {
-	type args struct {
-		s string
-	}
 	tests := []struct {
-		name    string
-		args    args
+		s       string
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"", true},
+		{" ", true},
+		{"grammar<>;", true},
+		{"grammar abc;", false},
+		{"<abc.r>", true},
+		{"  <abc.>", true},
+		{"grammar <.def>;", false},
+		{"grammar <<.def.abc>>;", false},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := ValidateJSGFName(tt.args.s); (err != nil) != tt.wantErr {
-				t.Errorf("ValidateJSGFName() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+	for i, test := range tests {
+		err := ValidateJSGFName(test.s)
+		if (err != nil) != test.wantErr {
+			t.Errorf("test %v: ValidateJSGFName(%v)\nGOT %v\nWANT %v", i, test.s, err, test.wantErr)
+		}
 	}
 }
 
 func TestValidateJSGFImport(t *testing.T) {
-	type args struct {
-		s string
-	}
 	tests := []struct {
-		name    string
-		args    args
+		s       string
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"", true},
+		{" ", true},
+		{"import<>;", true},
+		{"import abc;", true},
+		{"<abc.r>", true},
+		{"  <abc.>", true},
+		{"import <.def>;", false},
+		{"import <<.def.abc>>;", false},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := ValidateJSGFImport(tt.args.s); (err != nil) != tt.wantErr {
-				t.Errorf("ValidateJSGFImport() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+	for i, test := range tests {
+		err := ValidateJSGFImport(test.s)
+		if (err != nil) != test.wantErr {
+			t.Errorf("test %v: ValidateJSGFImport(%v)\nGOT %v\nWANT %v", i, test.s, err, test.wantErr)
+		}
 	}
 }
 func TestValidateJSGFRule(t *testing.T) {
-	dummyError := errors.New("")
 	table := []struct {
-		l   string
-		err error
+		l       string
+		wantErr bool
 	}{
-		{l: "", err: dummyError},
-		{l: ";", err: dummyError},
-		{l: "=;", err: dummyError},
-		{l: "<>=;", err: dummyError},
-		{l: "public<>=;", err: dummyError},
-		{l: "public <>=;", err: dummyError},
-		{l: "< > = <>; ", err: dummyError},
-		{l: "< > = <>;", err: nil},
-		{l: "< >=;", err: nil},
-		{l: "public < >=;", err: nil},
-		{l: "public < > = ;", err: nil},
-		{l: "<abc> = def <ghi>;", err: nil},
-		{l: "<abc> = def = <ghi>;", err: nil},
-		{l: "<abc> = \"def\" = <ghi>;", err: nil},
-		{l: "<abc> = def <ghi>;;", err: nil},
+		{l: "", wantErr: true},
+		{l: ";", wantErr: true},
+		{l: "=;", wantErr: true},
+		{l: "<>=;", wantErr: true},
+		{l: "public<>=;", wantErr: true},
+		{l: "public <>=;", wantErr: true},
+		{l: "< > = <>; ", wantErr: true},
+		{l: "< > = <>;", wantErr: false},
+		{l: "< >=;", wantErr: false},
+		{l: "public < >=;", wantErr: false},
+		{l: "public < > = ;", wantErr: false},
+		{l: "<abc> = def <ghi>;", wantErr: false},
+		{l: "<abc> = def = <ghi>;", wantErr: false},
+		{l: "<abc> = \"def\" = <ghi>;", wantErr: false},
+		{l: "<abc> = def <ghi>;;", wantErr: false},
 	}
 	for i, test := range table {
 		err := ValidateJSGFRule(test.l)
-		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
-			t.Errorf("test %v: ValidateJSGF(%v)\nGOT %v\nEXP %v", i, test.l, err, test.err)
+		if (err != nil) != test.wantErr {
+			t.Errorf("test %v: ValidateJSGFRule(%v)\nGOT %v\nWANT %v", i, test.l, err, test.wantErr)
 		}
 	}
 }

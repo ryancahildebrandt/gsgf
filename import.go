@@ -22,7 +22,8 @@ func WrapRule(s string) string {
 
 func UnwrapRule(s string) string {
 	s = strings.TrimSpace(s)
-	s = strings.TrimPrefix(s, "public ")
+	s = strings.TrimPrefix(s, "public")
+	s = strings.TrimSpace(s)
 	s = strings.TrimPrefix(s, "<")
 	s = strings.TrimSuffix(s, ">")
 
@@ -31,7 +32,9 @@ func UnwrapRule(s string) string {
 
 func CleanImportStatement(s string) string {
 	s = strings.TrimSpace(s)
-	s = strings.TrimPrefix(s, "import ")
+	s = strings.TrimPrefix(s, "import")
+	s = strings.TrimSuffix(s, ";")
+	s = strings.TrimSpace(s)
 	s = strings.TrimPrefix(s, "<")
 	s = strings.TrimSuffix(s, ">")
 
@@ -40,7 +43,8 @@ func CleanImportStatement(s string) string {
 
 func CleanGrammarStatement(s string) string {
 	s = strings.TrimSpace(s)
-	s = strings.TrimPrefix(s, "grammar ")
+	s = strings.TrimPrefix(s, "grammar")
+	s = strings.TrimSpace(s)
 	s = strings.TrimSuffix(s, ";")
 
 	return s

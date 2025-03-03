@@ -111,16 +111,23 @@ func GraphToDOT(g Graph) string {
 }
 
 func ReferencesToDOT(g Grammar) string {
-	var builder strings.Builder
-	var entry string
+	var (
+		builder strings.Builder
+		entry   string
+		entries []string
+	)
 
 	builder.WriteString("digraph {\n\n")
 	builder.WriteString("\trankdir = \"LR\"\n\n")
 	for k, v := range g.Rules {
 		for _, r := range GetReferences(v) {
 			entry = fmt.Sprintf("\t%s -> %s;\n", r, k)
-			builder.WriteString(entry)
+			entries = append(entries, entry)
 		}
+	}
+	slices.Sort(entries)
+	for _, e := range entries {
+		builder.WriteString(e)
 	}
 	builder.WriteString("\n}")
 

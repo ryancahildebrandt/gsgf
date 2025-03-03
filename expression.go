@@ -17,16 +17,17 @@ import (
 type Expression = string
 
 func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
-	var (
-		res     string
-		builder strings.Builder
-		out     = []Expression{"<SOS>"}
-	)
-
 	if e == "" {
 		return []Expression{}
 	}
-	stream := lex.ParseString(e)
+
+	var (
+		res     string
+		builder strings.Builder
+		out     []Expression      = []Expression{"<SOS>"}
+		stream  *tokenizer.Stream = lex.ParseString(e)
+	)
+
 	for stream.IsValid() {
 		switch {
 		case stream.CurrentToken().Is(SquareOpen, SquareClose, ParenthesisOpen, ParenthesisClose, Alternate, Semicolon):

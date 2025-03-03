@@ -6,6 +6,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"strings"
 
@@ -63,9 +64,7 @@ func NewJSGFLexer() *tokenizer.Tokenizer {
 
 func CaptureString(s *tokenizer.Stream, end string, includeEnd bool) (string, error) {
 	var builder strings.Builder
-	var remainder string = s.GetSnippetAsString(0, 1000000, 0)
-	// really high value here because s doesn't have a "show me whats left in the string" method
-
+	var remainder string = s.GetSnippetAsString(0, 1000000, 0) // really high value here because s doesn't have a "show me whats left in the string" method
 	if !strings.Contains(remainder, end) {
 		return "", errors.New("close token not found in remaining string")
 	}
@@ -78,7 +77,6 @@ func CaptureString(s *tokenizer.Stream, end string, includeEnd bool) (string, er
 			if includeEnd {
 				builder.WriteString(s.CurrentToken().ValueUnescapedString())
 			}
-
 			break
 		}
 		builder.WriteString(s.CurrentToken().ValueUnescapedString())
@@ -86,4 +84,17 @@ func CaptureString(s *tokenizer.Stream, end string, includeEnd bool) (string, er
 	}
 
 	return builder.String(), nil
+}
+
+func ValidateLexerString(s string) error {
+	// not empty
+	// not \x00
+	if s == "" {
+		return errors.New("cannot tokenize empty string")
+	}
+	if bytes.Contains([]byte(s), []byte("\x00")) {
+		return errors.New("cannot tokenize string containing null char \x00")
+	}
+
+	return nil
 }

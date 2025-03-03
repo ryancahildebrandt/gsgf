@@ -268,7 +268,7 @@ func WeightEdges(r Rule) (Rule, error) {
 func GetProductions(r Rule) []string {
 	var productions []string
 	for _, path := range GetAllPaths(r.Graph) {
-		prod := GetSingleProduction(path, FilterTerminals(GetTokens(r), []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"}))
+		prod := GetSingleProduction(path, FilterTokens(GetTokens(r), []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"}))
 		if prod != "" {
 			productions = append(productions, prod)
 		}
@@ -291,20 +291,20 @@ func GetSingleProduction(p Path, a []Expression) string {
 	return builder.String()
 }
 
-func FilterTerminals(a []Expression, f []string) []Expression {
+func FilterTokens(e []Expression, f []string) []Expression {
 	var filter map[string]struct{} = make(map[string]struct{})
-	var a1 []Expression = make([]Expression, len(a))
-	copy(a1, a)
+	var e1 []Expression = make([]Expression, len(e))
+	copy(e1, e)
 
 	for _, s := range f {
 		filter[s] = struct{}{}
 	}
-	for i, s := range a1 {
+	for i, s := range e1 {
 		_, ok := filter[s]
 		if ok {
-			a1[i] = ""
+			e1[i] = ""
 		}
 	}
 
-	return a1
+	return e1
 }

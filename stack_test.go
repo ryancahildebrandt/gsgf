@@ -6,80 +6,77 @@
 package main
 
 import (
-	"errors"
 	"slices"
 	"testing"
 )
 
 func TestStackTop(t *testing.T) {
-	dummyError := errors.New("")
 	table := []struct {
-		s   Stack
-		exp int
-		err error
+		s       Stack
+		want    int
+		wantErr bool
 	}{
-		{s: Stack{}, exp: 0, err: dummyError},
-		{s: Stack{0}, exp: 0, err: nil},
-		{s: Stack{0, 1, 2}, exp: 2, err: nil},
-		{s: Stack{100, 99, 98, 97, 96, 95}, exp: 95, err: nil},
-		{s: Stack{2, 1, 0, -1, -2}, exp: -2, err: nil},
+		{s: Stack{}, want: 0, wantErr: true},
+		{s: Stack{0}, want: 0, wantErr: false},
+		{s: Stack{0, 1, 2}, want: 2, wantErr: false},
+		{s: Stack{100, 99, 98, 97, 96, 95}, want: 95, wantErr: false},
+		{s: Stack{2, 1, 0, -1, -2}, want: -2, wantErr: false},
 	}
 	for i, test := range table {
-		res, err := test.s.Top()
-		if res != test.exp {
-			t.Errorf("test %v: %v.Top()\nGOT %v\nEXP %v", i, test.s, res, test.exp)
+		got, err := test.s.Top()
+		if got != test.want {
+			t.Errorf("test %v: %v.Top()\nGOT %v\nWANT %v", i, test.s, got, test.want)
 		}
-		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
-			t.Errorf("test %v: %v.Top()\nGOT %v\nEXP %v", i, test.s, err, test.err)
+		if (err != nil) != test.wantErr {
+			t.Errorf("test %v: %v.Top()\nGOT %v\nWANT %v", i, test.s, err, test.wantErr)
 		}
 	}
 }
 
 func TestStackPop(t *testing.T) {
-	dummyError := errors.New("")
 	table := []struct {
-		s   Stack
-		t   int
-		b   Stack
-		err error
+		s       Stack
+		t       int
+		b       Stack
+		wantErr bool
 	}{
-		{s: Stack{}, t: 0, b: Stack{}, err: dummyError},
-		{s: Stack{0}, t: 0, b: Stack{}, err: nil},
-		{s: Stack{0, 1, 2}, t: 2, b: Stack{0, 1}, err: nil},
-		{s: Stack{100, 99, 98, 97, 96, 95}, t: 95, b: Stack{100, 99, 98, 97, 96}, err: nil},
-		{s: Stack{2, 1, 0, -1, -2}, t: -2, b: Stack{2, 1, 0, -1}, err: nil},
+		{s: Stack{}, t: 0, b: Stack{}, wantErr: true},
+		{s: Stack{0}, t: 0, b: Stack{}, wantErr: false},
+		{s: Stack{0, 1, 2}, t: 2, b: Stack{0, 1}, wantErr: false},
+		{s: Stack{100, 99, 98, 97, 96, 95}, t: 95, b: Stack{100, 99, 98, 97, 96}, wantErr: false},
+		{s: Stack{2, 1, 0, -1, -2}, t: -2, b: Stack{2, 1, 0, -1}, wantErr: false},
 	}
 	for i, test := range table {
 		top, bot, err := test.s.Pop()
 		if top != test.t {
-			t.Errorf("test %v: %v.Pop()\nGOT %v\nEXP %v", i, test.s, t, test.t)
+			t.Errorf("test %v: %v.Pop()\nGOT %v\nWANT %v", i, test.s, t, test.t)
 		}
 		if !slices.Equal(bot, test.b) {
-			t.Errorf("test %v: %v.Pop()\nGOT %v\nEXP %v", i, test.s, bot, test.b)
+			t.Errorf("test %v: %v.Pop()\nGOT %v\nWANT %v", i, test.s, bot, test.b)
 		}
-		if (test.err != nil && err == nil) || (test.err == nil && err != nil) {
-			t.Errorf("test %v: %v.Pop()\nGOT %v\nEXP %v", i, test.s, err, test.err)
+		if (err != nil) != test.wantErr {
+			t.Errorf("test %v: %v.Pop()\nGOT %v\nWANT %v", i, test.s, err, test.wantErr)
 		}
 	}
 }
 
 func TestStackDrop(t *testing.T) {
 	table := []struct {
-		s   Stack
-		n   int
-		exp Stack
+		s    Stack
+		n    int
+		want Stack
 	}{
-		{s: Stack{}, n: 0, exp: Stack{}},
-		{s: Stack{0}, n: 0, exp: Stack{}},
-		{s: Stack{0, 1, 2}, n: 1, exp: Stack{0, 2}},
-		{s: Stack{0, 1, 2, 2}, n: 2, exp: Stack{0, 1}},
-		{s: Stack{100, 99, 98, 97, 96, 95}, n: 98, exp: Stack{100, 99, 97, 96, 95}},
-		{s: Stack{2, 1, 0, -1, -2}, n: -2, exp: Stack{2, 1, 0, -1}},
+		{s: Stack{}, n: 0, want: Stack{}},
+		{s: Stack{0}, n: 0, want: Stack{}},
+		{s: Stack{0, 1, 2}, n: 1, want: Stack{0, 2}},
+		{s: Stack{0, 1, 2, 2}, n: 2, want: Stack{0, 1}},
+		{s: Stack{100, 99, 98, 97, 96, 95}, n: 98, want: Stack{100, 99, 97, 96, 95}},
+		{s: Stack{2, 1, 0, -1, -2}, n: -2, want: Stack{2, 1, 0, -1}},
 	}
 	for i, test := range table {
-		res := test.s.Drop(test.n)
-		if !slices.Equal(res, test.exp) {
-			t.Errorf("test %v: %v.Drop()\nGOT %v\nEXP %v", i, test.s, res, test.exp)
+		got := test.s.Drop(test.n)
+		if !slices.Equal(got, test.want) {
+			t.Errorf("test %v: %v.Drop()\nGOT %v\nWANT %v", i, test.s, got, test.want)
 		}
 	}
 }
