@@ -463,8 +463,14 @@ func TestEdgeListSort(t *testing.T) {
 		e    EdgeList
 		want EdgeList
 	}{
-		{e: EdgeList{}, want: EdgeList{}},
-		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, want: EdgeList{{From: 0, To: 1, Weight: 1.0}}},
+		{
+			e:    EdgeList{},
+			want: EdgeList{},
+		},
+		{
+			e:    EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			want: EdgeList{{From: 0, To: 1, Weight: 1.0}},
+		},
 		{
 			e:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
 			want: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
@@ -491,8 +497,14 @@ func TestEdgeListUnique(t *testing.T) {
 		e    EdgeList
 		want EdgeList
 	}{
-		{e: EdgeList{}, want: EdgeList{}},
-		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, want: EdgeList{{From: 0, To: 1, Weight: 1.0}}},
+		{
+			e:    EdgeList{},
+			want: EdgeList{},
+		},
+		{
+			e:    EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			want: EdgeList{{From: 0, To: 1, Weight: 1.0}},
+		},
 		{
 			e:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
 			want: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
@@ -507,7 +519,8 @@ func TestEdgeListUnique(t *testing.T) {
 				{From: 0, To: 1, Weight: 1.0},
 				{From: 2, To: 3, Weight: 1.0},
 				{From: 2, To: 3, Weight: 1.0},
-			}, want: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+			},
+			want: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
 		},
 	}
 	for i, test := range table {
@@ -523,16 +536,26 @@ func TestEdgeListMax(t *testing.T) {
 		e    EdgeList
 		want int
 	}{
-		{e: EdgeList{}, want: 0},
-		{e: EdgeList{{From: 0, To: 0, Weight: 1.0}}, want: 0},
-		{e: EdgeList{{From: 1, To: 1, Weight: 1.0}, {From: 1, To: 1, Weight: 1.0}}, want: 1},
+		{
+			e:    EdgeList{},
+			want: 0,
+		},
+		{
+			e:    EdgeList{{From: 0, To: 0, Weight: 1.0}},
+			want: 0,
+		},
+		{
+			e:    EdgeList{{From: 1, To: 1, Weight: 1.0}, {From: 1, To: 1, Weight: 1.0}},
+			want: 1,
+		},
 		{
 			e: EdgeList{
 				{From: 10, To: 12, Weight: 1.0},
 				{From: 55, To: 94, Weight: 1.0},
 				{From: 0, To: 15, Weight: 1.0},
 				{From: 1, To: 1, Weight: 1.0},
-			}, want: 94,
+			},
+			want: 94,
 		},
 		{
 			e: EdgeList{
@@ -544,7 +567,8 @@ func TestEdgeListMax(t *testing.T) {
 				{From: 1000000000, To: 0, Weight: 1.0},
 				{From: 0, To: 8, Weight: 1.0},
 				{From: 15, To: 44, Weight: 1.0},
-			}, want: 1000000000,
+			},
+			want: 1000000000,
 		},
 	}
 	for i, test := range table {
@@ -561,10 +585,19 @@ func TestEdgeListIncrement(t *testing.T) {
 		n    int
 		want EdgeList
 	}{
-		{e: EdgeList{}, n: 0, want: EdgeList{}},
-		{e: EdgeList{{From: 0, To: 0, Weight: 1.0}}, n: 0, want: EdgeList{{From: 0, To: 0, Weight: 1.0}}},
 		{
-			e: EdgeList{{From: 1, To: 1, Weight: 1.0}, {From: 1, To: 1, Weight: 1.0}}, n: 1,
+			e:    EdgeList{},
+			n:    0,
+			want: EdgeList{},
+		},
+		{
+			e:    EdgeList{{From: 0, To: 0, Weight: 1.0}},
+			n:    0,
+			want: EdgeList{{From: 0, To: 0, Weight: 1.0}},
+		},
+		{
+			e:    EdgeList{{From: 1, To: 1, Weight: 1.0}, {From: 1, To: 1, Weight: 1.0}},
+			n:    1,
 			want: EdgeList{{From: 2, To: 2, Weight: 1.0}, {From: 2, To: 2, Weight: 1.0}},
 		},
 		{
@@ -573,7 +606,9 @@ func TestEdgeListIncrement(t *testing.T) {
 				{From: 55, To: 94, Weight: 1.0},
 				{From: 0, To: 15, Weight: 1.0},
 				{From: 1, To: 1, Weight: 1.0},
-			}, n: -1, want: EdgeList{
+			},
+			n: -1,
+			want: EdgeList{
 				{From: 9, To: 11, Weight: 1.0},
 				{From: 54, To: 93, Weight: 1.0},
 				{From: -1, To: 14, Weight: 1.0},
@@ -590,7 +625,9 @@ func TestEdgeListIncrement(t *testing.T) {
 				{From: 1000000000, To: 0, Weight: 1.0},
 				{From: 0, To: 8, Weight: 1.0},
 				{From: 15, To: 44, Weight: 1.0},
-			}, n: 10, want: EdgeList{
+			},
+			n: 10,
+			want: EdgeList{
 				{From: 9, To: 1661, Weight: 1.0},
 				{From: 65, To: 75, Weight: 1.0},
 				{From: 20, To: 11, Weight: 1.0},

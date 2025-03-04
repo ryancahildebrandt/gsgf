@@ -223,55 +223,116 @@ func TestPeekGrammar(t *testing.T) {
 		rules   map[string]string
 	}{
 		{
-			p: "data/tests/test0.jsgf", n: "test0", imports: []string{"import <a.*>;"}, rules: map[string]string{
-				"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<quant>": "some|a (cup|glass) of;", "<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;",
+			p:       "data/tests/test0.jsgf",
+			n:       "test0",
+			imports: []string{"import <a.*>;"},
+			rules: map[string]string{
+				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<brew>":    "(make|brew|whip up) <quant>;",
 			},
 		},
 		{
-			p: "data/tests/test1.jsgf", n: "test1", imports: []string{"import <c.brew>;"}, rules: map[string]string{
-				"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;", "<teatype>": "red|sweet|green|jasmine|milk;",
+			p:       "data/tests/test1.jsgf",
+			n:       "test1",
+			imports: []string{"import <c.brew>;"},
+			rules: map[string]string{
+				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;",
 			},
 		},
 		{
-			p: "data/tests/test2.jsgf", n: "test2", imports: []string{"import <a1.*>;"}, rules: map[string]string{
-				"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;",
-				"<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;",
+			p:       "data/tests/test2.jsgf",
+			n:       "test2",
+			imports: []string{"import <a1.*>;"},
+			rules: map[string]string{
+				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<brew>":    "(make|brew|whip up) <quant>;",
 			},
 		},
 		{
-			p: "data/tests/test3.jsgf", n: "test3", imports: []string{"import <e.dne>;"}, rules: map[string]string{
-				"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;",
-				"<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;",
+			p:       "data/tests/test3.jsgf",
+			n:       "test3",
+			imports: []string{"import <e.dne>;"},
+			rules: map[string]string{
+				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<brew>":    "(make|brew|whip up) <quant>;",
 			},
 		},
 		{
-			p: "data/tests/test4.jsgf", n: "test4", imports: []string{"import <d.*>;"},
-			rules: map[string]string{"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<request>": "[(could|will|would) you] please <brew>;", "<quant>": "some|a (cup|glass) of;", "<brew>": "(make|brew|whip up) <quant>;"},
+			p:       "data/tests/test4.jsgf",
+			n:       "test4",
+			imports: []string{"import <d.*>;"},
+			rules: map[string]string{"<main>": "(<request>|<order>) <quant> <teatype> tea;",
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<brew>":    "(make|brew|whip up) <quant>;"},
 		},
 		{
-			p: "data/tests/test5.jsgf", n: "test5", imports: []string{"import <b.request>;"},
-			rules: map[string]string{"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;", "<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;"},
+			p:       "data/tests/test5.jsgf",
+			n:       "test5",
+			imports: []string{"import <b.request>;"},
+			rules: map[string]string{"<main>": "(<request>|<order>) <quant> <teatype> tea;",
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<brew>":    "(make|brew|whip up) <quant>;"},
 		},
 		{
-			p: "data/tests/a.jsgf", n: "a", imports: []string{},
-			rules: map[string]string{"<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<brew>": "(make|brew|whip up) <quant>;", "<quant>": "some|a (cup|glass) of;"},
+			p:       "data/tests/a.jsgf",
+			n:       "a",
+			imports: []string{},
+			rules: map[string]string{"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>": "i'd like [to order|a|<quant>];",
+				"<brew>":  "(make|brew|whip up) <quant>;",
+				"<quant>": "some|a (cup|glass) of;"},
 		},
 		{
-			p: "data/tests/b.jsgf", n: "b", imports: []string{"import <c.brew>;"},
-			rules: map[string]string{"<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;"},
+			p:       "data/tests/b.jsgf",
+			n:       "b",
+			imports: []string{"import <c.brew>;"},
+			rules: map[string]string{"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>": "i'd like [to order|a|<quant>];",
+				"<quant>": "some|a (cup|glass) of;"},
 		},
 		{
-			p: "data/tests/dir0/c.jsgf", n: "c", imports: []string{},
-			rules: map[string]string{"<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;", "<quant>": "some|a (cup|glass) of;"},
+			p:       "data/tests/dir0/c.jsgf",
+			n:       "c",
+			imports: []string{},
+			rules: map[string]string{"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<brew>":  "(make|brew|whip up) <quant>;",
+				"<quant>": "some|a (cup|glass) of;"},
 		},
 		{
-			p: "data/tests/dir0/dir1/d.jsgf", n: "d", imports: []string{"import <c.teatype>;", "import <a.order>;"},
+			p: "data/tests/dir0/dir1/d.jsgf",
+			n: "d",
+			imports: []string{"import <c.teatype>;",
+				"import <a.order>;"},
 			rules: map[string]string{},
 		},
 		{
-			p: "data/tests/dir0/dir1/dir2/e.jsgf", n: "e", imports: []string{}, rules: map[string]string{
-				"<main>": "(<request>|<order>) <quant> <teatype> tea;", "<request>": "[(could|will|would) you] please <brew>;", "<order>": "i'd like [to order|a|<quant>];", "<quant>": "some|a (cup|glass) of;",
-				"<teatype>": "red|sweet|green|jasmine|milk;", "<brew>": "(make|brew|whip up) <quant>;",
+			p:       "data/tests/dir0/dir1/dir2/e.jsgf",
+			n:       "e",
+			imports: []string{},
+			rules: map[string]string{
+				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<brew>":    "(make|brew|whip up) <quant>;",
 			},
 		},
 	}
@@ -308,12 +369,12 @@ func TestWrapRule(t *testing.T) {
 		s    string
 		want string
 	}{
-		{"", "<>"},
-		{" ", "< >"},
-		{"<>", "<<>>"},
-		{"abc", "<abc>"},
-		{"<abc>", "<<abc>>"},
-		{"abc def", "<abc def>"},
+		{s: "", want: "<>"},
+		{s: " ", want: "< >"},
+		{s: "<>", want: "<<>>"},
+		{s: "abc", want: "<abc>"},
+		{s: "<abc>", want: "<<abc>>"},
+		{s: "abc def", want: "<abc def>"},
 	}
 	for i, test := range tests {
 		got := WrapRule(test.s)
@@ -328,14 +389,14 @@ func TestUnwrapRule(t *testing.T) {
 		s    string
 		want string
 	}{
-		{"", ""},
-		{" ", ""},
-		{"public<>", ""},
-		{"public abc", "abc"},
-		{"<abc>", "abc"},
-		{"  <abc> ", "abc"},
-		{"public <def>", "def"},
-		{"public <<def>>", "<def>"},
+		{s: "", want: ""},
+		{s: " ", want: ""},
+		{s: "public<>", want: ""},
+		{s: "public abc", want: "abc"},
+		{s: "<abc>", want: "abc"},
+		{s: "  <abc> ", want: "abc"},
+		{s: "public <def>", want: "def"},
+		{s: "public <<def>>", want: "<def>"},
 	}
 	for i, test := range tests {
 		got := UnwrapRule(test.s)
@@ -350,14 +411,14 @@ func TestCleanImportStatement(t *testing.T) {
 		s    string
 		want string
 	}{
-		{"", ""},
-		{" ", ""},
-		{"import<>;", ""},
-		{"import abc;", "abc"},
-		{"<abc.r>", "abc.r"},
-		{"  <abc.>", "abc."},
-		{"import <.def>;", ".def"},
-		{"import <<.def.abc>>;", "<.def.abc>"},
+		{s: "", want: ""},
+		{s: " ", want: ""},
+		{s: "import<>;", want: ""},
+		{s: "import abc;", want: "abc"},
+		{s: "<abc.r>", want: "abc.r"},
+		{s: "  <abc.>", want: "abc."},
+		{s: "import <.def>;", want: ".def"},
+		{s: "import <<.def.abc>>;", want: "<.def.abc>"},
 	}
 	for i, test := range tests {
 		got := CleanImportStatement(test.s)
@@ -372,14 +433,14 @@ func TestCleanGrammarStatement(t *testing.T) {
 		s    string
 		want string
 	}{
-		{"", ""},
-		{" ", ""},
-		{"grammar<>;", "<>"},
-		{"grammar abc;", "abc"},
-		{"<abc.r>", "<abc.r>"},
-		{"  <abc.>", "<abc.>"},
-		{"grammar <.def>;", "<.def>"},
-		{"grammar <<.def.abc>>;", "<<.def.abc>>"},
+		{s: "", want: ""},
+		{s: " ", want: ""},
+		{s: "grammar<>;", want: "<>"},
+		{s: "grammar abc;", want: "abc"},
+		{s: "<abc.r>", want: "<abc.r>"},
+		{s: "  <abc.>", want: "<abc.>"},
+		{s: "grammar <.def>;", want: "<.def>"},
+		{s: "grammar <<.def.abc>>;", want: "<<.def.abc>>"},
 	}
 	for i, test := range tests {
 		got := CleanGrammarStatement(test.s)
@@ -394,14 +455,14 @@ func TestValidateJSGFName(t *testing.T) {
 		s       string
 		wantErr bool
 	}{
-		{"", true},
-		{" ", true},
-		{"grammar<>;", true},
-		{"grammar abc;", false},
-		{"<abc.r>", true},
-		{"  <abc.>", true},
-		{"grammar <.def>;", false},
-		{"grammar <<.def.abc>>;", false},
+		{s: "", wantErr: true},
+		{s: " ", wantErr: true},
+		{s: "grammar<>;", wantErr: true},
+		{s: "grammar abc;", wantErr: false},
+		{s: "<abc.r>", wantErr: true},
+		{s: "  <abc.>", wantErr: true},
+		{s: "grammar <.def>;", wantErr: false},
+		{s: "grammar <<.def.abc>>;", wantErr: false},
 	}
 	for i, test := range tests {
 		err := ValidateJSGFName(test.s)
@@ -416,14 +477,14 @@ func TestValidateJSGFImport(t *testing.T) {
 		s       string
 		wantErr bool
 	}{
-		{"", true},
-		{" ", true},
-		{"import<>;", true},
-		{"import abc;", true},
-		{"<abc.r>", true},
-		{"  <abc.>", true},
-		{"import <.def>;", false},
-		{"import <<.def.abc>>;", false},
+		{s: "", wantErr: true},
+		{s: " ", wantErr: true},
+		{s: "import<>;", wantErr: true},
+		{s: "import abc;", wantErr: true},
+		{s: "<abc.r>", wantErr: true},
+		{s: "  <abc.>", wantErr: true},
+		{s: "import <.def>;", wantErr: false},
+		{s: "import <<.def.abc>>;", wantErr: false},
 	}
 	for i, test := range tests {
 		err := ValidateJSGFImport(test.s)

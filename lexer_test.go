@@ -47,13 +47,13 @@ func TestValidateLexerString(t *testing.T) {
 		s       string
 		wantErr bool
 	}{
-		{"", true},
-		{"\x00", true},
-		{"\x00\x00", true},
-		{" ", false},
-		{"abc", false},
-		{"()", false},
-		{"\x01", false},
+		{s: "", wantErr: true},
+		{s: "\x00", wantErr: true},
+		{s: "\x00\x00", wantErr: true},
+		{s: " ", wantErr: false},
+		{s: "abc", wantErr: false},
+		{s: "()", wantErr: false},
+		{s: "\x01", wantErr: false},
 	}
 	for i, test := range tests {
 		err := ValidateLexerString(test.s)

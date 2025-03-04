@@ -19,10 +19,25 @@ func TestGetFrom(t *testing.T) {
 		n    int
 		want []int
 	}{
-		{e: EdgeList{}, n: -1, want: []int{}},
-		{e: EdgeList{}, n: 0, want: []int{}},
-		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, n: 2, want: []int{}},
-		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}}, n: 0, want: []int{1}},
+		{
+			e:    EdgeList{},
+			n:    -1,
+			want: []int{}},
+		{
+			e:    EdgeList{},
+			n:    0,
+			want: []int{},
+		},
+		{
+			e:    EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			n:    2,
+			want: []int{},
+		},
+		{
+			e:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+			n:    0,
+			want: []int{1},
+		},
 		{
 			e: EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
@@ -31,7 +46,9 @@ func TestGetFrom(t *testing.T) {
 				{From: 1, To: 6, Weight: 1.0},
 				{From: 3, To: 6, Weight: 1.0},
 				{From: 5, To: 6, Weight: 1.0},
-			}, n: 6, want: []int{},
+			},
+			n:    6,
+			want: []int{},
 		},
 		{
 			e: EdgeList{
@@ -45,7 +62,9 @@ func TestGetFrom(t *testing.T) {
 				{From: 5, To: 7, Weight: 1.0},
 				{From: 6, To: 7, Weight: 1.0},
 				{From: 7, To: 8, Weight: 1.0},
-			}, n: 2, want: []int{3, 4},
+			},
+			n:    2,
+			want: []int{3, 4},
 		},
 		{
 			e: EdgeList{
@@ -57,7 +76,9 @@ func TestGetFrom(t *testing.T) {
 				{From: 5, To: 6, Weight: 1.0},
 				{From: 6, To: 7, Weight: 1.0},
 				{From: 7, To: 8, Weight: 1.0},
-			}, n: 5, want: []int{6},
+			},
+			n:    5,
+			want: []int{6},
 		},
 		{
 			e: EdgeList{
@@ -71,11 +92,14 @@ func TestGetFrom(t *testing.T) {
 				{From: 5, To: 8, Weight: 1.0},
 				{From: 7, To: 8, Weight: 1.0},
 				{From: 8, To: 9, Weight: 1.0},
-			}, n: 2, want: []int{3, 5, 7, 8},
+			},
+			n:    2,
+			want: []int{3, 5, 7, 8},
 		},
 	}
 	for i, test := range table {
-		g := NewGraph(test.e, []Expression{})
+		g := NewGraph(test.e,
+			[]Expression{})
 		got := g.GetFrom(test.n)
 		if !slices.Equal(got, test.want) {
 			t.Errorf("test %v: Graph(%v).GetFrom(%v)\nGOT  %v\nWANT %v", i, test.e, test.n, got, test.want)
@@ -92,81 +116,130 @@ func TestGetWeight(t *testing.T) {
 	}{
 		{
 			g: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
-			}, f: 0, t: 0, want: 1.0,
+				Tokens:   []Expression{},
+				Edges:    EdgeList{},
+				Children: map[int][]int{},
+				Weights:  map[int]map[int]float64{},
+			},
+			f:    0,
+			t:    0,
+			want: 1.0,
 		},
 		{
 			g: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
-			}, f: -1, t: 0, want: 1.0,
+				Tokens:   []Expression{},
+				Edges:    EdgeList{},
+				Children: map[int][]int{},
+				Weights:  map[int]map[int]float64{},
+			},
+			f:    -1,
+			t:    0,
+			want: 1.0,
 		},
 		{
 			g: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
-			}, f: 0, t: -1, want: 1.0,
+				Tokens:   []Expression{},
+				Edges:    EdgeList{},
+				Children: map[int][]int{},
+				Weights:  map[int]map[int]float64{},
+			},
+			f:    0,
+			t:    -1,
+			want: 1.0,
 		},
 		{
 			g: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
-			}, f: -1, t: -1, want: 1.0,
+				Tokens:   []Expression{},
+				Edges:    EdgeList{},
+				Children: map[int][]int{},
+				Weights:  map[int]map[int]float64{},
+			},
+			f:    -1,
+			t:    -1,
+			want: 1.0,
 		},
 		{
 			g: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
-				Children: map[int][]int{0: {1}, 1: {2}}, Weights: map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
-			}, f: 0, t: 0, want: 1.0,
+				Tokens:   []Expression{},
+				Edges:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+				Children: map[int][]int{0: {1}, 1: {2}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
+			},
+			f:    0,
+			t:    0,
+			want: 1.0,
 		},
 		{
 			g: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{
+				Tokens: []Expression{},
+				Edges: EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 0.99},
 					{From: 0, To: 5, Weight: 0.0},
 					{From: 1, To: 6, Weight: 100},
 					{From: 3, To: 6, Weight: 99},
 					{From: 5, To: 6, Weight: 9},
-				}, Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
-				Weights: map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
-			}, f: 0, t: 1, want: 1.0,
+				},
+				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+			},
+			f:    0,
+			t:    1,
+			want: 1.0,
 		},
 		{
 			g: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{
+				Tokens: []Expression{},
+				Edges: EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 0.99},
 					{From: 0, To: 5, Weight: 0.0},
 					{From: 1, To: 6, Weight: 100},
 					{From: 3, To: 6, Weight: 99},
 					{From: 5, To: 6, Weight: 9},
-				}, Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
-				Weights: map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
-			}, f: 0, t: 5, want: 0.0,
+				},
+				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+			},
+			f:    0,
+			t:    5,
+			want: 0.0,
 		},
 		{
 			g: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{
+				Tokens: []Expression{},
+				Edges: EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 0.99},
 					{From: 0, To: 5, Weight: 0.0},
 					{From: 1, To: 6, Weight: 100},
 					{From: 3, To: 6, Weight: 99},
 					{From: 5, To: 6, Weight: 9},
-				}, Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
-				Weights: map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
-			}, f: 1, t: 6, want: 100,
+				},
+				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+			},
+			f:    1,
+			t:    6,
+			want: 100,
 		},
 		{
 			g: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{
+				Tokens: []Expression{},
+				Edges: EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 0.99},
 					{From: 0, To: 5, Weight: 0.0},
 					{From: 1, To: 6, Weight: 100},
 					{From: 3, To: 6, Weight: 99},
 					{From: 5, To: 6, Weight: 9},
-				}, Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
-				Weights: map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
-			}, f: 5, t: 6, want: 9,
+				},
+				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+			},
+			f:    5,
+			t:    6,
+			want: 9,
 		},
 	}
 	for i, test := range table {
@@ -184,57 +257,81 @@ func TestAddEdge(t *testing.T) {
 		want Graph
 	}{
 		{
-			e: EdgeList{}, want: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
+			e: EdgeList{},
+			want: Graph{
+				Tokens:   []Expression{},
+				Edges:    EdgeList{},
+				Children: map[int][]int{},
+				Weights:  map[int]map[int]float64{},
 			},
 		},
 		{
-			e: EdgeList{}, edg: Edge{From: 0, To: 0, Weight: 1.0}, want: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{}, Children: map[int][]int{}, Weights: map[int]map[int]float64{},
+			e:   EdgeList{},
+			edg: Edge{From: 0, To: 0, Weight: 1.0},
+			want: Graph{
+				Tokens:   []Expression{},
+				Edges:    EdgeList{},
+				Children: map[int][]int{},
+				Weights:  map[int]map[int]float64{},
 			},
 		},
 		{
-			e: EdgeList{}, edg: Edge{From: 1, To: 10, Weight: 1.0}, want: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{{From: 1, To: 10, Weight: 1.0}}, Children: map[int][]int{1: {10}},
-				Weights: map[int]map[int]float64{1: {10: 1.0}},
+			e:   EdgeList{},
+			edg: Edge{From: 1, To: 10, Weight: 1.0},
+			want: Graph{
+				Tokens:   []Expression{},
+				Edges:    EdgeList{{From: 1, To: 10, Weight: 1.0}},
+				Children: map[int][]int{1: {10}},
+				Weights:  map[int]map[int]float64{1: {10: 1.0}},
 			},
 		},
 		{
-			e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, want: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{{From: 0, To: 1, Weight: 1.0}}, Children: map[int][]int{0: {1}},
-				Weights: map[int]map[int]float64{0: {1: 1.0}},
+			e: EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			want: Graph{
+				Tokens:   []Expression{},
+				Edges:    EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				Children: map[int][]int{0: {1}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0}},
 			},
 		},
 		{
 			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
-			edg: Edge{From: 1, To: 2, Weight: 1.0}, want: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{
-					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
-				}, Children: map[int][]int{0: {1}, 1: {2, 2}}, Weights: map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
+			edg: Edge{From: 1, To: 2, Weight: 1.0},
+			want: Graph{
+				Tokens:   []Expression{},
+				Edges:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+				Children: map[int][]int{0: {1}, 1: {2, 2}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
 			},
 		},
 		{
 			e:   EdgeList{{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}},
-			edg: Edge{From: 1, To: 2, Weight: 1.0}, want: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{
-					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
-				}, Children: map[int][]int{0: {1}, 1: {2, 2}}, Weights: map[int]map[int]float64{0: {1: 0.99}, 1: {2: 1.0}},
+			edg: Edge{From: 1, To: 2, Weight: 1.0},
+			want: Graph{
+				Tokens:   []Expression{},
+				Edges:    EdgeList{{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+				Children: map[int][]int{0: {1}, 1: {2, 2}},
+				Weights:  map[int]map[int]float64{0: {1: 0.99}, 1: {2: 1.0}},
 			},
 		},
 		{
 			e:   EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
-			edg: Edge{From: 1, To: 2, Weight: 0.99}, want: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{
-					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 0.99},
-				}, Children: map[int][]int{0: {1}, 1: {2, 2}}, Weights: map[int]map[int]float64{0: {1: 1.0}, 1: {2: 0.99}},
+			edg: Edge{From: 1, To: 2, Weight: 0.99},
+			want: Graph{
+				Tokens:   []Expression{},
+				Edges:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 0.99}},
+				Children: map[int][]int{0: {1}, 1: {2, 2}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0}, 1: {2: 0.99}},
 			},
 		},
 		{
 			e:   EdgeList{{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}},
-			edg: Edge{From: 1, To: 2, Weight: 0.99}, want: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{
-					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 0.99},
-				}, Children: map[int][]int{0: {1}, 1: {2, 2}}, Weights: map[int]map[int]float64{0: {1: 0.99}, 1: {2: 0.99}},
+			edg: Edge{From: 1, To: 2, Weight: 0.99},
+			want: Graph{
+				Tokens:   []Expression{},
+				Edges:    EdgeList{{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 0.99}},
+				Children: map[int][]int{0: {1}, 1: {2, 2}},
+				Weights:  map[int]map[int]float64{0: {1: 0.99}, 1: {2: 0.99}},
 			},
 		},
 		{
@@ -245,8 +342,11 @@ func TestAddEdge(t *testing.T) {
 				{From: 1, To: 6, Weight: 1.0},
 				{From: 3, To: 6, Weight: 1.0},
 				{From: 5, To: 6, Weight: 1.0},
-			}, edg: Edge{From: 8, To: 9, Weight: 1.0}, want: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{
+			},
+			edg: Edge{From: 8, To: 9, Weight: 1.0},
+			want: Graph{
+				Tokens: []Expression{},
+				Edges: EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 0, To: 3, Weight: 1.0},
 					{From: 0, To: 5, Weight: 1.0},
@@ -254,9 +354,9 @@ func TestAddEdge(t *testing.T) {
 					{From: 3, To: 6, Weight: 1.0},
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 8, To: 9, Weight: 1.0},
-				}, Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}, 8: {9}}, Weights: map[int]map[int]float64{
-					0: {1: 1.0, 3: 1.0, 5: 1.0}, 1: {6: 1.0}, 3: {6: 1.0}, 5: {6: 1.0}, 8: {9: 1.0},
 				},
+				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}, 8: {9}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 1.0, 5: 1.0}, 1: {6: 1.0}, 3: {6: 1.0}, 5: {6: 1.0}, 8: {9: 1.0}},
 			},
 		},
 		{
@@ -271,8 +371,11 @@ func TestAddEdge(t *testing.T) {
 				{From: 5, To: 7, Weight: 1.0},
 				{From: 6, To: 7, Weight: 1.0},
 				{From: 7, To: 8, Weight: 1.0},
-			}, edg: Edge{From: 0, To: 2, Weight: 1.0}, want: Graph{
-				Tokens: []Expression{}, Edges: EdgeList{
+			},
+			edg: Edge{From: 0, To: 2, Weight: 1.0},
+			want: Graph{
+				Tokens: []Expression{},
+				Edges: EdgeList{
 					{From: 0, To: 1, Weight: 1.0},
 					{From: 1, To: 2, Weight: 1.0},
 					{From: 2, To: 3, Weight: 1.0},
@@ -284,16 +387,15 @@ func TestAddEdge(t *testing.T) {
 					{From: 6, To: 7, Weight: 1.0},
 					{From: 7, To: 8, Weight: 1.0},
 					{From: 0, To: 2, Weight: 1.0},
-				}, Children: map[int][]int{0: {1, 2}, 1: {2}, 2: {3, 4}, 3: {4}, 4: {5}, 5: {6, 7}, 6: {7}, 7: {8}},
-				Weights: map[int]map[int]float64{
-					0: {1: 1.0, 2: 1.0}, 1: {2: 1.0}, 2: {3: 1.0, 4: 1.0}, 3: {4: 1.0}, 4: {5: 1.0}, 5: {6: 1.0, 7: 1.0},
-					6: {7: 1.0}, 7: {8: 1.0},
 				},
+				Children: map[int][]int{0: {1, 2}, 1: {2}, 2: {3, 4}, 3: {4}, 4: {5}, 5: {6, 7}, 6: {7}, 7: {8}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0, 2: 1.0}, 1: {2: 1.0}, 2: {3: 1.0, 4: 1.0}, 3: {4: 1.0}, 4: {5: 1.0}, 5: {6: 1.0, 7: 1.0}, 6: {7: 1.0}, 7: {8: 1.0}},
 			},
 		},
 	}
 	for i, test := range table {
-		g := NewGraph(test.e, []Expression{})
+		g := NewGraph(test.e,
+			[]Expression{})
 		got := g.AddEdge(test.edg)
 		if !slices.Equal(got.Tokens, test.want.Tokens) {
 			t.Errorf("test %v: Graph(%v).AddEdge(%v).Nodes\nGOT  %v\nWANT %v", i, test.e, test.edg, got.Tokens, test.want.Tokens)
@@ -325,16 +427,30 @@ func TestGetEndPoints(t *testing.T) {
 		i int
 		f int
 	}{
-		{e: EdgeList{}, i: 0, f: 0},
-		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, i: 0, f: 1},
-		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}}, i: 0, f: 2},
+		{
+			e: EdgeList{},
+			i: 0,
+			f: 0,
+		},
+		{
+			e: EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			i: 0,
+			f: 1,
+		},
+		{
+			e: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+			i: 0,
+			f: 2,
+		},
 		{
 			e: EdgeList{
 				{From: 10, To: 0, Weight: 1.0},
 				{From: 0, To: 1, Weight: 1.0},
 				{From: 1, To: 2, Weight: 1.0},
 				{From: 2, To: 20, Weight: 1.0},
-			}, i: 10, f: 20,
+			},
+			i: 10,
+			f: 20,
 		},
 		{
 			e: EdgeList{
@@ -346,7 +462,9 @@ func TestGetEndPoints(t *testing.T) {
 				{From: 2, To: 4, Weight: 1.0},
 				{From: 4, To: 8, Weight: 1.0},
 				{From: 8, To: 44, Weight: 1.0},
-			}, i: 1, f: 44,
+			},
+			i: 1,
+			f: 44,
 		},
 		{
 			e: EdgeList{
@@ -382,11 +500,14 @@ func TestGetEndPoints(t *testing.T) {
 				{From: 35, To: 36, Weight: 1.0},
 				{From: 36, To: 37, Weight: 1.0},
 				{From: 37, To: 27, Weight: 1.0},
-			}, i: 0, f: 10,
+			},
+			i: 0,
+			f: 10,
 		},
 	}
 	for i, test := range table {
-		g := NewGraph(test.e, []Expression{})
+		g := NewGraph(test.e,
+			[]Expression{})
 		initial, final := GetEndPoints(g)
 		if initial != test.i {
 			t.Errorf("test %v: GetEndPoints(%v).initial\nGOT  %v\nWANT %v", i, test.e, initial, test.i)
@@ -402,8 +523,12 @@ func TestGetAllPaths(t *testing.T) {
 		e    EdgeList
 		want []Path
 	}{
-		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}}, want: []Path{{0, 1}}},
-		{e: EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}}, want: []Path{{0, 1, 2}}},
+		{
+			e:    EdgeList{{From: 0, To: 1, Weight: 1.0}},
+			want: []Path{{0, 1}}},
+		{
+			e:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+			want: []Path{{0, 1, 2}}},
 		{
 			e: EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
@@ -412,7 +537,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 1, To: 6, Weight: 1.0},
 				{From: 3, To: 6, Weight: 1.0},
 				{From: 5, To: 6, Weight: 1.0},
-			}, want: []Path{{0, 1, 6}, {0, 3, 6}, {0, 5, 6}},
+			},
+			want: []Path{{0, 1, 6}, {0, 3, 6}, {0, 5, 6}},
 		},
 		{
 			e: EdgeList{
@@ -426,9 +552,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 5, To: 7, Weight: 1.0},
 				{From: 6, To: 7, Weight: 1.0},
 				{From: 7, To: 8, Weight: 1.0},
-			}, want: []Path{
-				{0, 1, 2, 3, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 7, 8}, {0, 1, 2, 3, 4, 5, 7, 8},
 			},
+			want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 7, 8}, {0, 1, 2, 3, 4, 5, 7, 8}},
 		},
 		{
 			e: EdgeList{
@@ -440,7 +565,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 5, To: 6, Weight: 1.0},
 				{From: 6, To: 7, Weight: 1.0},
 				{From: 7, To: 8, Weight: 1.0},
-			}, want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8}},
+			},
+			want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8}},
 		},
 		{
 			e: EdgeList{
@@ -454,7 +580,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 5, To: 8, Weight: 1.0},
 				{From: 7, To: 8, Weight: 1.0},
 				{From: 8, To: 9, Weight: 1.0},
-			}, want: []Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}, {0, 1, 2, 8, 9}},
+			},
+			want: []Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}, {0, 1, 2, 8, 9}},
 		},
 		{
 			e: EdgeList{
@@ -467,7 +594,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 5, To: 8, Weight: 1.0},
 				{From: 7, To: 8, Weight: 1.0},
 				{From: 8, To: 9, Weight: 1.0},
-			}, want: []Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}},
+			},
+			want: []Path{{0, 1, 2, 3, 8, 9}, {0, 1, 2, 5, 8, 9}, {0, 1, 2, 7, 8, 9}},
 		},
 		{
 			e: EdgeList{
@@ -480,7 +608,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 6, To: 7, Weight: 1.0},
 				{From: 7, To: 8, Weight: 1.0},
 				{From: 8, To: 9, Weight: 1.0},
-			}, want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}},
+			},
+			want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}},
 		},
 		{
 			e: EdgeList{
@@ -497,7 +626,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 10, To: 11, Weight: 1.0},
 				{From: 11, To: 12, Weight: 1.0},
 				{From: 12, To: 13, Weight: 1.0},
-			}, want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}},
+			},
+			want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}},
 		},
 		{
 			e: EdgeList{
@@ -516,7 +646,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 12, To: 13, Weight: 1.0},
 				{From: 13, To: 14, Weight: 1.0},
 				{From: 14, To: 15, Weight: 1.0},
-			}, want: []Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}},
+			},
+			want: []Path{{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15}},
 		},
 		{
 			e: EdgeList{
@@ -531,7 +662,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 8, To: 9, Weight: 1.0},
 				{From: 3, To: 7, Weight: 1.0},
 				{From: 4, To: 6, Weight: 1.0},
-			}, want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}},
+			},
+			want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}},
 		},
 		{
 			e: EdgeList{
@@ -551,7 +683,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 3, To: 5, Weight: 1.0},
 				{From: 6, To: 8, Weight: 1.0},
 				{From: 9, To: 11, Weight: 1.0},
-			}, want: []Path{
+			},
+			want: []Path{
 				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
 				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13},
 				{0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13},
@@ -582,7 +715,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 3, To: 5, Weight: 1.0},
 				{From: 7, To: 9, Weight: 1.0},
 				{From: 11, To: 13, Weight: 1.0},
-			}, want: []Path{
+			},
+			want: []Path{
 				{0, 1, 2, 3, 4, 5, 14, 15},
 				{0, 1, 2, 3, 5, 14, 15},
 				{0, 1, 2, 7, 8, 9, 14, 15},
@@ -603,7 +737,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 7, To: 8, Weight: 1.0},
 				{From: 8, To: 9, Weight: 1.0},
 				{From: 2, To: 8, Weight: 1.0},
-			}, want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 8, 9}},
+			},
+			want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 8, 9}},
 		},
 		{
 			e: EdgeList{
@@ -621,7 +756,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 11, To: 12, Weight: 1.0},
 				{From: 12, To: 13, Weight: 1.0},
 				{From: 2, To: 12, Weight: 1.0},
-			}, want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 12, 13}},
+			},
+			want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, {0, 1, 2, 12, 13}},
 		},
 		{
 			e: EdgeList{
@@ -641,7 +777,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 5, To: 14, Weight: 1.0},
 				{From: 14, To: 15, Weight: 1.0},
 				{From: 2, To: 14, Weight: 1.0},
-			}, want: []Path{
+			},
+			want: []Path{
 				{0, 1, 2, 3, 4, 5, 14, 15}, {0, 1, 2, 14, 15}, {0, 1, 2, 7, 8, 9, 14, 15}, {0, 1, 2, 11, 12, 13, 14, 15},
 			},
 		},
@@ -659,9 +796,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 2, To: 8, Weight: 1.0},
 				{From: 3, To: 7, Weight: 1.0},
 				{From: 4, To: 6, Weight: 1.0},
-			}, want: []Path{
-				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}, {0, 1, 2, 8, 9},
 			},
+			want: []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}, {0, 1, 2, 8, 9}},
 		},
 		{
 			e: EdgeList{
@@ -682,7 +818,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 3, To: 5, Weight: 1.0},
 				{From: 6, To: 8, Weight: 1.0},
 				{From: 9, To: 11, Weight: 1.0},
-			}, want: []Path{
+			},
+			want: []Path{
 				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
 				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13},
 				{0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13},
@@ -715,7 +852,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 3, To: 5, Weight: 1.0},
 				{From: 7, To: 9, Weight: 1.0},
 				{From: 11, To: 13, Weight: 1.0},
-			}, want: []Path{
+			},
+			want: []Path{
 				{0, 1, 2, 3, 4, 5, 14, 15},
 				{0, 1, 2, 3, 5, 14, 15},
 				{0, 1, 2, 7, 8, 9, 14, 15},
@@ -743,7 +881,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 12, To: 13, Weight: 1.0},
 				{From: 13, To: 14, Weight: 1.0},
 				{From: 14, To: 15, Weight: 1.0},
-			}, want: []Path{
+			},
+			want: []Path{
 				{0, 1, 2, 3, 4, 5, 13, 14, 15},
 				{0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15},
 				{0, 1, 2, 7, 8, 9, 10, 12, 13, 14, 15},
@@ -769,7 +908,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 13, To: 14, Weight: 1.0},
 				{From: 14, To: 15, Weight: 1.0},
 				{From: 12, To: 14, Weight: 1.0},
-			}, want: []Path{
+			},
+			want: []Path{
 				{0, 1, 2, 3, 4, 5, 11, 12, 13, 14, 15},
 				{0, 1, 2, 3, 4, 5, 11, 12, 14, 15},
 				{0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 14, 15},
@@ -798,7 +938,8 @@ func TestGetAllPaths(t *testing.T) {
 				{From: 13, To: 14, Weight: 1.0},
 				{From: 1, To: 12, Weight: 1.0},
 				{From: 6, To: 8, Weight: 1.0},
-			}, want: []Path{
+			},
+			want: []Path{
 				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
 				{0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14},
 				{0, 1, 12, 13, 14},
@@ -806,7 +947,8 @@ func TestGetAllPaths(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		g := NewGraph(test.e, []Expression{})
+		g := NewGraph(test.e,
+			[]Expression{})
 		got := GetAllPaths(g)
 		sort.Slice(got, func(i, j int) bool { return fmt.Sprint(got[i]) < fmt.Sprint(got[j]) })
 		sort.Slice(test.want, func(i, j int) bool { return fmt.Sprint(test.want[i]) < fmt.Sprint(test.want[j]) })
@@ -827,191 +969,359 @@ func TestComposeGraphs(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			g1: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{"a", "b"}),
-			g2: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{"c", "d"}),
-			i:  0,
-			want: NewGraph(EdgeList{{From: 2, To: 3, Weight: 1.0}, {From: 3, To: 1, Weight: 1.0}}, []Expression{
-				"a", "b", "c", "d",
-			}),
-			wantErr: false,
-		},
-		{
-			g1: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{"c", "d"}),
-			g2: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{"a", "b"}),
-			i:  1,
-			want: NewGraph(EdgeList{{From: 0, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}}, []Expression{
-				"c", "d", "a", "b",
-			}),
-			wantErr: false,
-		},
-		{
-			g1: NewGraph(EdgeList{
-				{From: 0, To: 1, Weight: 1.0},
-				{From: 1, To: 2, Weight: 1.0},
-				{From: 2, To: 3, Weight: 1.0},
-				{From: 3, To: 4, Weight: 1.0},
-				{From: 4, To: 5, Weight: 1.0},
-				{From: 5, To: 10, Weight: 1.0},
-				{From: 2, To: 7, Weight: 1.0},
-				{From: 7, To: 8, Weight: 1.0},
-				{From: 8, To: 9, Weight: 1.0},
-				{From: 9, To: 10, Weight: 1.0},
-				{From: 7, To: 9, Weight: 1.0},
-			}, []Expression{"a", "b", "c", "d"}),
-			g2: NewGraph(EdgeList{
-				{From: 0, To: 1, Weight: 1.0},
-				{From: 1, To: 2, Weight: 1.0},
-				{From: 2, To: 3, Weight: 1.0},
-				{From: 3, To: 4, Weight: 1.0},
-			}, []Expression{"a", "b", "c", "d"}),
+			g1: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{"a", "b"},
+			),
+			g2: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{"c", "d"},
+			),
 			i: 0,
-			want: NewGraph(EdgeList{
-				{From: 15, To: 1, Weight: 1.0},
-				{From: 1, To: 2, Weight: 1.0},
-				{From: 2, To: 3, Weight: 1.0},
-				{From: 3, To: 4, Weight: 1.0},
-				{From: 4, To: 5, Weight: 1.0},
-				{From: 5, To: 10, Weight: 1.0},
-				{From: 2, To: 7, Weight: 1.0},
-				{From: 7, To: 8, Weight: 1.0},
-				{From: 8, To: 9, Weight: 1.0},
-				{From: 9, To: 10, Weight: 1.0},
-				{From: 7, To: 9, Weight: 1.0},
-				{From: 11, To: 12, Weight: 1.0},
-				{From: 12, To: 13, Weight: 1.0},
-				{From: 13, To: 14, Weight: 1.0},
-				{From: 14, To: 15, Weight: 1.0},
-			}, []Expression{"a", "b", "c", "d", "a", "b", "c", "d"}),
+			want: NewGraph(
+				EdgeList{{From: 2, To: 3, Weight: 1.0}, {From: 3, To: 1, Weight: 1.0}},
+				[]Expression{"a", "b", "c", "d"},
+			),
 			wantErr: false,
 		},
 		{
-			g1: NewGraph(EdgeList{
-				{From: 0, To: 1, Weight: 1.0},
-				{From: 1, To: 2, Weight: 1.0},
-				{From: 2, To: 3, Weight: 1.0},
-				{From: 3, To: 4, Weight: 1.0},
-				{From: 4, To: 5, Weight: 1.0},
-				{From: 5, To: 10, Weight: 1.0},
-				{From: 2, To: 7, Weight: 1.0},
-				{From: 7, To: 8, Weight: 1.0},
-				{From: 8, To: 9, Weight: 1.0},
-				{From: 9, To: 10, Weight: 1.0},
-				{From: 7, To: 9, Weight: 1.0},
-			}, []Expression{""}),
-			g2: NewGraph(EdgeList{
-				{From: 0, To: 1, Weight: 1.0},
-				{From: 1, To: 2, Weight: 1.0},
-				{From: 2, To: 3, Weight: 1.0},
-				{From: 3, To: 4, Weight: 1.0},
-			}, []Expression{""}),
+			g1: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{"c", "d"},
+			),
+			g2: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{"a", "b"},
+			),
+			i: 1,
+			want: NewGraph(
+				EdgeList{{From: 0, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
+				[]Expression{"c", "d", "a", "b"},
+			),
+			wantErr: false,
+		},
+		{
+			g1: NewGraph(
+				EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 10, Weight: 1.0},
+					{From: 2, To: 7, Weight: 1.0},
+					{From: 7, To: 8, Weight: 1.0},
+					{From: 8, To: 9, Weight: 1.0},
+					{From: 9, To: 10, Weight: 1.0},
+					{From: 7, To: 9, Weight: 1.0},
+				},
+				[]Expression{"a", "b", "c", "d"},
+			),
+			g2: NewGraph(
+				EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+				},
+				[]Expression{"a", "b", "c", "d"},
+			),
+			i: 0,
+			want: NewGraph(
+				EdgeList{
+					{From: 15, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 10, Weight: 1.0},
+					{From: 2, To: 7, Weight: 1.0},
+					{From: 7, To: 8, Weight: 1.0},
+					{From: 8, To: 9, Weight: 1.0},
+					{From: 9, To: 10, Weight: 1.0},
+					{From: 7, To: 9, Weight: 1.0},
+					{From: 11, To: 12, Weight: 1.0},
+					{From: 12, To: 13, Weight: 1.0},
+					{From: 13, To: 14, Weight: 1.0},
+					{From: 14, To: 15, Weight: 1.0},
+				},
+				[]Expression{"a", "b", "c", "d", "a", "b", "c", "d"},
+			),
+			wantErr: false,
+		},
+		{
+			g1: NewGraph(
+				EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 10, Weight: 1.0},
+					{From: 2, To: 7, Weight: 1.0},
+					{From: 7, To: 8, Weight: 1.0},
+					{From: 8, To: 9, Weight: 1.0},
+					{From: 9, To: 10, Weight: 1.0},
+					{From: 7, To: 9, Weight: 1.0},
+				},
+				[]Expression{""},
+			),
+			g2: NewGraph(
+				EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+				},
+				[]Expression{""},
+			),
 			i: 5,
-			want: NewGraph(EdgeList{
-				{From: 0, To: 1, Weight: 1.0},
-				{From: 1, To: 2, Weight: 1.0},
-				{From: 2, To: 3, Weight: 1.0},
-				{From: 3, To: 4, Weight: 1.0},
-				{From: 4, To: 11, Weight: 1.0},
-				{From: 15, To: 10, Weight: 1.0},
-				{From: 2, To: 7, Weight: 1.0},
-				{From: 7, To: 8, Weight: 1.0},
-				{From: 8, To: 9, Weight: 1.0},
-				{From: 9, To: 10, Weight: 1.0},
-				{From: 7, To: 9, Weight: 1.0},
-				{From: 11, To: 12, Weight: 1.0},
-				{From: 12, To: 13, Weight: 1.0},
-				{From: 13, To: 14, Weight: 1.0},
-				{From: 14, To: 15, Weight: 1.0},
-			}, []Expression{"", ""}),
+			want: NewGraph(
+				EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 11, Weight: 1.0},
+					{From: 15, To: 10, Weight: 1.0},
+					{From: 2, To: 7, Weight: 1.0},
+					{From: 7, To: 8, Weight: 1.0},
+					{From: 8, To: 9, Weight: 1.0},
+					{From: 9, To: 10, Weight: 1.0},
+					{From: 7, To: 9, Weight: 1.0},
+					{From: 11, To: 12, Weight: 1.0},
+					{From: 12, To: 13, Weight: 1.0},
+					{From: 13, To: 14, Weight: 1.0},
+					{From: 14, To: 15, Weight: 1.0},
+				},
+				[]Expression{"", ""},
+			),
 			wantErr: false,
 		},
 		{
-			g1: NewGraph(EdgeList{
-				{From: 0, To: 1, Weight: 1.0},
-				{From: 1, To: 2, Weight: 1.0},
-				{From: 2, To: 3, Weight: 1.0},
-				{From: 3, To: 4, Weight: 1.0},
-				{From: 4, To: 5, Weight: 1.0},
-				{From: 5, To: 10, Weight: 1.0},
-				{From: 2, To: 7, Weight: 1.0},
-				{From: 7, To: 8, Weight: 1.0},
-				{From: 8, To: 9, Weight: 1.0},
-				{From: 9, To: 10, Weight: 1.0},
-				{From: 7, To: 9, Weight: 1.0},
-			}, []Expression{"a", "b", "c"}),
-			g2: NewGraph(EdgeList{
-				{From: 0, To: 1, Weight: 1.0},
-				{From: 1, To: 2, Weight: 1.0},
-				{From: 2, To: 3, Weight: 1.0},
-				{From: 3, To: 4, Weight: 1.0},
-			}, []Expression{}),
+			g1: NewGraph(
+				EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 10, Weight: 1.0},
+					{From: 2, To: 7, Weight: 1.0},
+					{From: 7, To: 8, Weight: 1.0},
+					{From: 8, To: 9, Weight: 1.0},
+					{From: 9, To: 10, Weight: 1.0},
+					{From: 7, To: 9, Weight: 1.0},
+				},
+				[]Expression{"a", "b", "c"},
+			),
+			g2: NewGraph(
+				EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+				},
+				[]Expression{},
+			),
 			i: 10,
-			want: NewGraph(EdgeList{
-				{From: 0, To: 1, Weight: 1.0},
-				{From: 1, To: 2, Weight: 1.0},
-				{From: 2, To: 3, Weight: 1.0},
-				{From: 3, To: 4, Weight: 1.0},
-				{From: 4, To: 5, Weight: 1.0},
-				{From: 5, To: 11, Weight: 1.0},
-				{From: 2, To: 7, Weight: 1.0},
-				{From: 7, To: 8, Weight: 1.0},
-				{From: 8, To: 9, Weight: 1.0},
-				{From: 9, To: 11, Weight: 1.0},
-				{From: 7, To: 9, Weight: 1.0},
-				{From: 11, To: 12, Weight: 1.0},
-				{From: 12, To: 13, Weight: 1.0},
-				{From: 13, To: 14, Weight: 1.0},
-				{From: 14, To: 15, Weight: 1.0},
-			}, []Expression{"a", "b", "c"}),
+			want: NewGraph(
+				EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 1, To: 2, Weight: 1.0},
+					{From: 2, To: 3, Weight: 1.0},
+					{From: 3, To: 4, Weight: 1.0},
+					{From: 4, To: 5, Weight: 1.0},
+					{From: 5, To: 11, Weight: 1.0},
+					{From: 2, To: 7, Weight: 1.0},
+					{From: 7, To: 8, Weight: 1.0},
+					{From: 8, To: 9, Weight: 1.0},
+					{From: 9, To: 11, Weight: 1.0},
+					{From: 7, To: 9, Weight: 1.0},
+					{From: 11, To: 12, Weight: 1.0},
+					{From: 12, To: 13, Weight: 1.0},
+					{From: 13, To: 14, Weight: 1.0},
+					{From: 14, To: 15, Weight: 1.0},
+				},
+				[]Expression{"a", "b", "c"},
+			),
 			wantErr: false,
 		},
 		{
-			g1: NewGraph(EdgeList{}, []Expression{}), g2: NewGraph(EdgeList{}, []Expression{}), i: -1,
-			want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			i: -1,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 		{
-			g1: NewGraph(EdgeList{}, []Expression{}), g2: NewGraph(EdgeList{}, []Expression{}), i: 0,
-			want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			i: 0,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 		{
-			g1: NewGraph(EdgeList{}, []Expression{}), g2: NewGraph(EdgeList{}, []Expression{}), i: 2,
-			want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			i: 2,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 		{
-			g1: NewGraph(EdgeList{}, []Expression{}),
-			g2: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}), i: -1,
-			want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{},
+			),
+			i: -1,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 		{
-			g1: NewGraph(EdgeList{}, []Expression{}),
-			g2: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}), i: 0,
-			want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{},
+			),
+			i: 0,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 		{
-			g1: NewGraph(EdgeList{}, []Expression{}),
-			g2: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}), i: 2,
-			want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{},
+			),
+			i: 2,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 		{
-			g1: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}),
-			g2: NewGraph(EdgeList{}, []Expression{}), i: -1, want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			i: -1,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 		{
-			g1: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}),
-			g2: NewGraph(EdgeList{}, []Expression{}), i: 0, want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			i: 0,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 		{
-			g1: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}),
-			g2: NewGraph(EdgeList{}, []Expression{}), i: 2, want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			i: 2,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 		{
-			g1: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}),
-			g2: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}), i: -1,
-			want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{},
+			),
+			i: -1,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 		{
-			g1: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}),
-			g2: NewGraph(EdgeList{{From: 0, To: 1, Weight: 1.0}}, []Expression{}), i: 2,
-			want: NewGraph(EdgeList{}, []Expression{}), wantErr: true,
+			g1: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{},
+			),
+			g2: NewGraph(
+				EdgeList{{From: 0, To: 1, Weight: 1.0}},
+				[]Expression{},
+			),
+			i: 2,
+			want: NewGraph(
+				EdgeList{},
+				[]Expression{},
+			),
+			wantErr: true,
 		},
 	}
 	for i, test := range table {
@@ -1131,9 +1441,7 @@ func TestGetRandomPath(t *testing.T) {
 				{From: 6, To: 7, Weight: 1.0},
 				{From: 7, To: 8, Weight: 1.0},
 			},
-			want: []Path{
-				{0, 1, 2, 3, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 7, 8}, {0, 1, 2, 3, 4, 5, 7, 8},
-			},
+			want:    []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 6, 7, 8}, {0, 1, 2, 4, 5, 7, 8}, {0, 1, 2, 3, 4, 5, 7, 8}},
 			wantErr: false,
 		},
 		{
@@ -1393,9 +1701,7 @@ func TestGetRandomPath(t *testing.T) {
 				{From: 3, To: 7, Weight: 1.0},
 				{From: 4, To: 6, Weight: 1.0},
 			},
-			want: []Path{
-				{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}, {0, 1, 2, 8, 9},
-			},
+			want:    []Path{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, {0, 1, 2, 3, 4, 6, 7, 8, 9}, {0, 1, 2, 3, 7, 8, 9}, {0, 1, 2, 8, 9}},
 			wantErr: false,
 		},
 		{
@@ -1797,7 +2103,8 @@ func TestGraphDropNode(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		g := NewGraph(test.e, []Expression{})
+		g := NewGraph(test.e,
+			[]Expression{})
 		got := g.DropNode(test.i)
 		if !slices.Equal(Sort(got.Edges), Sort(test.want)) {
 			t.Errorf("test %v: (%v).DropNode(%v)\nGOT  %v\nWANT %v", i, test.e, test.i, Sort(got.Edges), Sort(test.want))
@@ -2000,202 +2307,297 @@ func TestRuleWeightEdges(t *testing.T) {
 	}{
 		{
 			r: Rule{
-				Exp: "/.//", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+				Exp:      "/.//",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{},
+					[]Expression{},
+				),
 			},
 			want: Rule{
-				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+				Exp:      "",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{},
+					[]Expression{},
+				),
 			},
 			wantErr: false,
 		},
 		{
 			r: Rule{
-				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+				Exp:      "",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{},
+					[]Expression{},
+				),
 			},
 			want: Rule{
-				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+				Exp:      "",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{},
+					[]Expression{},
+				),
 			},
 			wantErr: false,
 		},
 		{
 			r: Rule{
-				Exp: "/.99/;", IsPublic: false,
-				Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
-				}, []Expression{"<SOS>", "/.99/", ";", "<EOS>"}),
+				Exp:      "/.99/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "/.99/", ";", "<EOS>"},
+				),
 			},
 			want: Rule{
-				Exp: "/.99/;", IsPublic: false,
-				Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0},
-				}, []Expression{"<SOS>", "", ";", "<EOS>"}),
+				Exp:      "/.99/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "", ";", "<EOS>"},
+				),
 			},
 			wantErr: false,
 		},
 		{
 			r: Rule{
-				Exp: "123/.99/;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
-				}, []Expression{
-					"<SOS>", "123/.99/", ";", "<EOS>",
-				}),
+				Exp:      "123/.99/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+					},
+					[]Expression{
+						"<SOS>", "123/.99/", ";", "<EOS>",
+					},
+				),
 			},
 			want: Rule{
-				Exp: "123/.99/;", IsPublic: false,
-				Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
-				}, []Expression{"<SOS>", "123", ";", "<EOS>"}),
+				Exp:      "123/.99/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "123", ";", "<EOS>"},
+				),
 			},
 			wantErr: false,
 		},
 		{
 			r: Rule{
-				Exp: "<123>/.99/;", IsPublic: false,
-				Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
-				}, []Expression{
-					"<SOS>", "<123>/.99/", ";", "<EOS>",
-				}),
+				Exp:      "<123>/.99/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+					},
+					[]Expression{
+						"<SOS>", "<123>/.99/", ";", "<EOS>",
+					},
+				),
 			},
 			want: Rule{
-				Exp: "<123>/.99/;", IsPublic: false,
-				Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
-				}, []Expression{
-					"<SOS>", "<123>", ";", "<EOS>",
-				}),
+				Exp:      "<123>/.99/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+					},
+					[]Expression{
+						"<SOS>", "<123>", ";", "<EOS>",
+					},
+				),
 			},
 			wantErr: false,
 		},
 		{
 			r: Rule{
-				Exp: "1|2|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 0, To: 3, Weight: 1.0},
-					{From: 0, To: 5, Weight: 1.0},
-					{From: 1, To: 6, Weight: 1.0},
-					{From: 3, To: 6, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1", "|", "2", "|", "3/0.1/", ";", "<EOS>"}),
+				Exp:      "1|2|3/0.1/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 0, To: 3, Weight: 1.0},
+						{From: 0, To: 5, Weight: 1.0},
+						{From: 1, To: 6, Weight: 1.0},
+						{From: 3, To: 6, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1", "|", "2", "|", "3/0.1/", ";", "<EOS>"},
+				),
 			},
 			want: Rule{
-				Exp: "1|2|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 0, To: 3, Weight: 1.0},
-					{From: 0, To: 5, Weight: 0.1},
-					{From: 1, To: 6, Weight: 1.0},
-					{From: 3, To: 6, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}),
+				Exp:      "1|2|3/0.1/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 0, To: 3, Weight: 1.0},
+						{From: 0, To: 5, Weight: 0.1},
+						{From: 1, To: 6, Weight: 1.0},
+						{From: 3, To: 6, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"},
+				),
 			},
 			wantErr: false,
 		},
 		{
 			r: Rule{
-				Exp: "1{}|2//|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 0, To: 3, Weight: 1.0},
-					{From: 0, To: 5, Weight: 1.0},
-					{From: 1, To: 6, Weight: 1.0},
-					{From: 3, To: 6, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"}),
+				Exp:      "1{}|2//|3/0.1/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 0, To: 3, Weight: 1.0},
+						{From: 0, To: 5, Weight: 1.0},
+						{From: 1, To: 6, Weight: 1.0},
+						{From: 3, To: 6, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"},
+				),
 			},
 			want: Rule{
-				Exp: "1{}|2//|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 0, To: 3, Weight: 1.0},
-					{From: 0, To: 5, Weight: 0.1},
-					{From: 1, To: 6, Weight: 1.0},
-					{From: 3, To: 6, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3", ";", "<EOS>"}),
+				Exp:      "1{}|2//|3/0.1/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 0, To: 3, Weight: 1.0},
+						{From: 0, To: 5, Weight: 0.1},
+						{From: 1, To: 6, Weight: 1.0},
+						{From: 3, To: 6, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1{}", "|", "2//", "|", "3", ";", "<EOS>"},
+				),
 			},
 			wantErr: false,
 		},
 		{
 			r: Rule{
-				Exp: "1/0.1/[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 1, To: 2, Weight: 1.0},
-					{From: 2, To: 3, Weight: 1.0},
-					{From: 2, To: 4, Weight: 1.0},
-					{From: 3, To: 4, Weight: 1.0},
-					{From: 4, To: 5, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1/1.01/", "[", "2", "]", "3", ";", "<EOS>"}),
+				Exp:      "1/0.1/[2]3;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 1, To: 2, Weight: 1.0},
+						{From: 2, To: 3, Weight: 1.0},
+						{From: 2, To: 4, Weight: 1.0},
+						{From: 3, To: 4, Weight: 1.0},
+						{From: 4, To: 5, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1/1.01/", "[", "2", "]", "3", ";", "<EOS>"},
+				),
 			},
 			want: Rule{
-				Exp: "1/0.1/[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.01},
-					{From: 1, To: 2, Weight: 1.0},
-					{From: 2, To: 3, Weight: 1.0},
-					{From: 2, To: 4, Weight: 1.0},
-					{From: 3, To: 4, Weight: 1.0},
-					{From: 4, To: 5, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}),
+				Exp:      "1/0.1/[2]3;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.01},
+						{From: 1, To: 2, Weight: 1.0},
+						{From: 2, To: 3, Weight: 1.0},
+						{From: 2, To: 4, Weight: 1.0},
+						{From: 3, To: 4, Weight: 1.0},
+						{From: 4, To: 5, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"},
+				),
 			},
 			wantErr: false,
 		},
 		{
 			r: Rule{
-				Exp: "1(2/1.01/)3;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 1, To: 2, Weight: 1.0},
-					{From: 2, To: 3, Weight: 1.0},
-					{From: 3, To: 4, Weight: 1.0},
-					{From: 4, To: 5, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1", "(", "2/1.01/", ")", "3", ";", "<EOS>"}),
+				Exp:      "1(2/1.01/)3;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 1, To: 2, Weight: 1.0},
+						{From: 2, To: 3, Weight: 1.0},
+						{From: 3, To: 4, Weight: 1.0},
+						{From: 4, To: 5, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1", "(", "2/1.01/", ")", "3", ";", "<EOS>"},
+				),
 			},
 			want: Rule{
-				Exp: "1(2/1.01/)3;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 1, To: 2, Weight: 1.0},
-					{From: 2, To: 3, Weight: 1.01},
-					{From: 3, To: 4, Weight: 1.0},
-					{From: 4, To: 5, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}),
+				Exp:      "1(2/1.01/)3;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 1, To: 2, Weight: 1.0},
+						{From: 2, To: 3, Weight: 1.01},
+						{From: 3, To: 4, Weight: 1.0},
+						{From: 4, To: 5, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"},
+				),
 			},
 			wantErr: false,
 		},
 		{
 			r: Rule{
-				Exp: "1/1.01/(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 1, To: 2, Weight: 1.0},
-					{From: 2, To: 3, Weight: 1.0},
-					{From: 3, To: 4, Weight: 1.0},
-					{From: 4, To: 5, Weight: 1.0},
-					{From: 4, To: 6, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-					{From: 7, To: 8, Weight: 1.0},
-					{From: 8, To: 9, Weight: 1.0},
-				}, []Expression{"<SOS>", "1/1.01/", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
+				Exp:      "1/1.01/(2[3]);",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 1, To: 2, Weight: 1.0},
+						{From: 2, To: 3, Weight: 1.0},
+						{From: 3, To: 4, Weight: 1.0},
+						{From: 4, To: 5, Weight: 1.0},
+						{From: 4, To: 6, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+						{From: 7, To: 8, Weight: 1.0},
+						{From: 8, To: 9, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1/1.01/", "(", "2", "[", "3", "]", ")", ";", "<EOS>"},
+				),
 			},
 			want: Rule{
-				Exp: "1/1.01/(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.01},
-					{From: 1, To: 2, Weight: 1.0},
-					{From: 2, To: 3, Weight: 1.0},
-					{From: 3, To: 4, Weight: 1.0},
-					{From: 4, To: 5, Weight: 1.0},
-					{From: 4, To: 6, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-					{From: 7, To: 8, Weight: 1.0},
-					{From: 8, To: 9, Weight: 1.0},
-				}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
+				Exp:      "1/1.01/(2[3]);",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.01},
+						{From: 1, To: 2, Weight: 1.0},
+						{From: 2, To: 3, Weight: 1.0},
+						{From: 3, To: 4, Weight: 1.0},
+						{From: 4, To: 5, Weight: 1.0},
+						{From: 4, To: 6, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+						{From: 7, To: 8, Weight: 1.0},
+						{From: 8, To: 9, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"},
+				),
 			},
 			wantErr: false,
 		},
@@ -2230,99 +2632,137 @@ func TestGetProductions(t *testing.T) {
 	}{
 		{
 			r: Rule{
-				Exp: "", IsPublic: false, Graph: NewGraph(EdgeList{}, []Expression{}),
+				Exp:      "",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{},
+					[]Expression{},
+				),
 			},
 			want: []string{},
 		},
 		{
 			r: Rule{
-				Exp: ";", IsPublic: false,
-				Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
-				}, []Expression{"<SOS>", ";", "<EOS>"}),
+				Exp:      ";",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", ";", "<EOS>"},
+				),
 			},
 			want: []string{},
 		},
 		{
 			r: Rule{
-				Exp: "123;", IsPublic: false,
-				Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
-				}, []Expression{"<SOS>", "123", ";", "<EOS>"}),
+				Exp:      "123;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "123", ";", "<EOS>"},
+				),
 			},
 			want: []string{"123"},
 		},
 		{
 			r: Rule{
-				Exp: "1|2|3;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 0, To: 3, Weight: 1.0},
-					{From: 0, To: 5, Weight: 1.0},
-					{From: 1, To: 6, Weight: 1.0},
-					{From: 3, To: 6, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"}),
+				Exp:      "1|2|3;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 0, To: 3, Weight: 1.0},
+						{From: 0, To: 5, Weight: 1.0},
+						{From: 1, To: 6, Weight: 1.0},
+						{From: 3, To: 6, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1", "|", "2", "|", "3", ";", "<EOS>"},
+				),
 			},
 			want: []string{"1", "2", "3"},
 		},
 		{
 			r: Rule{
-				Exp: "1{}|2//|3/0.1/;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 0, To: 3, Weight: 1.0},
-					{From: 0, To: 5, Weight: 1.0},
-					{From: 1, To: 6, Weight: 1.0},
-					{From: 3, To: 6, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"}),
+				Exp:      "1{}|2//|3/0.1/;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 0, To: 3, Weight: 1.0},
+						{From: 0, To: 5, Weight: 1.0},
+						{From: 1, To: 6, Weight: 1.0},
+						{From: 3, To: 6, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1{}", "|", "2//", "|", "3/0.1/", ";", "<EOS>"},
+				),
 			},
 			want: []string{"1{}", "2//", "3/0.1/"},
 		},
 		{
 			r: Rule{
-				Exp: "1[2]3;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 1, To: 2, Weight: 1.0},
-					{From: 2, To: 3, Weight: 1.0},
-					{From: 2, To: 4, Weight: 1.0},
-					{From: 3, To: 4, Weight: 1.0},
-					{From: 4, To: 5, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"}),
+				Exp:      "1[2]3;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 1, To: 2, Weight: 1.0},
+						{From: 2, To: 3, Weight: 1.0},
+						{From: 2, To: 4, Weight: 1.0},
+						{From: 3, To: 4, Weight: 1.0},
+						{From: 4, To: 5, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1", "[", "2", "]", "3", ";", "<EOS>"},
+				),
 			},
 			want: []string{"123", "13"},
 		},
 		{
 			r: Rule{
-				Exp: "1(2)3;", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 1, To: 2, Weight: 1.0},
-					{From: 2, To: 3, Weight: 1.0},
-					{From: 3, To: 4, Weight: 1.0},
-					{From: 4, To: 5, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-				}, []Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"}),
+				Exp:      "1(2)3;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 1, To: 2, Weight: 1.0},
+						{From: 2, To: 3, Weight: 1.0},
+						{From: 3, To: 4, Weight: 1.0},
+						{From: 4, To: 5, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1", "(", "2", ")", "3", ";", "<EOS>"},
+				),
 			},
 			want: []string{"123"},
 		},
 		{
 			r: Rule{
-				Exp: "1(2[3]);", IsPublic: false, Graph: NewGraph(EdgeList{
-					{From: 0, To: 1, Weight: 1.0},
-					{From: 1, To: 2, Weight: 1.0},
-					{From: 2, To: 3, Weight: 1.0},
-					{From: 3, To: 4, Weight: 1.0},
-					{From: 4, To: 5, Weight: 1.0},
-					{From: 4, To: 6, Weight: 1.0},
-					{From: 5, To: 6, Weight: 1.0},
-					{From: 6, To: 7, Weight: 1.0},
-					{From: 7, To: 8, Weight: 1.0},
-					{From: 8, To: 9, Weight: 1.0},
-				}, []Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"}),
+				Exp:      "1(2[3]);",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0},
+						{From: 1, To: 2, Weight: 1.0},
+						{From: 2, To: 3, Weight: 1.0},
+						{From: 3, To: 4, Weight: 1.0},
+						{From: 4, To: 5, Weight: 1.0},
+						{From: 4, To: 6, Weight: 1.0},
+						{From: 5, To: 6, Weight: 1.0},
+						{From: 6, To: 7, Weight: 1.0},
+						{From: 7, To: 8, Weight: 1.0},
+						{From: 8, To: 9, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1", "(", "2", "[", "3", "]", ")", ";", "<EOS>"},
+				),
 			},
 			want: []string{"12", "123"},
 		},

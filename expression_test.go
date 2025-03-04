@@ -16,11 +16,21 @@ func TestToTokens(t *testing.T) {
 		e    Expression
 		want []Expression
 	}{
-		{e: "", want: []Expression{}},
-		{e: ";", want: []Expression{"<SOS>", ";", "<EOS>"}},
-		{e: " ", want: []Expression{"<SOS>", " ", "<EOS>"}},
-		{e: "test expression 123", want: []Expression{"<SOS>", "test expression 123", "<EOS>"}},
-		{e: "test expression 123;", want: []Expression{"<SOS>", "test expression 123", ";", "<EOS>"}},
+		{
+			e:    "",
+			want: []Expression{}},
+		{
+			e:    ";",
+			want: []Expression{"<SOS>", ";", "<EOS>"}},
+		{
+			e:    " ",
+			want: []Expression{"<SOS>", " ", "<EOS>"}},
+		{
+			e:    "test expression 123",
+			want: []Expression{"<SOS>", "test expression 123", "<EOS>"}},
+		{
+			e:    "test expression 123;",
+			want: []Expression{"<SOS>", "test expression 123", ";", "<EOS>"}},
 		{
 			e:    "test expression 123 (abc);",
 			want: []Expression{"<SOS>", "test expression 123 ", "(", "abc", ")", ";", "<EOS>"},
@@ -178,17 +188,17 @@ func TestIsWeighted(t *testing.T) {
 		e    Expression
 		want bool
 	}{
-		{"/0/", true},
-		{" /0.0/", true},
-		{"abc/999/", true},
-		{"\abc/./", true},
-		{"abc/.0/abc", true},
-		{"", false},
-		{" ", false},
-		{"abc", false},
-		{"\abc", false},
-		{"//abc", false},
-		{"/0.0a/abc", false},
+		{e: "/0/", want: true},
+		{e: " /0.0/", want: true},
+		{e: "abc/999/", want: true},
+		{e: "\abc/./", want: true},
+		{e: "abc/.0/abc", want: true},
+		{e: "", want: false},
+		{e: " ", want: false},
+		{e: "abc", want: false},
+		{e: "\abc", want: false},
+		{e: "//abc", want: false},
+		{e: "/0.0a/abc", want: false},
 	}
 	for i, test := range tests {
 		got := IsWeighted(test.e)
