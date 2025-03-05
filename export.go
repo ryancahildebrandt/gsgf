@@ -133,3 +133,52 @@ func ReferencesToDOT(g Grammar) string {
 
 	return builder.String()
 }
+
+func GraphToD2(g Graph) string {
+	var (
+		builder strings.Builder
+		entry   string
+		visited []int
+	)
+
+	builder.WriteString("direction: right\n\n")
+	for _, e := range g.Edges {
+		visited = append(visited, e.From)
+		visited = append(visited, e.To)
+	}
+	for i, t := range g.Tokens {
+		if slices.Contains(visited, i) {
+			entry = fmt.Sprintf("_%v: \"%s\"\n", i, t)
+			builder.WriteString(entry)
+		}
+	}
+	builder.WriteString("\n")
+	for _, e := range g.Edges {
+		entry = fmt.Sprintf("_%v -> _%v: \"%v\"\n", e.From, e.To, e.Weight)
+		builder.WriteString(entry)
+	}
+
+	return builder.String()
+}
+
+func ReferencesToD2(g Grammar) string {
+	var (
+		builder strings.Builder
+		entry   string
+		entries []string
+	)
+
+	builder.WriteString("direction: right\n\n")
+	for k, v := range g.Rules {
+		for _, r := range GetReferences(v) {
+			entry = fmt.Sprintf("\"%s\" -> \"%s\"\n", r, k)
+			entries = append(entries, entry)
+		}
+	}
+	slices.Sort(entries)
+	for _, e := range entries {
+		builder.WriteString(e)
+	}
+
+	return builder.String()
+}

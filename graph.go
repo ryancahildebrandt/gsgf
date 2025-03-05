@@ -7,6 +7,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"slices"
 	"strings"
 
@@ -157,11 +158,11 @@ func GetAllPaths(g Graph) []Path {
 func ComposeGraphs(g Graph, g1 Graph, i int) (Graph, error) {
 	switch {
 	case g.Edges.IsEmpty() || g1.Edges.IsEmpty():
-		return Graph{}, errors.New("one or more EdgeLists e and a are empty")
+		return Graph{}, fmt.Errorf("error when calling ComposeGraphs(%v, %v, %v):\n%+w", g, g1, i, errors.New("one or more EdgeLists e and a are empty"))
 	case i < 0:
-		return Graph{}, errors.New("cannot insert EdgeList a at negative index")
+		return Graph{}, fmt.Errorf("error when calling ComposeGraphs(%v, %v, %v):\n%+w", g, g1, i, errors.New("cannot insert EdgeList a at negative index"))
 	case i > g.Edges.Max():
-		return Graph{}, errors.New("cannot insert EdgeList a at index greater than EdgeList g.Max()")
+		return Graph{}, fmt.Errorf("error when calling ComposeGraphs(%v, %v, %v):\n%+w", g, g1, i, errors.New("cannot insert EdgeList g1 at index greater than EdgeList g.Max()"))
 	}
 
 	g1.Edges = Increment(g1.Edges, g.Edges.Max()+1)
@@ -185,14 +186,14 @@ func ComposeGraphs(g Graph, g1 Graph, i int) (Graph, error) {
 
 func GetRandomChoice(c []int, w []float64) (int, error) {
 	if len(c) == 0 || len(w) == 0 {
-		return -1, errors.New("length of choices c and/or weights w is 0")
+		return -1, fmt.Errorf("error when calling GetRandomChoice(%v, %v):\n%+w", c, w, errors.New("length of choices c and/or weights w is 0"))
 	}
 	if len(c) != len(w) {
-		return -1, errors.New("length of choices c and weights w do not match")
+		return -1, fmt.Errorf("error when calling GetRandomChoice(%v, %v):\n%+w", c, w, errors.New("length of choices c and weights w do not match"))
 	}
 	choice, ok := sampleuv.NewWeighted(w, nil).Take()
 	if !ok {
-		return -1, errors.New("sampleuv.NewWeighted could not sample from choices c and weights w")
+		return -1, fmt.Errorf("error when calling GetRandomChoice(%v, %v):\n%+w", c, w, errors.New("sampleuv.NewWeighted could not sample from choices c and weights w"))
 	}
 
 	return c[choice], nil
@@ -210,7 +211,7 @@ func GetRandomPath(g Graph) (Path, error) {
 		n := g.GetFrom(node)
 		switch len(n) {
 		case 0:
-			return Path{}, errors.New("cannot proceed further down path")
+			return Path{}, fmt.Errorf("error when calling GetRandomPath(%v), GetFrom(%v):\n%+w", g, n, errors.New("cannot proceed further down path, no nodes are reachable from n"))
 		case 1:
 			choice = n[0]
 			res = append(res, choice)
@@ -222,7 +223,7 @@ func GetRandomPath(g Graph) (Path, error) {
 			}
 			choice, err := GetRandomChoice(g.GetFrom(node), w)
 			if err != nil {
-				return Path{}, err
+				return Path{}, fmt.Errorf("in GetRandomPath(%v):\n%+w", g, err)
 			}
 			res = append(res, choice)
 			node = choice
@@ -250,7 +251,7 @@ func WeightEdges(r Rule) (Rule, error) {
 		if IsWeighted(t) {
 			exp, weight, err := ParseWeight(t)
 			if err != nil {
-				return r, err
+				return r, fmt.Errorf("in WeightEdges(%v):\n%+w", r, err)
 			}
 			r.Tokens[i] = exp
 			r.Graph.Tokens[i] = exp

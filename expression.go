@@ -7,6 +7,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -85,11 +86,11 @@ func IsWeighted(e Expression) bool {
 func ParseWeight(e Expression) (Expression, float64, error) {
 	split := strings.Split(e, "/")
 	if len(split) != 3 {
-		return e, 0.0, errors.New("expression e not separable into expected 3 parts exp/weight/end. e may have the incorrect number of /")
+		return e, 0.0, fmt.Errorf("error when calling ParseWeight(%v), split into %v:\n%+w", e, split, errors.New("expression e not separable into expected 3 parts exp/weight/end. e may have the incorrect number of /"))
 	}
 	weight, err := strconv.ParseFloat(split[1], 64)
 	if err != nil {
-		return e, 0.0, errors.New("unable to parse weight in expression e to float64")
+		return e, 0.0, fmt.Errorf("error when calling ParseWeight(%v), strconv.ParseFloat(%v, 64):\n%+w", e, split[1], err)
 	}
 
 	return split[0], weight, nil

@@ -8,6 +8,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/bzick/tokenizer"
@@ -130,7 +131,7 @@ func ValidateGrammarCompleteness(g Grammar) error {
 		for _, r := range GetReferences(v) {
 			_, ok := g.Rules[r]
 			if !ok {
-				return errors.New("grammar references rule not present in namespace")
+				return fmt.Errorf("error when calling ValidateGrammarCompleteness(%v), on rule %v, reference %v:\n%+w", g, v, r, errors.New("grammar references rule not present in namespace"))
 			}
 		}
 	}

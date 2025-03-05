@@ -8,6 +8,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/bzick/tokenizer"
@@ -66,10 +67,11 @@ func CaptureString(s *tokenizer.Stream, end string, includeEnd bool) (string, er
 	var builder strings.Builder
 	var remainder string = s.GetSnippetAsString(0, 1000000, 0) // really high value here because s doesn't have a "show me whats left in the string" method
 	if !strings.Contains(remainder, end) {
-		return "", errors.New("close token not found in remaining string")
+		return "", fmt.Errorf("error when calling CaptureString(%v, %v, %v), remainder %v:\n%+w", s, end, includeEnd, remainder, errors.New("close token not found in remaining string"))
 	}
+
 	if remainder == "" {
-		return "", errors.New("cannot capture from empty string")
+		return "", fmt.Errorf("error when calling CaptureString(%v, %v, %v), remainder %v:\n%+w", s, end, includeEnd, remainder, errors.New("cannot capture from empty string"))
 	}
 
 	for s.IsValid() {
@@ -90,10 +92,10 @@ func ValidateLexerString(s string) error {
 	// not empty
 	// not \x00
 	if s == "" {
-		return errors.New("cannot tokenize empty string")
+		return fmt.Errorf("error when calling ValidateLexerString(%v):\n%+w", s, errors.New("cannot tokenize empty string"))
 	}
 	if bytes.Contains([]byte(s), []byte("\x00")) {
-		return errors.New("cannot tokenize string containing null char \x00")
+		return fmt.Errorf("error when calling ValidateLexerString(%v):\n%+w", s, errors.New("cannot tokenize string containing null char \x00"))
 	}
 
 	return nil

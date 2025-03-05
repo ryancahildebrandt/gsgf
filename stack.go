@@ -7,6 +7,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 )
 
 type Stack []int
@@ -19,7 +20,7 @@ func (s Stack) Top() (int, error) {
 	var top int
 
 	if len(s) == 0 {
-		return 0, errors.New("no top value in empty stack")
+		return 0, fmt.Errorf("error when calling Stack(%v).Top():\n%+w", s, errors.New("no top value in empty stack"))
 	}
 	top = s[len(s)-1]
 
@@ -32,7 +33,7 @@ func (s Stack) Pop() (int, Stack, error) {
 
 	top, err := s.Top()
 	if err != nil {
-		return 0, Stack{}, err
+		return 0, Stack{}, fmt.Errorf("in Stack(%v).Pop():\n%+w", s, err)
 	}
 	bot = s[:len(s)-1]
 

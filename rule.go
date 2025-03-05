@@ -7,6 +7,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"slices"
 	"strings"
@@ -68,7 +69,7 @@ func ResolveReferences(r Rule, m map[string]Rule, lex *tokenizer.Tokenizer) (Rul
 		}
 		r2, ok := rules[ref]
 		if !ok {
-			return r, errors.New("referenced rule does not exist in grammar")
+			return r, fmt.Errorf("error when calling ResolveReferences(%v, %v, %v), rule %v, ref %v:\n%+w", r, m, lex, rules, ref, errors.New("referenced rule does not exist in grammar"))
 		}
 		r1, err = SingleResolveReference(r1, ref, r2, lex)
 		if err != nil {
@@ -107,7 +108,7 @@ func ParseRule(line string, lex *tokenizer.Tokenizer) (string, Rule, error) {
 
 	name, exp, found := strings.Cut(line, "=")
 	if !found {
-		return "", Rule{}, errors.New("jsgf line does not contain required assignment =")
+		return "", Rule{}, fmt.Errorf("error when calling ParseRule(%s, %v), strings.Cut(%s, \"=\"):\n%+w", line, lex, line, errors.New("jsgf line does not contain required assignment ="))
 	}
 	name = strings.TrimPrefix(name, "public ")
 	name = strings.TrimSpace(name)
@@ -123,11 +124,11 @@ func ValidateRuleRecursion(n string, r Rule, m map[string]Rule) error {
 		return nil
 	}
 	if slices.Contains(refs, n) {
-		return errors.New("rule references self")
+		return fmt.Errorf("error when calling ValidateRuleRecursion(%v, %v, %v), references %v:\n%+w", n, r, m, refs, errors.New("rule references self directly"))
 	}
 	for _, v := range m {
 		if slices.Contains(GetReferences(v), n) {
-			return errors.New("rule references self")
+			return fmt.Errorf("error when calling ValidateRuleRecursion(%v, %v, %v), references %v, rule %v:\n%+w", n, r, m, refs, v, errors.New("rule references self indirectly"))
 		}
 	}
 

@@ -39,6 +39,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(grammar)
 	fmt.Printf("Took %s", time.Since(start))
 }

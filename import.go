@@ -57,7 +57,7 @@ func ValidateJSGFRule(s string) error {
 	// the expansion of the rule
 	// a closing semi-colon `;'.
 	if !regexp.MustCompile("^(public )?<.+?> ?= ?.*?;$").MatchString(s) {
-		return errors.New("invalid jsgf line")
+		return fmt.Errorf("error when calling ValidateJSGFRule(%v):\n%+w", s, errors.New("invalid jsgf line"))
 	}
 
 	return nil
@@ -66,7 +66,7 @@ func ValidateJSGFRule(s string) error {
 func ValidateJSGFName(s string) error {
 	// grammar name;
 	if !regexp.MustCompile("^grammar .+?;$").MatchString(s) {
-		return errors.New("invalid jsgf name declaration")
+		return fmt.Errorf("error when calling ValidateJSGFName(%v):\n%+w", s, errors.New("invalid jsgf name declaration"))
 	}
 
 	return nil
@@ -75,7 +75,7 @@ func ValidateJSGFName(s string) error {
 func ValidateJSGFImport(s string) error {
 	// import <gram.rule>;
 	if !regexp.MustCompile("^import <.+?>;$").MatchString(s) {
-		return errors.New("invalid jsgf import")
+		return fmt.Errorf("error when calling ValidateJSGFImport(%v):\n%+w", s, errors.New("invalid jsgf import"))
 	}
 
 	return nil
@@ -86,17 +86,17 @@ func CreateNameSpace(p string, e string) (map[string]string, error) {
 
 	imports, err := GetImportOrder(p, e)
 	if err != nil {
-		return make(map[string]string), err
+		return make(map[string]string), fmt.Errorf("in CreateNameSpace(%v, %v):\n%+w", p, e, err)
 	}
 	for _, imp := range imports {
 		gram, _, _ := strings.Cut(CleanImportStatement(imp), ".")
 		path, err := FindGrammar(p, gram, e)
 		if err != nil {
-			return make(map[string]string), err
+			return make(map[string]string), fmt.Errorf("in CreateNameSpace(%v, %v):\n%+w", p, e, err)
 		}
 		_, _, rules, err := PeekGrammar(path)
 		if err != nil {
-			return make(map[string]string), err
+			return make(map[string]string), fmt.Errorf("in CreateNameSpace(%v, %v):\n%+w", p, e, err)
 		}
 		for k, v := range rules {
 			res[k] = v
@@ -116,14 +116,14 @@ func PeekGrammar(p string) (string, []string, map[string]string, error) {
 
 	f, err := os.Open(p)
 	if err != nil {
-		return "", []string{}, map[string]string{}, errors.New(fmt.Sprint("unable to open grammar ", p))
+		return "", []string{}, map[string]string{}, fmt.Errorf("in PeekGrammar(%v):\n%+w", p, err)
 	}
 	info, err := f.Stat()
 	if err != nil {
-		return "", []string{}, map[string]string{}, errors.New(fmt.Sprint("unable to open grammar ", p))
+		return "", []string{}, map[string]string{}, fmt.Errorf("in PeekGrammar(%v):\n%+w", p, err)
 	}
 	if info.IsDir() {
-		return "", []string{}, map[string]string{}, errors.New(fmt.Sprint("provided path is a directory", p))
+		return "", []string{}, map[string]string{}, fmt.Errorf("in PeekGrammar(%v):\n%+w", p, errors.New("provided path is a directory"))
 	}
 
 	scanner := bufio.NewScanner(f)
@@ -133,19 +133,19 @@ func PeekGrammar(p string) (string, []string, map[string]string, error) {
 		case strings.HasPrefix(line, "grammar "):
 			err = ValidateJSGFName(line)
 			if err != nil {
-				return name, imports, rules, err
+				return name, imports, rules, fmt.Errorf("in PeekGrammar(%v):\n%+w", p, err)
 			}
 			name = CleanGrammarStatement(line)
 		case strings.HasPrefix(line, "import <"):
 			err = ValidateJSGFImport(line)
 			if err != nil {
-				return name, imports, rules, err
+				return name, imports, rules, fmt.Errorf("in PeekGrammar(%v):\n%+w", p, err)
 			}
 			imports = append(imports, line)
 		case strings.HasPrefix(line, "<") || strings.HasPrefix(line, "public <"):
 			err = ValidateJSGFRule(line)
 			if err != nil {
-				return name, imports, rules, err
+				return name, imports, rules, fmt.Errorf("in PeekGrammar(%v):\n%+w", p, err)
 			}
 			name, rule, _ := strings.Cut(line, "=")
 			name = strings.TrimSpace(name)
@@ -183,10 +183,10 @@ func FindGrammar(p string, t string, e string) (string, error) {
 		err = nil
 	}
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error when calling FindGrammar(%v, %v, %v):\n%+w", p, t, e, err)
 	}
 	if !found {
-		return "", errors.New(fmt.Sprint("grammar ", target, " not declared in available directories"))
+		return "", fmt.Errorf("error when calling FindGrammar(%v, %v, %v):\n%+w", p, t, e, errors.New("grammar not declared in available directories"))
 	}
 
 	return target, nil
@@ -207,11 +207,11 @@ func GetImportOrder(p string, e string) ([]string, error) {
 		gram, _, _ := strings.Cut(CleanImportStatement(imp), ".")
 		path, err := FindGrammar(p, gram, e)
 		if err != nil {
-			return []string{}, err
+			return []string{}, fmt.Errorf("in GetImportOrder(%v, %v):\n%+w", p, e, err)
 		}
 		_, imps, _, err := PeekGrammar(path)
 		if err != nil {
-			return []string{}, err
+			return []string{}, fmt.Errorf("in GetImportOrder(%v, %v):\n%+w", p, e, err)
 		}
 		imports = append(imports, imps...)
 		res = append(res, imp)

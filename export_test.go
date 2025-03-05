@@ -192,3 +192,118 @@ func TestReferencesToDOT(t *testing.T) {
 		}
 	}
 }
+
+func TestGraphToD2(t *testing.T) {
+	tests := []struct {
+		g    Graph
+		want string
+	}{
+		{
+			g: Graph{
+				Tokens:   []Expression{},
+				Edges:    EdgeList{},
+				Children: map[int][]int{},
+				Weights:  map[int]map[int]float64{},
+			},
+			want: "direction: right\n\n\n",
+		},
+		{
+			g: Graph{
+				Tokens:   []Expression{"a", "b", "c"},
+				Edges:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
+				Children: map[int][]int{0: {1}, 1: {2}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
+			},
+			want: "direction: right\n\n_0: \"a\"\n_1: \"b\"\n_2: \"c\"\n\n_0 -> _1: \"1\"\n_1 -> _2: \"1\"\n",
+		},
+		{
+			g: Graph{
+				Tokens: []Expression{"a", "b", "c", "", "e"},
+				Edges: EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 0, To: 3, Weight: 0.99},
+					{From: 0, To: 5, Weight: 0.0},
+					{From: 1, To: 6, Weight: 100},
+					{From: 3, To: 6, Weight: 99},
+					{From: 5, To: 6, Weight: 9},
+				},
+				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+			},
+			want: "direction: right\n\n_0: \"a\"\n_1: \"b\"\n_3: \"\"\n\n_0 -> _1: \"1\"\n_0 -> _3: \"0.99\"\n_0 -> _5: \"0\"\n_1 -> _6: \"100\"\n_3 -> _6: \"99\"\n_5 -> _6: \"9\"\n",
+		},
+		{
+			g: Graph{
+				Tokens: []Expression{"a", "b", "c", "d", "e"},
+				Edges: EdgeList{
+					{From: 0, To: 1, Weight: 1.0},
+					{From: 0, To: 3, Weight: 0.99},
+					{From: 0, To: 5, Weight: 0.0},
+					{From: 1, To: 6, Weight: 100},
+					{From: 3, To: 6, Weight: 99},
+					{From: 5, To: 6, Weight: 9},
+				},
+				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+			},
+			want: "direction: right\n\n_0: \"a\"\n_1: \"b\"\n_3: \"d\"\n\n_0 -> _1: \"1\"\n_0 -> _3: \"0.99\"\n_0 -> _5: \"0\"\n_1 -> _6: \"100\"\n_3 -> _6: \"99\"\n_5 -> _6: \"9\"\n",
+		},
+	}
+	for i, test := range tests {
+		got := GraphToD2(test.g)
+		if got != test.want {
+			t.Errorf("test %v: GraphToD2(%v)\nGOT %v\nWANT %v", i, test.g, got, test.want)
+		}
+	}
+}
+
+func TestReferencesToD2(t *testing.T) {
+	tests := []struct {
+		g    Grammar
+		want string
+	}{
+		{
+			g:    Grammar{Rules: map[string]Rule{}, Imports: []string{}},
+			want: "direction: right\n\n",
+		},
+		{
+			g:    Grammar{Rules: map[string]Rule{"<a>": NewRule("", false)}, Imports: []string{}},
+			want: "direction: right\n\n",
+		},
+		{
+			g:    Grammar{Rules: map[string]Rule{"<a>": NewRule("<b><c>", false)}, Imports: []string{}},
+			want: "direction: right\n\n\"<b>\" -> \"<a>\"\n\"<c>\" -> \"<a>\"\n",
+		},
+		{
+			g: Grammar{Rules: map[string]Rule{"<a>": NewRule("<b>", true),
+				"<c>": NewRule("", false)}, Imports: []string{}},
+			want: "direction: right\n\n\"<b>\" -> \"<a>\"\n",
+		},
+		{
+			g: Grammar{
+				Rules: map[string]Rule{
+					"<a>": NewRule("<c>", true),
+					"<b>": NewRule("<c>", true),
+					"<c>": NewRule("<d>", true),
+					"<d>": NewRule("", true),
+				}, Imports: []string{}},
+			want: "direction: right\n\n\"<c>\" -> \"<a>\"\n\"<c>\" -> \"<b>\"\n\"<d>\" -> \"<c>\"\n",
+		},
+		{
+			g: Grammar{
+				Rules: map[string]Rule{
+					"<a>": NewRule("<c>", true),
+					"<b>": NewRule("<c>", true),
+					"<c>": NewRule("<d>", true),
+					"<d>": NewRule("", false),
+				}, Imports: []string{}},
+			want: "direction: right\n\n\"<c>\" -> \"<a>\"\n\"<c>\" -> \"<b>\"\n\"<d>\" -> \"<c>\"\n",
+		},
+	}
+	for i, test := range tests {
+		got := ReferencesToD2(test.g)
+		if got != test.want {
+			t.Errorf("test %v: ReferencesToD2(%v)\nGOT %v\nWANT %v", i, test.g, got, test.want)
+		}
+	}
+}
