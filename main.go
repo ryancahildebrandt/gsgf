@@ -39,5 +39,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	for _, p := range GetAllProductions(grammar) {
+		fmt.Println(p)
+	}
+	for _, p := range WrapProductions([]string{"abc", "{}{}", "ab{cd}ef"}, "PRE: ", ": SUF") {
+		fmt.Println(p)
+	}
 	fmt.Printf("Took %s", time.Since(start))
 }
