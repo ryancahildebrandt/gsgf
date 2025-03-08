@@ -11,6 +11,8 @@ import (
 	"log"
 	"os"
 	"time"
+
+	"github.com/urfave/cli"
 )
 
 func main() {
@@ -46,4 +48,96 @@ func main() {
 		fmt.Println(p)
 	}
 	fmt.Printf("Took %s", time.Since(start))
+
+// cli
+// generate
+// sample
+// export
+// -n
+// -shuffle
+// -infile
+// -outfile
+// -outdir
+// -minimize
+// -quote
+
+  configPath := ""
+	lastrun := true
+	intflag := 0
+  app := &cli.App{
+		Name:  "GSGF",
+		Usage: "Generate natural language expressions from context free grammars",
+		// EnableShellCompletion: true,
+		Commands: []cli.Command{
+			cli.Command{
+				Name:        "generate",
+				Usage:       "",
+				UsageText:   "",
+        Description: "",
+				ArgsUsage:   "",
+				Flags:       []cli.Flag{},
+			  Action: func() bool {return true},
+      },
+      {
+				Name:        "sample",
+				Usage:       "",
+				UsageText:   "",
+        Description: "",
+				ArgsUsage:   "",
+				Flags:       []cli.Flag{},
+			  Action: func() bool {return true},
+      },
+      {
+				Name:        "export",
+				Usage:       "",
+				UsageText:   "",
+        Description: "",
+				ArgsUsage:   "",
+				Flags:       []cli.Flag{},
+			  Action: func() bool {return true},
+      },
+		},
+		Flags: []cli.Flag{
+			&cli.IntFlag{
+				Name:        "c",
+				Value:       0,
+				Usage:       "",
+				Destination: &intflag,
+			},
+      &cli.StringFlag{
+				Name:        "inFile",
+				Value:       "",
+				Usage:       "",
+				Destination: &configPath,
+			},
+      &cli.StringFlag{
+				Name:        "outFile",
+				Value:       "",
+				Usage:       "",
+				Destination: &configPath,
+			},
+      &cli.StringFlag{
+				Name:        "exportDir",
+				Value:       "",
+				Usage:       "",
+				Destination: &configPath,
+			},
+			&cli.BoolFlag{
+				Name:        "minimize",
+				Usage:       "",
+				Destination: &lastrun,
+			},
+      &cli.BoolFlag{
+				Name:        "shuffle",
+				Usage:       "",
+				Destination: &lastrun,
+			},
+      &cli.BoolFlag{
+				Name:        "singleQuote",
+				Usage:       "",
+				Destination: &lastrun,
+			},
+		},
+		Action: func(*cli.Context) {}}
+	app.Run(os.Args)
 }
