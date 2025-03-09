@@ -6,138 +6,136 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"log"
+	"context"
 	"os"
-	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v3"
 )
 
 func main() {
-	start := time.Now()
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	basepath := "./data/tests/test0.jsgf"
-	ext := ".jsgf"
-	fmt.Println(basepath)
-	grammar := NewGrammar()
-	f, err := os.Open(basepath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	scanner := bufio.NewScanner(f)
-	lex := NewJSGFLexer()
-	grammar, err = ImportLines(grammar, scanner, lex)
-	if err != nil {
-		log.Fatal(err)
-	}
-	namespace, err := CreateNameSpace(basepath, ext)
-	if err != nil {
-		log.Fatal(err)
-	}
-	grammar = ImportNameSpace(grammar, namespace, lex)
-	grammar, err = ResolveRules(grammar, lex)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, p := range GetAllProductions(grammar) {
-		fmt.Println(p)
-	}
-	for _, p := range WrapProductions([]string{"abc", "{}{}", "ab{cd}ef"}, "PRE: ", ": SUF") {
-		fmt.Println(p)
-	}
-	fmt.Printf("Took %s", time.Since(start))
+	// start := time.Now()
+	// log.SetFlags(log.LstdFlags | log.Lshortfile)
+	// basepath := "./data/tests/test0.jsgf"
+	// ext := ".jsgf"
+	// fmt.Println(basepath)
+	// grammar := NewGrammar()
+	// f, err := os.Open(basepath)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// scanner := bufio.NewScanner(f)
+	// lex := NewJSGFLexer()
+	// grammar, err = ImportLines(grammar, scanner, lex)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// namespace, err := CreateNameSpace(basepath, ext)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// grammar = ImportNameSpace(grammar, namespace, lex)
+	// grammar, err = ResolveRules(grammar, lex)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// for _, p := range GetAllProductions(grammar) {
+	// 	fmt.Println(p)
+	// }
+	// for _, p := range WrapProductions([]string{"abc", "{}{}", "ab{cd}ef"}, "PRE: ", ": SUF") {
+	// 	fmt.Println(p)
+	// }
+	// fmt.Printf("Took %s", time.Since(start))
 
-// cli
-// generate
-// sample
-// export
-// -n
-// -shuffle
-// -infile
-// -outfile
-// -outdir
-// -minimize
-// -quote
+	var stringFlag string
+	var boolFlag bool
+	var intFlag int64
 
-  configPath := ""
-	lastrun := true
-	intflag := 0
-  app := &cli.App{
-		Name:  "GSGF",
-		Usage: "Generate natural language expressions from context free grammars",
-		// EnableShellCompletion: true,
-		Commands: []cli.Command{
-			cli.Command{
+	var flags []cli.Flag = []cli.Flag{
+		&cli.IntFlag{
+			Name:        "number",
+			Aliases:     []string{"n"},
+			Value:       0,
+			Usage:       "",
+			Destination: &intFlag,
+		},
+		&cli.StringFlag{
+			Name:        "inPath",
+			Aliases:     []string{"i"},
+			Value:       "",
+			Usage:       "",
+			Destination: &stringFlag,
+			Required:    true,
+		},
+		&cli.StringFlag{
+			Name:        "outFile",
+			Aliases:     []string{"o"},
+			Value:       "./productions.txt",
+			Usage:       "",
+			Destination: &stringFlag,
+		},
+		&cli.StringFlag{
+			Name:        "exportDir",
+			Aliases:     []string{"e"},
+			Value:       "",
+			Usage:       "",
+			Destination: &stringFlag,
+		},
+		&cli.BoolFlag{
+			Name:        "minimize",
+			Aliases:     []string{"m"},
+			Usage:       "",
+			Destination: &boolFlag,
+		},
+		&cli.BoolFlag{
+			Name:        "shuffle",
+			Aliases:     []string{"s"},
+			Usage:       "",
+			Destination: &boolFlag,
+		},
+		&cli.BoolFlag{
+			Name:        "singleQuote",
+			Aliases:     []string{"q"},
+			Usage:       "",
+			Destination: &boolFlag,
+		},
+	}
+	app := &cli.Command{
+		Name:                  "GSGF",
+		Usage:                 "Generate natural language expressions from context free grammars",
+		EnableShellCompletion: true,
+		Commands: []*cli.Command{
+			{
 				Name:        "generate",
-				Usage:       "",
+				Aliases:     []string{"gen"},
+				Usage:       "gsgf generate",
 				UsageText:   "",
-        Description: "",
+				Description: "Produce all expressions from a grammar file, disregarding token weights",
 				ArgsUsage:   "",
-				Flags:       []cli.Flag{},
-			  Action: func() bool {return true},
-      },
-      {
+				Flags:       flags,
+				Action:      func(ctx context.Context, cmd *cli.Command) error { return nil },
+			},
+			{
 				Name:        "sample",
-				Usage:       "",
+				Aliases:     []string{"sam"},
+				Usage:       "gsgf sample",
 				UsageText:   "",
-        Description: "",
+				Description: "Produce expressions from a grammar file, according to provided token weights",
 				ArgsUsage:   "",
-				Flags:       []cli.Flag{},
-			  Action: func() bool {return true},
-      },
-      {
+				Flags:       flags,
+				Action:      func(ctx context.Context, cmd *cli.Command) error { return nil },
+			},
+			{
 				Name:        "export",
-				Usage:       "",
+				Aliases:     []string{"exp"},
+				Usage:       "gsgf export",
 				UsageText:   "",
-        Description: "",
+				Description: "Save graph and grammar representations to disk",
 				ArgsUsage:   "",
-				Flags:       []cli.Flag{},
-			  Action: func() bool {return true},
-      },
-		},
-		Flags: []cli.Flag{
-			&cli.IntFlag{
-				Name:        "c",
-				Value:       0,
-				Usage:       "",
-				Destination: &intflag,
-			},
-      &cli.StringFlag{
-				Name:        "inFile",
-				Value:       "",
-				Usage:       "",
-				Destination: &configPath,
-			},
-      &cli.StringFlag{
-				Name:        "outFile",
-				Value:       "",
-				Usage:       "",
-				Destination: &configPath,
-			},
-      &cli.StringFlag{
-				Name:        "exportDir",
-				Value:       "",
-				Usage:       "",
-				Destination: &configPath,
-			},
-			&cli.BoolFlag{
-				Name:        "minimize",
-				Usage:       "",
-				Destination: &lastrun,
-			},
-      &cli.BoolFlag{
-				Name:        "shuffle",
-				Usage:       "",
-				Destination: &lastrun,
-			},
-      &cli.BoolFlag{
-				Name:        "singleQuote",
-				Usage:       "",
-				Destination: &lastrun,
+				Flags:       flags,
+				Action:      func(ctx context.Context, cmd *cli.Command) error { return nil },
 			},
 		},
-		Action: func(*cli.Context) {}}
-	app.Run(os.Args)
+		Action: func(ctx context.Context, cmd *cli.Command) error { return nil },
+	}
+	app.Run(context.Background(), os.Args)
 }
