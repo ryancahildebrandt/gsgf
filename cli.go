@@ -16,7 +16,7 @@ var (
 
 	inPath cli.StringArg = cli.StringArg{
 		Name:        "inPath",
-		Value:       "Grammar file to read. If directory, all grammar files matching inFormat in the top level of the directory will be read",
+		Value:       "Grammar file to read",
 		Destination: &stringFlag,
 	}
 
@@ -79,14 +79,7 @@ var (
 		Destination: &boolFlag,
 	}
 
-	inFormat cli.StringFlag = cli.StringFlag{
-		Name:        "inFormat",
-		Aliases:     []string{"f"},
-		Value:       "",
-		Usage:       "File format to read from input directory, one of .jsgf, .jjsgf, .ebnf",
-		Destination: &stringFlag,
-	}
-	outFile cli.StringFlag = cli.StringFlag{
+  outFile cli.StringFlag = cli.StringFlag{
 		Name:        "outFile",
 		Aliases:     []string{"o"},
 		Value:       "",

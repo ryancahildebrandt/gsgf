@@ -53,10 +53,10 @@ func main() {
 		EnableShellCompletion: true,
 		Commands: []*cli.Command{
 			{
-				Name:        "generate",
-				Aliases:     []string{"gen"},
-				UsageText:   "gsgf generate [OPTIONS...] example.jsgf",
-				Description: "Produce all expressions from a grammar file, disregarding token weights",
+				Name:      "generate",
+				Aliases:   []string{"gen"},
+				UsageText: "gsgf generate [OPTIONS...] example.jsgf",
+				Usage:     "Produce all expressions from a grammar file, disregarding token weights",
 				Flags: []cli.Flag{
 					&nProductions,
 					&outFile,
@@ -78,10 +78,10 @@ func main() {
 				Action: func(ctx context.Context, cmd *cli.Command) error { return nil },
 			},
 			{
-				Name:        "sample",
-				Aliases:     []string{"sam"},
-				UsageText:   "gsgf sample [OPTIONS...] example.jsgf",
-				Description: "Produce expressions from a grammar file, according to provided token weights",
+				Name:      "sample",
+				Aliases:   []string{"sam"},
+				UsageText: "gsgf sample [OPTIONS...] example.jsgf",
+				Usage:     "Produce expressions from a grammar file, according to provided token weights",
 				Flags: []cli.Flag{
 					&nProductions,
 					&outFile,
@@ -103,10 +103,10 @@ func main() {
 				Action: func(ctx context.Context, cmd *cli.Command) error { return nil },
 			},
 			{
-				Name:        "export",
-				Aliases:     []string{"exp"},
-				UsageText:   "gsgf export [OPTIONS...] example.jsgf",
-				Description: "Save graph and grammar representations to disk",
+				Name:      "export",
+				Aliases:   []string{"exp"},
+				UsageText: "gsgf export [OPTIONS...] example.jsgf",
+				Usage:     "Save graph and grammar representations to disk",
 				Flags: []cli.Flag{
 					&exportDir,
 					&minimize,
