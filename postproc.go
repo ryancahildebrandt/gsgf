@@ -15,6 +15,7 @@ func RemoveEndSpaces(p []string) []string {
 	for i := range p {
 		p[i] = strings.Trim(p[i], "\t\r\n ")
 	}
+
 	return p
 }
 
@@ -23,6 +24,7 @@ func RemoveMultipleSpaces(p []string) []string {
 	for i := range p {
 		p[i] = strings.Join(strings.Fields(p[i]), " ")
 	}
+
 	return p
 }
 
@@ -30,6 +32,7 @@ func RenderTabs(p []string) []string {
 	for i := range p {
 		p[i] = strings.Replace(p[i], `\t`, "\t", -1)
 	}
+
 	return p
 }
 
@@ -37,6 +40,7 @@ func RenderNewLines(p []string) []string {
 	for i := range p {
 		p[i] = strings.Replace(p[i], `\n`, "\n", -1)
 	}
+
 	return p
 }
 
@@ -44,6 +48,7 @@ func RemoveTags(p []string) []string {
 	for i := range p {
 		p[i] = regexp.MustCompile(`\{.*?\}`).ReplaceAllString(p[i], "")
 	}
+
 	return p
 }
 
@@ -60,6 +65,7 @@ func WrapTags(p []string, prefix string, suffix string) []string {
 			}
 		}
 	}
+
 	return p
 }
 
@@ -87,5 +93,6 @@ func WrapProductions(p []string, prefix string, suffix string) []string {
 	for i := range p {
 		p[i] = fmt.Sprint(prefix, p[i], suffix)
 	}
+
 	return p
 }
