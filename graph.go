@@ -8,9 +8,11 @@ package main
 import (
 	"errors"
 	"fmt"
+	mrand "math/rand/v2"
 	"slices"
 	"strings"
 
+	xrand "golang.org/x/exp/rand"
 	"gonum.org/v1/gonum/stat/sampleuv"
 )
 
@@ -184,14 +186,15 @@ func ComposeGraphs(g Graph, g1 Graph, i int) (Graph, error) {
 	return NewGraph(edg, exp), nil
 }
 
-func GetRandomChoice(c []int, w []float64) (int, error) {
+func GetRandomChoice(c []int, w []float64, s xrand.Source) (int, error) {
 	if len(c) == 0 || len(w) == 0 {
 		return -1, fmt.Errorf("error when calling GetRandomChoice(%v, %v):\n%+w", c, w, errors.New("length of choices c and/or weights w is 0"))
 	}
 	if len(c) != len(w) {
 		return -1, fmt.Errorf("error when calling GetRandomChoice(%v, %v):\n%+w", c, w, errors.New("length of choices c and weights w do not match"))
 	}
-	choice, ok := sampleuv.NewWeighted(w, nil).Take()
+
+	choice, ok := sampleuv.NewWeighted(w, s).Take()
 	if !ok {
 		return -1, fmt.Errorf("error when calling GetRandomChoice(%v, %v):\n%+w", c, w, errors.New("sampleuv.NewWeighted could not sample from choices c and weights w"))
 	}
@@ -201,9 +204,10 @@ func GetRandomChoice(c []int, w []float64) (int, error) {
 
 func GetRandomPath(g Graph) (Path, error) {
 	var (
-		from, to int  = GetEndPoints(g)
-		res      Path = Path{from}
-		node     int  = from
+		source   xrand.Source = xrand.NewSource(mrand.Uint64())
+		from, to int          = GetEndPoints(g)
+		res      Path         = Path{from}
+		node     int          = from
 		choice   int
 	)
 
@@ -221,7 +225,8 @@ func GetRandomPath(g Graph) (Path, error) {
 			for i, dest := range n {
 				w[i] = g.GetWeight(from, dest)
 			}
-			choice, err := GetRandomChoice(g.GetFrom(node), w)
+
+			choice, err := GetRandomChoice(g.GetFrom(node), w, source)
 			if err != nil {
 				return Path{}, fmt.Errorf("in GetRandomPath(%v):\n%+w", g, err)
 			}

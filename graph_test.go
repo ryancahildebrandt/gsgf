@@ -8,9 +8,12 @@ package main
 import (
 	"fmt"
 	"maps"
+	mrand "math/rand/v2"
 	"slices"
 	"sort"
 	"testing"
+
+	xrand "golang.org/x/exp/rand"
 )
 
 func TestGetFrom(t *testing.T) {
@@ -1372,6 +1375,7 @@ func TestGetRandomChoice(t *testing.T) {
 	}
 	for i, test := range table {
 		var (
+			s   xrand.Source = xrand.NewSource(mrand.Uint64())
 			c   int
 			got int
 			err error
@@ -1379,7 +1383,7 @@ func TestGetRandomChoice(t *testing.T) {
 		if test.p {
 			choices := make(map[int]float64)
 			for range 1000 {
-				c, err = GetRandomChoice(test.c, test.w)
+				c, err = GetRandomChoice(test.c, test.w, s)
 				choices[c]++
 			}
 			got = test.c[0]
@@ -1389,7 +1393,7 @@ func TestGetRandomChoice(t *testing.T) {
 				}
 			}
 		} else {
-			got, err = GetRandomChoice(test.c, test.w)
+			got, err = GetRandomChoice(test.c, test.w, s)
 		}
 		if got != test.want {
 			t.Errorf("test %v: ChooseNext(%v, %v)\nGOT  %v\nWANT %v", i, test.c, test.w, got, test.want)

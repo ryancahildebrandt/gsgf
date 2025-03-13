@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 
 	"github.com/urfave/cli/v3"
@@ -107,32 +108,52 @@ func main() {
 					&ArgRemoveEndSpaces,
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
-					// basepath := "./data/tests/test0.jsgf"
-					// ext := ".jsgf"
-					// fmt.Println(basepath)
-					// grammar := NewGrammar()
-					// f, err := os.Open(basepath)
-					// if err != nil {
-					// 	log.Fatal(err)
-					// }
-					// scanner := bufio.NewScanner(f)
-					// lex := NewJSGFLexer()
-					// grammar, err = ImportLines(grammar, scanner, lex)
-					// if err != nil {
-					// 	log.Fatal(err)
-					// }
-					// namespace, err := CreateNameSpace(basepath, ext)
-					// if err != nil {
-					// 	log.Fatal(err)
-					// }
-					// grammar = ImportNameSpace(grammar, namespace, lex)
-					// grammar, err = ResolveRules(grammar, lex)
-					// if err != nil {
-					// 	log.Fatal(err)
-					// }
-					// for _, p := range GetAllProductions(grammar) {
-					// 	fmt.Println(p)
-					// }
+					var ext string = ".jsgf"
+					var grammar Grammar = NewGrammar()
+					var inPath string = cmd.Args().First()
+					var productions []string
+
+					f, err := os.Open(inPath)
+					if err != nil {
+						log.Fatal(err)
+					}
+					scanner := bufio.NewScanner(f)
+					lex := NewJSGFLexer()
+					grammar, err = ImportLines(grammar, scanner, lex)
+					if err != nil {
+						log.Fatal(err)
+					}
+					namespace, err := CreateNameSpace(inPath, ext)
+					if err != nil {
+						log.Fatal(err)
+					}
+					grammar = ImportNameSpace(grammar, namespace, lex)
+					grammar, err = ResolveRules(grammar, lex)
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					var keys []string
+					for k, v := range grammar.Rules {
+						if v.IsPublic {
+							keys = append(keys, k)
+						}
+					}
+
+					for len(productions) < int(nProductions) {
+						key := keys[rand.Intn(len(keys))]
+						graph := grammar.Rules[key].Graph
+						path, err := GetRandomPath(graph)
+						if err != nil {
+							log.Fatal(err)
+						}
+						prod := GetSingleProduction(path, FilterTokens(graph.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}))
+						productions = append(productions, prod)
+					}
+
+					for _, p := range productions {
+						fmt.Println(p)
+					}
 					// for _, p := range WrapProductions([]string{"abc", "{}{}", "ab{cd}ef"}, "PRE: ", ": SUF") {
 					// 	fmt.Println(p)
 					// }
@@ -152,8 +173,8 @@ func main() {
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					var ext string = ".jsgf"
 					var grammar Grammar = NewGrammar()
+					var inPath string = cmd.Args().First()
 
-					inPath := cmd.Args().First()
 					f, err := os.Open(inPath)
 					if err != nil {
 						log.Fatal(err)
@@ -237,18 +258,11 @@ func main() {
 }
 
 var (
-	// inPath    string
-	// ArgInPath cliArg = cliArg{
-	// 	Name:        "inPath",
-	// 	Value:       "Grammar file to read",
-	// 	Destination: &inPath,
-	// }
-
 	nProductions    int64
 	ArgNProductions cli.IntFlag = cli.IntFlag{
 		Name:        "nProductions",
 		Aliases:     []string{"n"},
-		Value:       0,
+		Value:       1,
 		Usage:       "Number of productions to take from the top of the productions list",
 		Destination: &nProductions,
 	}
