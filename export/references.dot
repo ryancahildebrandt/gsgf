@@ -2,12 +2,12 @@ digraph {
 
 	rankdir = "LR"
 
-	<quant> -> <brew>;
 	<brew> -> <request>;
+	<order> -> <main>;
+	<quant> -> <brew>;
+	<quant> -> <main>;
 	<quant> -> <order>;
 	<request> -> <main>;
-	<order> -> <main>;
-	<quant> -> <main>;
 	<teatype> -> <main>;
 
 }

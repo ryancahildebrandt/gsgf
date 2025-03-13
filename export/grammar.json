@@ -1,13 +1,10 @@
 {
-	"Rules": {
+	"rules": {
 		"\u003cbrew\u003e": {
-			"Expression": "(make|brew|whip up) \u003cquant\u003e;",
-			"Is_public": false,
-			"References": [
-				"\u003cquant\u003e"
-			],
-			"Graph": {
-				"Nodes": [
+			"expression": "(make|brew|whip up) \u003cquant\u003e;",
+			"is_public": false,
+			"graph": {
+				"tokens": [
 					"\u003cSOS\u003e",
 					"(",
 					"make",
@@ -33,119 +30,119 @@
 					";",
 					"\u003cEOS\u003e"
 				],
-				"Edges": [
+				"edges": [
 					{
-						"From": 12,
-						"To": 13,
-						"Weight": 1
+						"source": 0,
+						"destination": 1,
+						"weight": 1
 					},
 					{
-						"From": 12,
-						"To": 15,
-						"Weight": 1
+						"source": 1,
+						"destination": 2,
+						"weight": 1
 					},
 					{
-						"From": 13,
-						"To": 22,
-						"Weight": 1
+						"source": 1,
+						"destination": 4,
+						"weight": 1
 					},
 					{
-						"From": 15,
-						"To": 16,
-						"Weight": 1
+						"source": 1,
+						"destination": 6,
+						"weight": 1
 					},
 					{
-						"From": 16,
-						"To": 17,
-						"Weight": 1
+						"source": 2,
+						"destination": 7,
+						"weight": 1
 					},
 					{
-						"From": 16,
-						"To": 19,
-						"Weight": 1
+						"source": 4,
+						"destination": 7,
+						"weight": 1
 					},
 					{
-						"From": 17,
-						"To": 20,
-						"Weight": 1
+						"source": 6,
+						"destination": 7,
+						"weight": 1
 					},
 					{
-						"From": 19,
-						"To": 20,
-						"Weight": 1
+						"source": 7,
+						"destination": 8,
+						"weight": 1
 					},
 					{
-						"From": 20,
-						"To": 21,
-						"Weight": 1
+						"source": 8,
+						"destination": 12,
+						"weight": 1
 					},
 					{
-						"From": 21,
-						"To": 22,
-						"Weight": 1
+						"source": 10,
+						"destination": 11,
+						"weight": 1
 					},
 					{
-						"From": 22,
-						"To": 23,
-						"Weight": 1
+						"source": 12,
+						"destination": 13,
+						"weight": 1
 					},
 					{
-						"From": 0,
-						"To": 1,
-						"Weight": 1
+						"source": 12,
+						"destination": 15,
+						"weight": 1
 					},
 					{
-						"From": 1,
-						"To": 2,
-						"Weight": 1
+						"source": 13,
+						"destination": 22,
+						"weight": 1
 					},
 					{
-						"From": 1,
-						"To": 4,
-						"Weight": 1
+						"source": 15,
+						"destination": 16,
+						"weight": 1
 					},
 					{
-						"From": 1,
-						"To": 6,
-						"Weight": 1
+						"source": 16,
+						"destination": 17,
+						"weight": 1
 					},
 					{
-						"From": 2,
-						"To": 7,
-						"Weight": 1
+						"source": 16,
+						"destination": 19,
+						"weight": 1
 					},
 					{
-						"From": 4,
-						"To": 7,
-						"Weight": 1
+						"source": 17,
+						"destination": 20,
+						"weight": 1
 					},
 					{
-						"From": 6,
-						"To": 7,
-						"Weight": 1
+						"source": 19,
+						"destination": 20,
+						"weight": 1
 					},
 					{
-						"From": 7,
-						"To": 8,
-						"Weight": 1
+						"source": 20,
+						"destination": 21,
+						"weight": 1
 					},
 					{
-						"From": 8,
-						"To": 12,
-						"Weight": 1
+						"source": 21,
+						"destination": 22,
+						"weight": 1
 					},
 					{
-						"From": 23,
-						"To": 10,
-						"Weight": 1
+						"source": 22,
+						"destination": 23,
+						"weight": 1
 					},
 					{
-						"From": 10,
-						"To": 11,
-						"Weight": 1
+						"source": 23,
+						"destination": 10,
+						"weight": 1
 					}
 				],
-				"Paths": [
+				"paths": [
 					[
 						0,
 						1,
@@ -288,45 +285,13 @@
 						11
 					]
 				]
-			},
-			"Tokens": [
-				"\u003cSOS\u003e",
-				"(",
-				"make",
-				"|",
-				"brew",
-				"|",
-				"whip up",
-				")",
-				" ",
-				"\u003cquant\u003e",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"some",
-				"|",
-				"a ",
-				"(",
-				"cup",
-				"|",
-				"glass",
-				")",
-				" of",
-				";",
-				"\u003cEOS\u003e"
-			]
+			}
 		},
 		"\u003cmain\u003e": {
-			"Expression": "(\u003crequest\u003e|\u003corder\u003e) \u003cquant\u003e \u003cteatype\u003e tea;",
-			"Is_public": true,
-			"References": [
-				"\u003crequest\u003e",
-				"\u003corder\u003e",
-				"\u003cquant\u003e",
-				"\u003cteatype\u003e"
-			],
-			"Graph": {
-				"Nodes": [
+			"expression": "(\u003crequest\u003e|\u003corder\u003e) \u003cquant\u003e \u003cteatype\u003e tea;",
+			"is_public": true,
+			"graph": {
+				"tokens": [
 					"\u003cSOS\u003e",
 					"(",
 					"\u003crequest\u003e",
@@ -427,474 +392,474 @@
 					";",
 					"\u003cEOS\u003e"
 				],
-				"Edges": [
+				"edges": [
 					{
-						"From": 87,
-						"To": 88,
-						"Weight": 1
+						"source": 0,
+						"destination": 1,
+						"weight": 1
 					},
 					{
-						"From": 87,
-						"To": 90,
-						"Weight": 1
+						"source": 1,
+						"destination": 13,
+						"weight": 1
 					},
 					{
-						"From": 87,
-						"To": 92,
-						"Weight": 1
+						"source": 1,
+						"destination": 52,
+						"weight": 1
 					},
 					{
-						"From": 87,
-						"To": 94,
-						"Weight": 1
+						"source": 5,
+						"destination": 6,
+						"weight": 1
 					},
 					{
-						"From": 87,
-						"To": 96,
-						"Weight": 1
+						"source": 6,
+						"destination": 75,
+						"weight": 1
 					},
 					{
-						"From": 88,
-						"To": 97,
-						"Weight": 1
+						"source": 8,
+						"destination": 87,
+						"weight": 1
 					},
 					{
-						"From": 90,
-						"To": 97,
-						"Weight": 1
+						"source": 10,
+						"destination": 11,
+						"weight": 1
 					},
 					{
-						"From": 92,
-						"To": 97,
-						"Weight": 1
+						"source": 11,
+						"destination": 12,
+						"weight": 1
 					},
 					{
-						"From": 94,
-						"To": 97,
-						"Weight": 1
+						"source": 13,
+						"destination": 14,
+						"weight": 1
 					},
 					{
-						"From": 96,
-						"To": 97,
-						"Weight": 1
+						"source": 14,
+						"destination": 15,
+						"weight": 1
 					},
 					{
-						"From": 97,
-						"To": 98,
-						"Weight": 1
+						"source": 14,
+						"destination": 23,
+						"weight": 1
 					},
 					{
-						"From": 75,
-						"To": 76,
-						"Weight": 1
+						"source": 15,
+						"destination": 16,
+						"weight": 1
 					},
 					{
-						"From": 75,
-						"To": 78,
-						"Weight": 1
+						"source": 15,
+						"destination": 18,
+						"weight": 1
 					},
 					{
-						"From": 76,
-						"To": 85,
-						"Weight": 1
+						"source": 15,
+						"destination": 20,
+						"weight": 1
 					},
 					{
-						"From": 78,
-						"To": 79,
-						"Weight": 1
+						"source": 16,
+						"destination": 21,
+						"weight": 1
 					},
 					{
-						"From": 79,
-						"To": 80,
-						"Weight": 1
+						"source": 18,
+						"destination": 21,
+						"weight": 1
 					},
 					{
-						"From": 79,
-						"To": 82,
-						"Weight": 1
+						"source": 20,
+						"destination": 21,
+						"weight": 1
 					},
 					{
-						"From": 80,
-						"To": 83,
-						"Weight": 1
+						"source": 21,
+						"destination": 22,
+						"weight": 1
 					},
 					{
-						"From": 82,
-						"To": 83,
-						"Weight": 1
+						"source": 22,
+						"destination": 23,
+						"weight": 1
 					},
 					{
-						"From": 83,
-						"To": 84,
-						"Weight": 1
+						"source": 23,
+						"destination": 24,
+						"weight": 1
 					},
 					{
-						"From": 84,
-						"To": 85,
-						"Weight": 1
+						"source": 24,
+						"destination": 28,
+						"weight": 1
 					},
 					{
-						"From": 85,
-						"To": 86,
-						"Weight": 1
+						"source": 26,
+						"destination": 27,
+						"weight": 1
 					},
 					{
-						"From": 63,
-						"To": 64,
-						"Weight": 1
+						"source": 27,
+						"destination": 5,
+						"weight": 1
 					},
 					{
-						"From": 63,
-						"To": 66,
-						"Weight": 1
+						"source": 28,
+						"destination": 29,
+						"weight": 1
 					},
 					{
-						"From": 64,
-						"To": 73,
-						"Weight": 1
+						"source": 29,
+						"destination": 30,
+						"weight": 1
 					},
 					{
-						"From": 66,
-						"To": 67,
-						"Weight": 1
+						"source": 29,
+						"destination": 32,
+						"weight": 1
 					},
 					{
-						"From": 67,
-						"To": 68,
-						"Weight": 1
+						"source": 29,
+						"destination": 34,
+						"weight": 1
 					},
 					{
-						"From": 67,
-						"To": 70,
-						"Weight": 1
+						"source": 30,
+						"destination": 35,
+						"weight": 1
 					},
 					{
-						"From": 68,
-						"To": 71,
-						"Weight": 1
+						"source": 32,
+						"destination": 35,
+						"weight": 1
 					},
 					{
-						"From": 70,
-						"To": 71,
-						"Weight": 1
+						"source": 34,
+						"destination": 35,
+						"weight": 1
 					},
 					{
-						"From": 71,
-						"To": 72,
-						"Weight": 1
+						"source": 35,
+						"destination": 36,
+						"weight": 1
 					},
 					{
-						"From": 72,
-						"To": 73,
-						"Weight": 1
+						"source": 36,
+						"destination": 40,
+						"weight": 1
 					},
 					{
-						"From": 73,
-						"To": 74,
-						"Weight": 1
+						"source": 38,
+						"destination": 39,
+						"weight": 1
 					},
 					{
-						"From": 52,
-						"To": 53,
-						"Weight": 1
+						"source": 39,
+						"destination": 26,
+						"weight": 1
 					},
 					{
-						"From": 53,
-						"To": 54,
-						"Weight": 1
+						"source": 40,
+						"destination": 41,
+						"weight": 1
 					},
 					{
-						"From": 54,
-						"To": 55,
-						"Weight": 1
+						"source": 40,
+						"destination": 43,
+						"weight": 1
 					},
 					{
-						"From": 54,
-						"To": 57,
-						"Weight": 1
+						"source": 41,
+						"destination": 50,
+						"weight": 1
 					},
 					{
-						"From": 54,
-						"To": 63,
-						"Weight": 1
+						"source": 43,
+						"destination": 44,
+						"weight": 1
 					},
 					{
-						"From": 54,
-						"To": 60,
-						"Weight": 1
+						"source": 44,
+						"destination": 45,
+						"weight": 1
 					},
 					{
-						"From": 55,
-						"To": 60,
-						"Weight": 1
+						"source": 44,
+						"destination": 47,
+						"weight": 1
 					},
 					{
-						"From": 57,
-						"To": 60,
-						"Weight": 1
+						"source": 45,
+						"destination": 48,
+						"weight": 1
 					},
 					{
-						"From": 74,
-						"To": 60,
-						"Weight": 1
+						"source": 47,
+						"destination": 48,
+						"weight": 1
 					},
 					{
-						"From": 60,
-						"To": 61,
-						"Weight": 1
+						"source": 48,
+						"destination": 49,
+						"weight": 1
 					},
 					{
-						"From": 61,
-						"To": 62,
-						"Weight": 1
+						"source": 49,
+						"destination": 50,
+						"weight": 1
 					},
 					{
-						"From": 40,
-						"To": 41,
-						"Weight": 1
+						"source": 50,
+						"destination": 51,
+						"weight": 1
 					},
 					{
-						"From": 40,
-						"To": 43,
-						"Weight": 1
+						"source": 51,
+						"destination": 38,
+						"weight": 1
 					},
 					{
-						"From": 41,
-						"To": 50,
-						"Weight": 1
+						"source": 52,
+						"destination": 53,
+						"weight": 1
 					},
 					{
-						"From": 43,
-						"To": 44,
-						"Weight": 1
+						"source": 53,
+						"destination": 54,
+						"weight": 1
 					},
 					{
-						"From": 44,
-						"To": 45,
-						"Weight": 1
+						"source": 54,
+						"destination": 55,
+						"weight": 1
 					},
 					{
-						"From": 44,
-						"To": 47,
-						"Weight": 1
+						"source": 54,
+						"destination": 57,
+						"weight": 1
 					},
 					{
-						"From": 45,
-						"To": 48,
-						"Weight": 1
+						"source": 54,
+						"destination": 60,
+						"weight": 1
 					},
 					{
-						"From": 47,
-						"To": 48,
-						"Weight": 1
+						"source": 54,
+						"destination": 63,
+						"weight": 1
 					},
 					{
-						"From": 48,
-						"To": 49,
-						"Weight": 1
+						"source": 55,
+						"destination": 60,
+						"weight": 1
 					},
 					{
-						"From": 49,
-						"To": 50,
-						"Weight": 1
+						"source": 57,
+						"destination": 60,
+						"weight": 1
 					},
 					{
-						"From": 50,
-						"To": 51,
-						"Weight": 1
+						"source": 60,
+						"destination": 61,
+						"weight": 1
 					},
 					{
-						"From": 28,
-						"To": 29,
-						"Weight": 1
+						"source": 61,
+						"destination": 62,
+						"weight": 1
 					},
 					{
-						"From": 29,
-						"To": 30,
-						"Weight": 1
+						"source": 62,
+						"destination": 5,
+						"weight": 1
 					},
 					{
-						"From": 29,
-						"To": 32,
-						"Weight": 1
+						"source": 63,
+						"destination": 64,
+						"weight": 1
 					},
 					{
-						"From": 29,
-						"To": 34,
-						"Weight": 1
+						"source": 63,
+						"destination": 66,
+						"weight": 1
 					},
 					{
-						"From": 30,
-						"To": 35,
-						"Weight": 1
+						"source": 64,
+						"destination": 73,
+						"weight": 1
 					},
 					{
-						"From": 32,
-						"To": 35,
-						"Weight": 1
+						"source": 66,
+						"destination": 67,
+						"weight": 1
 					},
 					{
-						"From": 34,
-						"To": 35,
-						"Weight": 1
+						"source": 67,
+						"destination": 68,
+						"weight": 1
 					},
 					{
-						"From": 35,
-						"To": 36,
-						"Weight": 1
+						"source": 67,
+						"destination": 70,
+						"weight": 1
 					},
 					{
-						"From": 36,
-						"To": 40,
-						"Weight": 1
+						"source": 68,
+						"destination": 71,
+						"weight": 1
 					},
 					{
-						"From": 51,
-						"To": 38,
-						"Weight": 1
+						"source": 70,
+						"destination": 71,
+						"weight": 1
 					},
 					{
-						"From": 38,
-						"To": 39,
-						"Weight": 1
+						"source": 71,
+						"destination": 72,
+						"weight": 1
 					},
 					{
-						"From": 13,
-						"To": 14,
-						"Weight": 1
+						"source": 72,
+						"destination": 73,
+						"weight": 1
 					},
 					{
-						"From": 14,
-						"To": 15,
-						"Weight": 1
+						"source": 73,
+						"destination": 74,
+						"weight": 1
 					},
 					{
-						"From": 14,
-						"To": 23,
-						"Weight": 1
+						"source": 74,
+						"destination": 60,
+						"weight": 1
 					},
 					{
-						"From": 15,
-						"To": 16,
-						"Weight": 1
+						"source": 75,
+						"destination": 76,
+						"weight": 1
 					},
 					{
-						"From": 15,
-						"To": 18,
-						"Weight": 1
+						"source": 75,
+						"destination": 78,
+						"weight": 1
 					},
 					{
-						"From": 15,
-						"To": 20,
-						"Weight": 1
+						"source": 76,
+						"destination": 85,
+						"weight": 1
 					},
 					{
-						"From": 16,
-						"To": 21,
-						"Weight": 1
+						"source": 78,
+						"destination": 79,
+						"weight": 1
 					},
 					{
-						"From": 18,
-						"To": 21,
-						"Weight": 1
+						"source": 79,
+						"destination": 80,
+						"weight": 1
 					},
 					{
-						"From": 20,
-						"To": 21,
-						"Weight": 1
+						"source": 79,
+						"destination": 82,
+						"weight": 1
 					},
 					{
-						"From": 21,
-						"To": 22,
-						"Weight": 1
+						"source": 80,
+						"destination": 83,
+						"weight": 1
 					},
 					{
-						"From": 22,
-						"To": 23,
-						"Weight": 1
+						"source": 82,
+						"destination": 83,
+						"weight": 1
 					},
 					{
-						"From": 23,
-						"To": 24,
-						"Weight": 1
+						"source": 83,
+						"destination": 84,
+						"weight": 1
 					},
 					{
-						"From": 24,
-						"To": 28,
-						"Weight": 1
+						"source": 84,
+						"destination": 85,
+						"weight": 1
 					},
 					{
-						"From": 39,
-						"To": 26,
-						"Weight": 1
+						"source": 85,
+						"destination": 86,
+						"weight": 1
 					},
 					{
-						"From": 26,
-						"To": 27,
-						"Weight": 1
+						"source": 86,
+						"destination": 8,
+						"weight": 1
 					},
 					{
-						"From": 0,
-						"To": 1,
-						"Weight": 1
+						"source": 87,
+						"destination": 88,
+						"weight": 1
 					},
 					{
-						"From": 1,
-						"To": 13,
-						"Weight": 1
+						"source": 87,
+						"destination": 90,
+						"weight": 1
 					},
 					{
-						"From": 1,
-						"To": 52,
-						"Weight": 1
+						"source": 87,
+						"destination": 92,
+						"weight": 1
 					},
 					{
-						"From": 27,
-						"To": 5,
-						"Weight": 1
+						"source": 87,
+						"destination": 94,
+						"weight": 1
 					},
 					{
-						"From": 62,
-						"To": 5,
-						"Weight": 1
+						"source": 87,
+						"destination": 96,
+						"weight": 1
 					},
 					{
-						"From": 5,
-						"To": 6,
-						"Weight": 1
+						"source": 88,
+						"destination": 97,
+						"weight": 1
 					},
 					{
-						"From": 6,
-						"To": 75,
-						"Weight": 1
+						"source": 90,
+						"destination": 97,
+						"weight": 1
 					},
 					{
-						"From": 86,
-						"To": 8,
-						"Weight": 1
+						"source": 92,
+						"destination": 97,
+						"weight": 1
 					},
 					{
-						"From": 8,
-						"To": 87,
-						"Weight": 1
+						"source": 94,
+						"destination": 97,
+						"weight": 1
 					},
 					{
-						"From": 98,
-						"To": 10,
-						"Weight": 1
+						"source": 96,
+						"destination": 97,
+						"weight": 1
 					},
 					{
-						"From": 10,
-						"To": 11,
-						"Weight": 1
+						"source": 97,
+						"destination": 98,
+						"weight": 1
 					},
 					{
-						"From": 11,
-						"To": 12,
-						"Weight": 1
+						"source": 98,
+						"destination": 10,
+						"weight": 1
 					}
 				],
-				"Paths": [
+				"paths": [
 					[
 						0,
 						1,
@@ -1271,146 +1236,6 @@
 						52,
 						53,
 						54,
-						63,
-						64,
-						73,
-						74,
-						60,
-						61,
-						62,
-						5,
-						6,
-						75,
-						76,
-						85,
-						86,
-						8,
-						87,
-						88,
-						97,
-						98,
-						10,
-						11,
-						12
-					],
-					[
-						0,
-						1,
-						52,
-						53,
-						54,
-						63,
-						64,
-						73,
-						74,
-						60,
-						61,
-						62,
-						5,
-						6,
-						75,
-						76,
-						85,
-						86,
-						8,
-						87,
-						90,
-						97,
-						98,
-						10,
-						11,
-						12
-					],
-					[
-						0,
-						1,
-						52,
-						53,
-						54,
-						63,
-						64,
-						73,
-						74,
-						60,
-						61,
-						62,
-						5,
-						6,
-						75,
-						76,
-						85,
-						86,
-						8,
-						87,
-						92,
-						97,
-						98,
-						10,
-						11,
-						12
-					],
-					[
-						0,
-						1,
-						52,
-						53,
-						54,
-						63,
-						64,
-						73,
-						74,
-						60,
-						61,
-						62,
-						5,
-						6,
-						75,
-						76,
-						85,
-						86,
-						8,
-						87,
-						94,
-						97,
-						98,
-						10,
-						11,
-						12
-					],
-					[
-						0,
-						1,
-						52,
-						53,
-						54,
-						63,
-						64,
-						73,
-						74,
-						60,
-						61,
-						62,
-						5,
-						6,
-						75,
-						76,
-						85,
-						86,
-						8,
-						87,
-						96,
-						97,
-						98,
-						10,
-						11,
-						12
-					],
-					[
-						0,
-						1,
-						52,
-						53,
-						54,
 						60,
 						61,
 						62,
@@ -1674,6 +1499,146 @@
 						82,
 						83,
 						84,
+						85,
+						86,
+						8,
+						87,
+						96,
+						97,
+						98,
+						10,
+						11,
+						12
+					],
+					[
+						0,
+						1,
+						52,
+						53,
+						54,
+						63,
+						64,
+						73,
+						74,
+						60,
+						61,
+						62,
+						5,
+						6,
+						75,
+						76,
+						85,
+						86,
+						8,
+						87,
+						88,
+						97,
+						98,
+						10,
+						11,
+						12
+					],
+					[
+						0,
+						1,
+						52,
+						53,
+						54,
+						63,
+						64,
+						73,
+						74,
+						60,
+						61,
+						62,
+						5,
+						6,
+						75,
+						76,
+						85,
+						86,
+						8,
+						87,
+						90,
+						97,
+						98,
+						10,
+						11,
+						12
+					],
+					[
+						0,
+						1,
+						52,
+						53,
+						54,
+						63,
+						64,
+						73,
+						74,
+						60,
+						61,
+						62,
+						5,
+						6,
+						75,
+						76,
+						85,
+						86,
+						8,
+						87,
+						92,
+						97,
+						98,
+						10,
+						11,
+						12
+					],
+					[
+						0,
+						1,
+						52,
+						53,
+						54,
+						63,
+						64,
+						73,
+						74,
+						60,
+						61,
+						62,
+						5,
+						6,
+						75,
+						76,
+						85,
+						86,
+						8,
+						87,
+						94,
+						97,
+						98,
+						10,
+						11,
+						12
+					],
+					[
+						0,
+						1,
+						52,
+						53,
+						54,
+						63,
+						64,
+						73,
+						74,
+						60,
+						61,
+						62,
+						5,
+						6,
+						75,
+						76,
 						85,
 						86,
 						8,
@@ -27026,117 +26991,13 @@
 						12
 					]
 				]
-			},
-			"Tokens": [
-				"\u003cSOS\u003e",
-				"(",
-				"\u003crequest\u003e",
-				"|",
-				"\u003corder\u003e",
-				")",
-				" ",
-				"\u003cquant\u003e",
-				" ",
-				"\u003cteatype\u003e",
-				" tea",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"[",
-				"(",
-				"could",
-				"|",
-				"will",
-				"|",
-				"would",
-				")",
-				" you",
-				"]",
-				" please ",
-				"\u003cbrew\u003e",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"(",
-				"make",
-				"|",
-				"brew",
-				"|",
-				"whip up",
-				")",
-				" ",
-				"\u003cquant\u003e",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"some",
-				"|",
-				"a ",
-				"(",
-				"cup",
-				"|",
-				"glass",
-				")",
-				" of",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"i'd like ",
-				"[",
-				"to order",
-				"|",
-				"a",
-				"|",
-				"\u003cquant\u003e",
-				"]",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"some",
-				"|",
-				"a ",
-				"(",
-				"cup",
-				"|",
-				"glass",
-				")",
-				" of",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"some",
-				"|",
-				"a ",
-				"(",
-				"cup",
-				"|",
-				"glass",
-				")",
-				" of",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"red",
-				"|",
-				"sweet",
-				"|",
-				"green",
-				"|",
-				"jasmine",
-				"|",
-				"milk",
-				";",
-				"\u003cEOS\u003e"
-			]
+			}
 		},
 		"\u003corder\u003e": {
-			"Expression": "i'd like [to order|a|\u003cquant\u003e];",
-			"Is_public": false,
-			"References": [
-				"\u003cquant\u003e"
-			],
-			"Graph": {
-				"Nodes": [
+			"expression": "i'd like [to order|a|\u003cquant\u003e];",
+			"is_public": false,
+			"graph": {
+				"tokens": [
 					"\u003cSOS\u003e",
 					"i'd like ",
 					"[",
@@ -27161,132 +27022,123 @@
 					";",
 					"\u003cEOS\u003e"
 				],
-				"Edges": [
+				"edges": [
 					{
-						"From": 11,
-						"To": 12,
-						"Weight": 1
+						"source": 0,
+						"destination": 1,
+						"weight": 1
 					},
 					{
-						"From": 11,
-						"To": 14,
-						"Weight": 1
+						"source": 1,
+						"destination": 2,
+						"weight": 1
 					},
 					{
-						"From": 12,
-						"To": 21,
-						"Weight": 1
+						"source": 2,
+						"destination": 3,
+						"weight": 1
 					},
 					{
-						"From": 14,
-						"To": 15,
-						"Weight": 1
+						"source": 2,
+						"destination": 5,
+						"weight": 1
 					},
 					{
-						"From": 15,
-						"To": 16,
-						"Weight": 1
+						"source": 2,
+						"destination": 8,
+						"weight": 1
 					},
 					{
-						"From": 15,
-						"To": 18,
-						"Weight": 1
+						"source": 2,
+						"destination": 11,
+						"weight": 1
 					},
 					{
-						"From": 16,
-						"To": 19,
-						"Weight": 1
+						"source": 3,
+						"destination": 8,
+						"weight": 1
 					},
 					{
-						"From": 18,
-						"To": 19,
-						"Weight": 1
+						"source": 5,
+						"destination": 8,
+						"weight": 1
 					},
 					{
-						"From": 19,
-						"To": 20,
-						"Weight": 1
+						"source": 8,
+						"destination": 9,
+						"weight": 1
 					},
 					{
-						"From": 20,
-						"To": 21,
-						"Weight": 1
+						"source": 9,
+						"destination": 10,
+						"weight": 1
 					},
 					{
-						"From": 21,
-						"To": 22,
-						"Weight": 1
+						"source": 11,
+						"destination": 12,
+						"weight": 1
 					},
 					{
-						"From": 0,
-						"To": 1,
-						"Weight": 1
+						"source": 11,
+						"destination": 14,
+						"weight": 1
 					},
 					{
-						"From": 1,
-						"To": 2,
-						"Weight": 1
+						"source": 12,
+						"destination": 21,
+						"weight": 1
 					},
 					{
-						"From": 2,
-						"To": 3,
-						"Weight": 1
+						"source": 14,
+						"destination": 15,
+						"weight": 1
 					},
 					{
-						"From": 2,
-						"To": 5,
-						"Weight": 1
+						"source": 15,
+						"destination": 16,
+						"weight": 1
 					},
 					{
-						"From": 2,
-						"To": 11,
-						"Weight": 1
+						"source": 15,
+						"destination": 18,
+						"weight": 1
 					},
 					{
-						"From": 2,
-						"To": 8,
-						"Weight": 1
+						"source": 16,
+						"destination": 19,
+						"weight": 1
 					},
 					{
-						"From": 3,
-						"To": 8,
-						"Weight": 1
+						"source": 18,
+						"destination": 19,
+						"weight": 1
 					},
 					{
-						"From": 5,
-						"To": 8,
-						"Weight": 1
+						"source": 19,
+						"destination": 20,
+						"weight": 1
 					},
 					{
-						"From": 22,
-						"To": 8,
-						"Weight": 1
+						"source": 20,
+						"destination": 21,
+						"weight": 1
 					},
 					{
-						"From": 8,
-						"To": 9,
-						"Weight": 1
+						"source": 21,
+						"destination": 22,
+						"weight": 1
 					},
 					{
-						"From": 9,
-						"To": 10,
-						"Weight": 1
+						"source": 22,
+						"destination": 8,
+						"weight": 1
 					}
 				],
-				"Paths": [
+				"paths": [
 					[
 						0,
 						1,
 						2,
-						8,
-						9,
-						10
-					],
-					[
-						0,
-						1,
-						2,
-						3,
 						8,
 						9,
 						10
@@ -27296,6 +27148,15 @@
 						1,
 						2,
 						5,
+						8,
+						9,
+						10
+					],
+					[
+						0,
+						1,
+						2,
+						3,
 						8,
 						9,
 						10
@@ -27345,39 +27206,13 @@
 						10
 					]
 				]
-			},
-			"Tokens": [
-				"\u003cSOS\u003e",
-				"i'd like ",
-				"[",
-				"to order",
-				"|",
-				"a",
-				"|",
-				"\u003cquant\u003e",
-				"]",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"some",
-				"|",
-				"a ",
-				"(",
-				"cup",
-				"|",
-				"glass",
-				")",
-				" of",
-				";",
-				"\u003cEOS\u003e"
-			]
+			}
 		},
 		"\u003cquant\u003e": {
-			"Expression": "some|a (cup|glass) of;",
-			"Is_public": false,
-			"References": null,
-			"Graph": {
-				"Nodes": [
+			"expression": "some|a (cup|glass) of;",
+			"is_public": false,
+			"graph": {
+				"tokens": [
 					"\u003cSOS\u003e",
 					"some",
 					"|",
@@ -27391,64 +27226,64 @@
 					";",
 					"\u003cEOS\u003e"
 				],
-				"Edges": [
+				"edges": [
 					{
-						"From": 0,
-						"To": 1,
-						"Weight": 1
+						"source": 0,
+						"destination": 1,
+						"weight": 1
 					},
 					{
-						"From": 0,
-						"To": 3,
-						"Weight": 1
+						"source": 0,
+						"destination": 3,
+						"weight": 1
 					},
 					{
-						"From": 1,
-						"To": 10,
-						"Weight": 1
+						"source": 1,
+						"destination": 10,
+						"weight": 1
 					},
 					{
-						"From": 3,
-						"To": 4,
-						"Weight": 1
+						"source": 3,
+						"destination": 4,
+						"weight": 1
 					},
 					{
-						"From": 4,
-						"To": 5,
-						"Weight": 1
+						"source": 4,
+						"destination": 5,
+						"weight": 1
 					},
 					{
-						"From": 4,
-						"To": 7,
-						"Weight": 1
+						"source": 4,
+						"destination": 7,
+						"weight": 1
 					},
 					{
-						"From": 5,
-						"To": 8,
-						"Weight": 1
+						"source": 5,
+						"destination": 8,
+						"weight": 1
 					},
 					{
-						"From": 7,
-						"To": 8,
-						"Weight": 1
+						"source": 7,
+						"destination": 8,
+						"weight": 1
 					},
 					{
-						"From": 8,
-						"To": 9,
-						"Weight": 1
+						"source": 8,
+						"destination": 9,
+						"weight": 1
 					},
 					{
-						"From": 9,
-						"To": 10,
-						"Weight": 1
+						"source": 9,
+						"destination": 10,
+						"weight": 1
 					},
 					{
-						"From": 10,
-						"To": 11,
-						"Weight": 1
+						"source": 10,
+						"destination": 11,
+						"weight": 1
 					}
 				],
-				"Paths": [
+				"paths": [
 					[
 						0,
 						1,
@@ -27476,30 +27311,13 @@
 						11
 					]
 				]
-			},
-			"Tokens": [
-				"\u003cSOS\u003e",
-				"some",
-				"|",
-				"a ",
-				"(",
-				"cup",
-				"|",
-				"glass",
-				")",
-				" of",
-				";",
-				"\u003cEOS\u003e"
-			]
+			}
 		},
 		"\u003crequest\u003e": {
-			"Expression": "[(could|will|would) you] please \u003cbrew\u003e;",
-			"Is_public": false,
-			"References": [
-				"\u003cbrew\u003e"
-			],
-			"Graph": {
-				"Nodes": [
+			"expression": "[(could|will|would) you] please \u003cbrew\u003e;",
+			"is_public": false,
+			"graph": {
+				"tokens": [
 					"\u003cSOS\u003e",
 					"[",
 					"(",
@@ -27540,194 +27358,194 @@
 					";",
 					"\u003cEOS\u003e"
 				],
-				"Edges": [
+				"edges": [
 					{
-						"From": 27,
-						"To": 28,
-						"Weight": 1
+						"source": 0,
+						"destination": 1,
+						"weight": 1
 					},
 					{
-						"From": 27,
-						"To": 30,
-						"Weight": 1
+						"source": 1,
+						"destination": 2,
+						"weight": 1
 					},
 					{
-						"From": 28,
-						"To": 37,
-						"Weight": 1
+						"source": 1,
+						"destination": 10,
+						"weight": 1
 					},
 					{
-						"From": 30,
-						"To": 31,
-						"Weight": 1
+						"source": 2,
+						"destination": 3,
+						"weight": 1
 					},
 					{
-						"From": 31,
-						"To": 32,
-						"Weight": 1
+						"source": 2,
+						"destination": 5,
+						"weight": 1
 					},
 					{
-						"From": 31,
-						"To": 34,
-						"Weight": 1
+						"source": 2,
+						"destination": 7,
+						"weight": 1
 					},
 					{
-						"From": 32,
-						"To": 35,
-						"Weight": 1
+						"source": 3,
+						"destination": 8,
+						"weight": 1
 					},
 					{
-						"From": 34,
-						"To": 35,
-						"Weight": 1
+						"source": 5,
+						"destination": 8,
+						"weight": 1
 					},
 					{
-						"From": 35,
-						"To": 36,
-						"Weight": 1
+						"source": 7,
+						"destination": 8,
+						"weight": 1
 					},
 					{
-						"From": 36,
-						"To": 37,
-						"Weight": 1
+						"source": 8,
+						"destination": 9,
+						"weight": 1
 					},
 					{
-						"From": 37,
-						"To": 38,
-						"Weight": 1
+						"source": 9,
+						"destination": 10,
+						"weight": 1
 					},
 					{
-						"From": 15,
-						"To": 16,
-						"Weight": 1
+						"source": 10,
+						"destination": 11,
+						"weight": 1
 					},
 					{
-						"From": 16,
-						"To": 17,
-						"Weight": 1
+						"source": 11,
+						"destination": 15,
+						"weight": 1
 					},
 					{
-						"From": 16,
-						"To": 19,
-						"Weight": 1
+						"source": 13,
+						"destination": 14,
+						"weight": 1
 					},
 					{
-						"From": 16,
-						"To": 21,
-						"Weight": 1
+						"source": 15,
+						"destination": 16,
+						"weight": 1
 					},
 					{
-						"From": 17,
-						"To": 22,
-						"Weight": 1
+						"source": 16,
+						"destination": 17,
+						"weight": 1
 					},
 					{
-						"From": 19,
-						"To": 22,
-						"Weight": 1
+						"source": 16,
+						"destination": 19,
+						"weight": 1
 					},
 					{
-						"From": 21,
-						"To": 22,
-						"Weight": 1
+						"source": 16,
+						"destination": 21,
+						"weight": 1
 					},
 					{
-						"From": 22,
-						"To": 23,
-						"Weight": 1
+						"source": 17,
+						"destination": 22,
+						"weight": 1
 					},
 					{
-						"From": 23,
-						"To": 27,
-						"Weight": 1
+						"source": 19,
+						"destination": 22,
+						"weight": 1
 					},
 					{
-						"From": 38,
-						"To": 25,
-						"Weight": 1
+						"source": 21,
+						"destination": 22,
+						"weight": 1
 					},
 					{
-						"From": 25,
-						"To": 26,
-						"Weight": 1
+						"source": 22,
+						"destination": 23,
+						"weight": 1
 					},
 					{
-						"From": 0,
-						"To": 1,
-						"Weight": 1
+						"source": 23,
+						"destination": 27,
+						"weight": 1
 					},
 					{
-						"From": 1,
-						"To": 2,
-						"Weight": 1
+						"source": 25,
+						"destination": 26,
+						"weight": 1
 					},
 					{
-						"From": 1,
-						"To": 10,
-						"Weight": 1
+						"source": 26,
+						"destination": 13,
+						"weight": 1
 					},
 					{
-						"From": 2,
-						"To": 3,
-						"Weight": 1
+						"source": 27,
+						"destination": 28,
+						"weight": 1
 					},
 					{
-						"From": 2,
-						"To": 5,
-						"Weight": 1
+						"source": 27,
+						"destination": 30,
+						"weight": 1
 					},
 					{
-						"From": 2,
-						"To": 7,
-						"Weight": 1
+						"source": 28,
+						"destination": 37,
+						"weight": 1
 					},
 					{
-						"From": 3,
-						"To": 8,
-						"Weight": 1
+						"source": 30,
+						"destination": 31,
+						"weight": 1
 					},
 					{
-						"From": 5,
-						"To": 8,
-						"Weight": 1
+						"source": 31,
+						"destination": 32,
+						"weight": 1
 					},
 					{
-						"From": 7,
-						"To": 8,
-						"Weight": 1
+						"source": 31,
+						"destination": 34,
+						"weight": 1
 					},
 					{
-						"From": 8,
-						"To": 9,
-						"Weight": 1
+						"source": 32,
+						"destination": 35,
+						"weight": 1
 					},
 					{
-						"From": 9,
-						"To": 10,
-						"Weight": 1
+						"source": 34,
+						"destination": 35,
+						"weight": 1
 					},
 					{
-						"From": 10,
-						"To": 11,
-						"Weight": 1
+						"source": 35,
+						"destination": 36,
+						"weight": 1
 					},
 					{
-						"From": 11,
-						"To": 15,
-						"Weight": 1
+						"source": 36,
+						"destination": 37,
+						"weight": 1
 					},
 					{
-						"From": 26,
-						"To": 13,
-						"Weight": 1
+						"source": 37,
+						"destination": 38,
+						"weight": 1
 					},
 					{
-						"From": 13,
-						"To": 14,
-						"Weight": 1
+						"source": 38,
+						"destination": 25,
+						"weight": 1
 					}
 				],
-				"Paths": [
+				"paths": [
 					[
 						0,
 						1,
@@ -27769,6 +27587,75 @@
 					[
 						0,
 						1,
+						10,
+						11,
+						15,
+						16,
+						21,
+						22,
+						23,
+						27,
+						28,
+						37,
+						38,
+						25,
+						26,
+						13,
+						14
+					],
+					[
+						0,
+						1,
+						2,
+						5,
+						8,
+						9,
+						10,
+						11,
+						15,
+						16,
+						17,
+						22,
+						23,
+						27,
+						28,
+						37,
+						38,
+						25,
+						26,
+						13,
+						14
+					],
+					[
+						0,
+						1,
+						2,
+						5,
+						8,
+						9,
+						10,
+						11,
+						15,
+						16,
+						19,
+						22,
+						23,
+						27,
+						28,
+						37,
+						38,
+						25,
+						26,
+						13,
+						14
+					],
+					[
+						0,
+						1,
+						2,
+						5,
+						8,
+						9,
 						10,
 						11,
 						15,
@@ -27836,75 +27723,6 @@
 						1,
 						2,
 						3,
-						8,
-						9,
-						10,
-						11,
-						15,
-						16,
-						21,
-						22,
-						23,
-						27,
-						28,
-						37,
-						38,
-						25,
-						26,
-						13,
-						14
-					],
-					[
-						0,
-						1,
-						2,
-						5,
-						8,
-						9,
-						10,
-						11,
-						15,
-						16,
-						17,
-						22,
-						23,
-						27,
-						28,
-						37,
-						38,
-						25,
-						26,
-						13,
-						14
-					],
-					[
-						0,
-						1,
-						2,
-						5,
-						8,
-						9,
-						10,
-						11,
-						15,
-						16,
-						19,
-						22,
-						23,
-						27,
-						28,
-						37,
-						38,
-						25,
-						26,
-						13,
-						14
-					],
-					[
-						0,
-						1,
-						2,
-						5,
 						8,
 						9,
 						10,
@@ -28134,168 +27952,6 @@
 						0,
 						1,
 						2,
-						3,
-						8,
-						9,
-						10,
-						11,
-						15,
-						16,
-						17,
-						22,
-						23,
-						27,
-						30,
-						31,
-						32,
-						35,
-						36,
-						37,
-						38,
-						25,
-						26,
-						13,
-						14
-					],
-					[
-						0,
-						1,
-						2,
-						3,
-						8,
-						9,
-						10,
-						11,
-						15,
-						16,
-						17,
-						22,
-						23,
-						27,
-						30,
-						31,
-						34,
-						35,
-						36,
-						37,
-						38,
-						25,
-						26,
-						13,
-						14
-					],
-					[
-						0,
-						1,
-						2,
-						3,
-						8,
-						9,
-						10,
-						11,
-						15,
-						16,
-						19,
-						22,
-						23,
-						27,
-						30,
-						31,
-						32,
-						35,
-						36,
-						37,
-						38,
-						25,
-						26,
-						13,
-						14
-					],
-					[
-						0,
-						1,
-						2,
-						3,
-						8,
-						9,
-						10,
-						11,
-						15,
-						16,
-						19,
-						22,
-						23,
-						27,
-						30,
-						31,
-						34,
-						35,
-						36,
-						37,
-						38,
-						25,
-						26,
-						13,
-						14
-					],
-					[
-						0,
-						1,
-						2,
-						3,
-						8,
-						9,
-						10,
-						11,
-						15,
-						16,
-						21,
-						22,
-						23,
-						27,
-						30,
-						31,
-						32,
-						35,
-						36,
-						37,
-						38,
-						25,
-						26,
-						13,
-						14
-					],
-					[
-						0,
-						1,
-						2,
-						3,
-						8,
-						9,
-						10,
-						11,
-						15,
-						16,
-						21,
-						22,
-						23,
-						27,
-						30,
-						31,
-						34,
-						35,
-						36,
-						37,
-						38,
-						25,
-						26,
-						13,
-						14
-					],
-					[
-						0,
-						1,
-						2,
 						5,
 						8,
 						9,
@@ -28432,6 +28088,168 @@
 						1,
 						2,
 						5,
+						8,
+						9,
+						10,
+						11,
+						15,
+						16,
+						21,
+						22,
+						23,
+						27,
+						30,
+						31,
+						34,
+						35,
+						36,
+						37,
+						38,
+						25,
+						26,
+						13,
+						14
+					],
+					[
+						0,
+						1,
+						2,
+						3,
+						8,
+						9,
+						10,
+						11,
+						15,
+						16,
+						17,
+						22,
+						23,
+						27,
+						30,
+						31,
+						32,
+						35,
+						36,
+						37,
+						38,
+						25,
+						26,
+						13,
+						14
+					],
+					[
+						0,
+						1,
+						2,
+						3,
+						8,
+						9,
+						10,
+						11,
+						15,
+						16,
+						17,
+						22,
+						23,
+						27,
+						30,
+						31,
+						34,
+						35,
+						36,
+						37,
+						38,
+						25,
+						26,
+						13,
+						14
+					],
+					[
+						0,
+						1,
+						2,
+						3,
+						8,
+						9,
+						10,
+						11,
+						15,
+						16,
+						19,
+						22,
+						23,
+						27,
+						30,
+						31,
+						32,
+						35,
+						36,
+						37,
+						38,
+						25,
+						26,
+						13,
+						14
+					],
+					[
+						0,
+						1,
+						2,
+						3,
+						8,
+						9,
+						10,
+						11,
+						15,
+						16,
+						19,
+						22,
+						23,
+						27,
+						30,
+						31,
+						34,
+						35,
+						36,
+						37,
+						38,
+						25,
+						26,
+						13,
+						14
+					],
+					[
+						0,
+						1,
+						2,
+						3,
+						8,
+						9,
+						10,
+						11,
+						15,
+						16,
+						21,
+						22,
+						23,
+						27,
+						30,
+						31,
+						32,
+						35,
+						36,
+						37,
+						38,
+						25,
+						26,
+						13,
+						14
+					],
+					[
+						0,
+						1,
+						2,
+						3,
 						8,
 						9,
 						10,
@@ -28617,55 +28435,13 @@
 						14
 					]
 				]
-			},
-			"Tokens": [
-				"\u003cSOS\u003e",
-				"[",
-				"(",
-				"could",
-				"|",
-				"will",
-				"|",
-				"would",
-				")",
-				" you",
-				"]",
-				" please ",
-				"\u003cbrew\u003e",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"(",
-				"make",
-				"|",
-				"brew",
-				"|",
-				"whip up",
-				")",
-				" ",
-				"\u003cquant\u003e",
-				";",
-				"\u003cEOS\u003e",
-				"\u003cSOS\u003e",
-				"some",
-				"|",
-				"a ",
-				"(",
-				"cup",
-				"|",
-				"glass",
-				")",
-				" of",
-				";",
-				"\u003cEOS\u003e"
-			]
+			}
 		},
 		"\u003cteatype\u003e": {
-			"Expression": "red|sweet|green|jasmine|milk;",
-			"Is_public": false,
-			"References": null,
-			"Graph": {
-				"Nodes": [
+			"expression": "red|sweet|green|jasmine|milk;",
+			"is_public": false,
+			"graph": {
+				"tokens": [
 					"\u003cSOS\u003e",
 					"red",
 					"|",
@@ -28679,70 +28455,64 @@
 					";",
 					"\u003cEOS\u003e"
 				],
-				"Edges": [
+				"edges": [
 					{
-						"From": 0,
-						"To": 1,
-						"Weight": 1
+						"source": 0,
+						"destination": 1,
+						"weight": 1
 					},
 					{
-						"From": 0,
-						"To": 3,
-						"Weight": 1
+						"source": 0,
+						"destination": 3,
+						"weight": 1
 					},
 					{
-						"From": 0,
-						"To": 5,
-						"Weight": 1
+						"source": 0,
+						"destination": 5,
+						"weight": 1
 					},
 					{
-						"From": 0,
-						"To": 7,
-						"Weight": 1
+						"source": 0,
+						"destination": 7,
+						"weight": 1
 					},
 					{
-						"From": 0,
-						"To": 9,
-						"Weight": 1
+						"source": 0,
+						"destination": 9,
+						"weight": 1
 					},
 					{
-						"From": 1,
-						"To": 10,
-						"Weight": 1
+						"source": 1,
+						"destination": 10,
+						"weight": 1
 					},
 					{
-						"From": 3,
-						"To": 10,
-						"Weight": 1
+						"source": 3,
+						"destination": 10,
+						"weight": 1
 					},
 					{
-						"From": 5,
-						"To": 10,
-						"Weight": 1
+						"source": 5,
+						"destination": 10,
+						"weight": 1
 					},
 					{
-						"From": 7,
-						"To": 10,
-						"Weight": 1
+						"source": 7,
+						"destination": 10,
+						"weight": 1
 					},
 					{
-						"From": 9,
-						"To": 10,
-						"Weight": 1
+						"source": 9,
+						"destination": 10,
+						"weight": 1
 					},
 					{
-						"From": 10,
-						"To": 11,
-						"Weight": 1
+						"source": 10,
+						"destination": 11,
+						"weight": 1
 					}
 				],
-				"Paths": [
-					[
-						0,
-						1,
-						10,
-						11
-					],
+				"paths": [
 					[
 						0,
 						3,
@@ -28766,26 +28536,18 @@
 						9,
 						10,
 						11
+					],
+					[
+						0,
+						1,
+						10,
+						11
 					]
 				]
-			},
-			"Tokens": [
-				"\u003cSOS\u003e",
-				"red",
-				"|",
-				"sweet",
-				"|",
-				"green",
-				"|",
-				"jasmine",
-				"|",
-				"milk",
-				";",
-				"\u003cEOS\u003e"
-			]
+			}
 		}
 	},
-	"Imports": [
+	"imports": [
 		"a.*"
 	]
 }
