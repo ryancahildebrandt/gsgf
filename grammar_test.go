@@ -768,6 +768,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 			rule := NewRule(p, true)
 			rule.Tokens = ToTokens(rule.Exp, lexer)
 			rule.Graph = NewGraph(ToEdgeList(rule.Tokens), rule.Tokens)
+			rule.Graph = Minimize(rule.Graph)
 			g.Rules[fmt.Sprintf("<pub_%v>", j)] = rule
 		}
 		g, err := ResolveRules(g, lexer)

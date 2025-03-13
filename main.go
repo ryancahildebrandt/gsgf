@@ -11,16 +11,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
+	mrand "math/rand/v2"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/urfave/cli/v3"
 )
 
 func main() {
-	// start := time.Now()
+	start := time.Now()
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	// fmt.Printf("Took %s", time.Since(start))
 
 	app := &cli.Command{
 		Name:                  "GSGF",
@@ -92,7 +93,6 @@ func main() {
 				Flags: []cli.Flag{
 					&ArgNProductions,
 					&ArgOutFile,
-					&ArgExportDir,
 					&ArgMinimize,
 					&ArgShuffle,
 					&ArgSingleQuote,
@@ -128,6 +128,14 @@ func main() {
 						log.Fatal(err)
 					}
 					grammar = ImportNameSpace(grammar, namespace, lex)
+
+					if minimize {
+						for k, v := range grammar.Rules {
+							v.Graph = Minimize(v.Graph)
+							grammar.Rules[k] = v
+						}
+					}
+
 					grammar, err = ResolveRules(grammar, lex)
 					if err != nil {
 						log.Fatal(err)
@@ -141,7 +149,7 @@ func main() {
 					}
 
 					for len(productions) < int(nProductions) {
-						key := keys[rand.Intn(len(keys))]
+						key := keys[mrand.IntN(len(keys))]
 						graph := grammar.Rules[key].Graph
 						path, err := GetRandomPath(graph)
 						if err != nil {
@@ -151,12 +159,48 @@ func main() {
 						productions = append(productions, prod)
 					}
 
-					for _, p := range productions {
-						fmt.Println(p)
+					if wrapProductionsPrefix != "" || wrapProductionsSuffix != "" {
+						productions = WrapProductions(productions, wrapProductionsPrefix, wrapProductionsSuffix)
 					}
-					// for _, p := range WrapProductions([]string{"abc", "{}{}", "ab{cd}ef"}, "PRE: ", ": SUF") {
-					// 	fmt.Println(p)
-					// }
+					if wrapTagsPrefix != "" || wrapTagsSuffix != "" {
+						productions = WrapProductions(productions, wrapTagsPrefix, wrapTagsSuffix)
+					}
+					if collectTagsChar != "" {
+						productions = CollectTags(productions, collectTagsChar)
+					}
+
+					if removeTags {
+						productions = RemoveTags(productions)
+					}
+					if removeMultiSpaces {
+						productions = RemoveMultipleSpaces(productions)
+					}
+					if removeEndSpaces {
+						productions = RemoveEndSpaces(productions)
+					}
+					if renderNewlines {
+						productions = RenderNewLines(productions)
+					}
+					if renderTabs {
+						productions = RenderTabs(productions)
+					}
+
+					if shuffle {
+						mrand.Shuffle(len(productions), func(i, j int) { productions[i], productions[j] = productions[j], productions[i] })
+					}
+
+					if outFile == "" {
+						for _, prod := range productions {
+							fmt.Println(prod)
+						}
+						return nil
+					}
+					err = os.WriteFile(outFile, []byte(strings.Join(productions, "\n")), 0644)
+					if err != nil {
+						log.Fatal(err)
+					}
+					// TODO: singleQuote,
+
 					return nil
 				},
 			},
@@ -190,6 +234,14 @@ func main() {
 						log.Fatal(err)
 					}
 					grammar = ImportNameSpace(grammar, namespace, lex)
+
+					if minimize {
+						for k, v := range grammar.Rules {
+							v.Graph = Minimize(v.Graph)
+							grammar.Rules[k] = v
+						}
+					}
+
 					grammar, err = ResolveRules(grammar, lex)
 					if err != nil {
 						log.Fatal(err)
@@ -255,6 +307,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Printf("Took %s", time.Since(start))
 }
 
 var (
