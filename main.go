@@ -9,10 +9,12 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	mrand "math/rand/v2"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -53,67 +55,22 @@ func main() {
 					&ArgRemoveEndSpaces,
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
-					// basepath := "./data/tests/test0.jsgf"
-					// ext := ".jsgf"
-					// fmt.Println(basepath)
-					// grammar := NewGrammar()
-					// f, err := os.Open(basepath)
-					// if err != nil {
-					// 	log.Fatal(err)
-					// }
-					// scanner := bufio.NewScanner(f)
-					// lex := NewJSGFLexer()
-					// grammar, err = ImportLines(grammar, scanner, lex)
-					// if err != nil {
-					// 	log.Fatal(err)
-					// }
-					// namespace, err := CreateNameSpace(basepath, ext)
-					// if err != nil {
-					// 	log.Fatal(err)
-					// }
-					// grammar = ImportNameSpace(grammar, namespace, lex)
-					// grammar, err = ResolveRules(grammar, lex)
-					// if err != nil {
-					// 	log.Fatal(err)
-					// }
-					// for _, p := range GetAllProductions(grammar) {
-					// 	fmt.Println(p)
-					// }
-					// for _, p := range WrapProductions([]string{"abc", "{}{}", "ab{cd}ef"}, "PRE: ", ": SUF") {
-					// 	fmt.Println(p)
-					// }
-					return nil
-				},
-			},
-			{
-				Name:      "sample",
-				Aliases:   []string{"sam"},
-				UsageText: "gsgf sample [OPTIONS...] example.jsgf",
-				Usage:     "Produce expressions from a grammar file, according to provided token weights",
-				Flags: []cli.Flag{
-					&ArgNProductions,
-					&ArgOutFile,
-					&ArgMinimize,
-					&ArgShuffle,
-					&ArgSingleQuote,
-					&ArgWrapProductionsPrefix,
-					&ArgWrapProductionsSuffix,
-					&ArgCollectTagsChar,
-					&ArgWrapTagsPrefix,
-					&ArgWrapTagsSuffix,
-					&ArgRemoveTags,
-					&ArgRenderNewlines,
-					&ArgRenderTabs,
-					&ArgRemoveMultiSpaces,
-					&ArgRemoveEndSpaces,
-				},
-				Action: func(ctx context.Context, cmd *cli.Command) error {
 					var ext string = ".jsgf"
 					var grammar Grammar = NewGrammar()
-					var inPath string = cmd.Args().First()
 					var productions []string
+					var err error
+					var inFile string = cmd.Args().First()
 
-					f, err := os.Open(inPath)
+					err = ValidateInFile(inFile)
+					if err != nil {
+						log.Fatal(err)
+					}
+					err = ValidateOutFile(outFile)
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					f, err := os.Open(inFile)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -123,7 +80,7 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-					namespace, err := CreateNameSpace(inPath, ext)
+					namespace, err := CreateNameSpace(inFile, ext)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -140,23 +97,14 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
+					productions = GetAllProductions(grammar)
 
-					var keys []string
-					for k, v := range grammar.Rules {
-						if v.IsPublic {
-							keys = append(keys, k)
-						}
+					if shuffle {
+						mrand.Shuffle(len(productions), func(i, j int) { productions[i], productions[j] = productions[j], productions[i] })
 					}
 
-					for len(productions) < int(nProductions) {
-						key := keys[mrand.IntN(len(keys))]
-						graph := grammar.Rules[key].Graph
-						path, err := GetRandomPath(graph)
-						if err != nil {
-							log.Fatal(err)
-						}
-						prod := GetSingleProduction(path, FilterTokens(graph.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}))
-						productions = append(productions, prod)
+					if nProductions != -1 {
+						productions = productions[0:nProductions]
 					}
 
 					if wrapProductionsPrefix != "" || wrapProductionsSuffix != "" {
@@ -185,21 +133,150 @@ func main() {
 						productions = RenderTabs(productions)
 					}
 
-					if shuffle {
-						mrand.Shuffle(len(productions), func(i, j int) { productions[i], productions[j] = productions[j], productions[i] })
-					}
-
 					if outFile == "" {
 						for _, prod := range productions {
 							fmt.Println(prod)
 						}
+
 						return nil
 					}
 					err = os.WriteFile(outFile, []byte(strings.Join(productions, "\n")), 0644)
 					if err != nil {
 						log.Fatal(err)
 					}
-					// TODO: singleQuote,
+
+					return nil
+				},
+			},
+
+			{
+				Name:      "sample",
+				Aliases:   []string{"sam"},
+				UsageText: "gsgf sample [OPTIONS...] example.jsgf",
+				Usage:     "Produce expressions from a grammar file, according to provided token weights",
+				Flags: []cli.Flag{
+					&ArgNProductions,
+					&ArgOutFile,
+					&ArgMinimize,
+					&ArgShuffle,
+					&ArgSingleQuote,
+					&ArgWrapProductionsPrefix,
+					&ArgWrapProductionsSuffix,
+					&ArgCollectTagsChar,
+					&ArgWrapTagsPrefix,
+					&ArgWrapTagsSuffix,
+					&ArgRemoveTags,
+					&ArgRenderNewlines,
+					&ArgRenderTabs,
+					&ArgRemoveMultiSpaces,
+					&ArgRemoveEndSpaces,
+				},
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					var ext string = ".jsgf"
+					var grammar Grammar = NewGrammar()
+					var inFile string = cmd.Args().First()
+					var productions []string
+					var err error
+
+					err = ValidateInFile(inFile)
+					if err != nil {
+						log.Fatal(err)
+					}
+					err = ValidateOutFile(outFile)
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					f, err := os.Open(inFile)
+					if err != nil {
+						log.Fatal(err)
+					}
+					scanner := bufio.NewScanner(f)
+					lex := NewJSGFLexer()
+					grammar, err = ImportLines(grammar, scanner, lex)
+					if err != nil {
+						log.Fatal(err)
+					}
+					namespace, err := CreateNameSpace(inFile, ext)
+					if err != nil {
+						log.Fatal(err)
+					}
+					grammar = ImportNameSpace(grammar, namespace, lex)
+
+					if minimize {
+						for k, v := range grammar.Rules {
+							v.Graph = Minimize(v.Graph)
+							grammar.Rules[k] = v
+						}
+					}
+
+					grammar, err = ResolveRules(grammar, lex)
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					var keys []string
+					for k, v := range grammar.Rules {
+						if v.IsPublic {
+							keys = append(keys, k)
+						}
+					}
+
+					if nProductions == -1 {
+						nProductions = 1
+					}
+					for len(productions) < int(nProductions) {
+						key := keys[mrand.IntN(len(keys))]
+						graph := grammar.Rules[key].Graph
+						path, err := GetRandomPath(graph)
+						if err != nil {
+							log.Fatal(err)
+						}
+						prod := GetSingleProduction(path, FilterTokens(graph.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}))
+						productions = append(productions, prod)
+					}
+
+					if shuffle {
+						mrand.Shuffle(len(productions), func(i, j int) { productions[i], productions[j] = productions[j], productions[i] })
+					}
+
+					if wrapProductionsPrefix != "" || wrapProductionsSuffix != "" {
+						productions = WrapProductions(productions, wrapProductionsPrefix, wrapProductionsSuffix)
+					}
+					if wrapTagsPrefix != "" || wrapTagsSuffix != "" {
+						productions = WrapProductions(productions, wrapTagsPrefix, wrapTagsSuffix)
+					}
+					if collectTagsChar != "" {
+						productions = CollectTags(productions, collectTagsChar)
+					}
+
+					if removeTags {
+						productions = RemoveTags(productions)
+					}
+					if removeMultiSpaces {
+						productions = RemoveMultipleSpaces(productions)
+					}
+					if removeEndSpaces {
+						productions = RemoveEndSpaces(productions)
+					}
+					if renderNewlines {
+						productions = RenderNewLines(productions)
+					}
+					if renderTabs {
+						productions = RenderTabs(productions)
+					}
+
+					if outFile == "" {
+						for _, prod := range productions {
+							fmt.Println(prod)
+						}
+
+						return nil
+					}
+					err = os.WriteFile(outFile, []byte(strings.Join(productions, "\n")), 0644)
+					if err != nil {
+						log.Fatal(err)
+					}
 
 					return nil
 				},
@@ -217,9 +294,19 @@ func main() {
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					var ext string = ".jsgf"
 					var grammar Grammar = NewGrammar()
-					var inPath string = cmd.Args().First()
+					var inFile string = cmd.Args().First()
+					var err error
 
-					f, err := os.Open(inPath)
+					err = ValidateInFile(inFile)
+					if err != nil {
+						log.Fatal(err)
+					}
+					err = ValidateExportDir(exportDir)
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					f, err := os.Open(inFile)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -229,7 +316,7 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-					namespace, err := CreateNameSpace(inPath, ext)
+					namespace, err := CreateNameSpace(inFile, ext)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -315,7 +402,7 @@ var (
 	ArgNProductions cli.IntFlag = cli.IntFlag{
 		Name:        "nProductions",
 		Aliases:     []string{"n"},
-		Value:       1,
+		Value:       -1,
 		Usage:       "Number of productions to take from the top of the productions list",
 		Destination: &nProductions,
 	}
@@ -431,3 +518,40 @@ var (
 		Destination: &wrapTagsSuffix,
 	}
 )
+
+func ValidateInFile(p string) error {
+	// valid extension
+	// exists
+	_, err := os.Open(p)
+	if err != nil {
+		return fmt.Errorf("in ValidateInFile(%v):\n%+w", p, err)
+	}
+	switch filepath.Ext(p) {
+	case ".jsgf", ".jjsgf", ".ebnf":
+		return nil
+	default:
+		return fmt.Errorf("in ValidateInFile(%v):\n%+w", p, errors.New("file extension is not one of .jsgf, .jjsgf, .ebnf"))
+	}
+}
+
+func ValidateOutFile(p string) error {
+	// dir exists if provided
+	_, err := os.Stat(filepath.Dir(p))
+	if err != nil {
+		return fmt.Errorf("in ValidateOutFile(%v):\n%+w", p, err)
+	}
+	return nil
+}
+
+func ValidateExportDir(p string) error {
+	// is dir
+	// exists
+	info, err := os.Stat(p)
+	if err != nil {
+		return fmt.Errorf("in ValidateExportDir(%v):\n%+w", p, err)
+	}
+	if !info.IsDir() {
+		return fmt.Errorf("in ValidateExportDir(%v):\n%+w", p, errors.New("provided path is not a directory"))
+	}
+	return nil
+}
