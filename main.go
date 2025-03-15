@@ -60,6 +60,7 @@ func main() {
 					var productions []string
 					var err error
 					var inFile string = cmd.Args().First()
+					var quoteChar string = "\""
 
 					err = ValidateInFile(inFile)
 					if err != nil {
@@ -75,7 +76,11 @@ func main() {
 						log.Fatal(err)
 					}
 					scanner := bufio.NewScanner(f)
-					lex := NewJSGFLexer()
+
+					if singleQuote {
+						quoteChar = "'"
+					}
+					lex := NewJSGFLexer(quoteChar)
 					grammar, err = ImportLines(grammar, scanner, lex)
 					if err != nil {
 						log.Fatal(err)
@@ -177,6 +182,7 @@ func main() {
 					var inFile string = cmd.Args().First()
 					var productions []string
 					var err error
+					var quoteChar string = "\""
 
 					err = ValidateInFile(inFile)
 					if err != nil {
@@ -192,7 +198,11 @@ func main() {
 						log.Fatal(err)
 					}
 					scanner := bufio.NewScanner(f)
-					lex := NewJSGFLexer()
+
+					if singleQuote {
+						quoteChar = "'"
+					}
+					lex := NewJSGFLexer(quoteChar)
 					grammar, err = ImportLines(grammar, scanner, lex)
 					if err != nil {
 						log.Fatal(err)
@@ -296,6 +306,7 @@ func main() {
 					var grammar Grammar = NewGrammar()
 					var inFile string = cmd.Args().First()
 					var err error
+					var quoteChar string = "\""
 
 					err = ValidateInFile(inFile)
 					if err != nil {
@@ -311,7 +322,11 @@ func main() {
 						log.Fatal(err)
 					}
 					scanner := bufio.NewScanner(f)
-					lex := NewJSGFLexer()
+
+					if singleQuote {
+						quoteChar = "'"
+					}
+					lex := NewJSGFLexer(quoteChar)
 					grammar, err = ImportLines(grammar, scanner, lex)
 					if err != nil {
 						log.Fatal(err)

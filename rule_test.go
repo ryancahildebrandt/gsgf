@@ -12,7 +12,7 @@ import (
 )
 
 func TestResolveReferences(t *testing.T) {
-	lexer := NewJSGFLexer()
+	lexer := NewJSGFLexer("\"")
 	m := map[string]Rule{
 		"<a>": {
 			Exp:      "123;",
@@ -612,7 +612,7 @@ func TestResolveReferences(t *testing.T) {
 }
 
 func TestParseRule(t *testing.T) {
-	lexer := NewJSGFLexer()
+	lexer := NewJSGFLexer("\"")
 	table := []struct {
 		l       string
 		n       string

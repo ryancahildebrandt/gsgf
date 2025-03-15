@@ -31,16 +31,19 @@ const (
 	SequenceStart
 	SequenceEnd
 	DoubleQuote
+	SingleQuote
 	BackSlash
 	ForwardSlash
 )
 
-func NewJSGFLexer() *tokenizer.Tokenizer {
+func NewJSGFLexer(q string) *tokenizer.Tokenizer {
 	var lexer *tokenizer.Tokenizer = tokenizer.New()
 
+	if q != "" {
+		lexer.DefineStringToken(DoubleQuote, `"`, `"`).SetEscapeSymbol(BackSlash).AddSpecialStrings(tokenizer.DefaultSpecialString)
+	}
+
 	lexer.SetWhiteSpaces([]byte{})
-	lexer.DefineStringToken(DoubleQuote, `"`, `"`).SetEscapeSymbol(BackSlash).AddSpecialStrings(tokenizer.DefaultSpecialString)
-	// lexer.DefineStringToken(SingleQuote, `'`, `'`).SetSpecialSymbols(tokenizer.DefaultStringEscapes).SetEscapeSymbol(BackSlash)
 
 	lexer.DefineTokens(AngleOpen, []string{"<"})
 	lexer.DefineTokens(AngleClose, []string{">"})
@@ -52,7 +55,7 @@ func NewJSGFLexer() *tokenizer.Tokenizer {
 	lexer.DefineTokens(ParenthesisClose, []string{")"})
 	lexer.DefineTokens(Alternate, []string{"|"})
 	lexer.DefineTokens(Comment, []string{"//", "/*", "*/"})
-	lexer.DefineTokens(Semicolon, []string{";", " ;", "; ", " ; "})
+	lexer.DefineTokens(Semicolon, []string{";"}) //, " ;", "; ", " ; "})
 	lexer.DefineTokens(Assignment, []string{"="})
 	lexer.DefineTokens(Modifier, []string{"*", "+"})
 	lexer.DefineTokens(SequenceStart, []string{"<SOS>"})

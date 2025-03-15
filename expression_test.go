@@ -11,7 +11,7 @@ import (
 )
 
 func TestToTokens(t *testing.T) {
-	lexer := NewJSGFLexer()
+	lexer := NewJSGFLexer("\"")
 	table := []struct {
 		e    Expression
 		want []Expression

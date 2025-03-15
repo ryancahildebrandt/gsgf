@@ -11,7 +11,7 @@ import (
 )
 
 func TestToEdgeList(t *testing.T) {
-	lexer := NewJSGFLexer()
+	lexer := NewJSGFLexer("\"")
 	table := []struct {
 		r       string
 		want    EdgeList

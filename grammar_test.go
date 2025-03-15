@@ -158,7 +158,7 @@ func TestGetCompositionOrder(t *testing.T) {
 }
 
 func TestGetAllProductions(t *testing.T) {
-	lexer := NewJSGFLexer()
+	lexer := NewJSGFLexer("\"")
 	table := []struct {
 		p       []string
 		want    []string
@@ -472,7 +472,7 @@ func TestGetAllProductions(t *testing.T) {
 }
 
 func TestGetAllProductionsMinimized(t *testing.T) {
-	lexer := NewJSGFLexer()
+	lexer := NewJSGFLexer("\"")
 	table := []struct {
 		p       []string
 		want    []string
@@ -785,7 +785,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 }
 
 func TestGetAllProductionsE2E(t *testing.T) {
-	lexer := NewJSGFLexer()
+	lexer := NewJSGFLexer("\"")
 	var productions []string
 	f, err := os.Open("data/tests/productions.txt")
 	if err != nil {

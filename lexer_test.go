@@ -10,7 +10,7 @@ import (
 )
 
 func TestCaptureString(t *testing.T) {
-	lexer := NewJSGFLexer()
+	lexer := NewJSGFLexer("\"")
 	table := []struct {
 		s       string
 		e       string
