@@ -228,7 +228,7 @@ func main() {
 								log.Fatal(err)
 							}
 
-							edges, nodes := GraphToTXT(v.Graph)
+							nodes, edges := GraphToTXT(v.Graph)
 							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_edges.txt"), []byte(edges), 0644)
 							if err != nil {
 								log.Fatal(err)
