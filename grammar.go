@@ -82,7 +82,7 @@ func ResolveRules(g Grammar, lex *tokenizer.Tokenizer) (Grammar, error) {
 	return g, nil
 }
 
-func ImportLines(g Grammar, s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar, error) {
+func FomJSGF(g Grammar, s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar, error) {
 	for s.Scan() {
 		line := s.Text()
 		switch {

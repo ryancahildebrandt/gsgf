@@ -165,7 +165,7 @@ func TestFindGrammar(t *testing.T) {
 		{p: "./data/tests/dir0/dir1/c.jsgf", t: "d", e: ".jsgf", want: "data/tests/dir0/dir1/d.jsgf", wantErr: false},
 		{p: "./data/tests/dir0/dir1/c.jsgf", t: "e", e: ".jsgf", want: "data/tests/dir0/dir1/dir2/e.jsgf", wantErr: false},
 		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "e", e: ".jsgf", want: "data/tests/dir0/dir1/dir2/e.jsgf", wantErr: false},
-		{p: "./data/tests", t: "test0", e: ".jsgf", want: "", wantErr: true},
+		{p: "./data/tests", t: "test0", e: ".jsgf", want: "data/tests/test0.jsgf", wantErr: false},
 		{p: "./data/tests/dir0/dir1/c.jsgf", t: "b", e: ".jsgf", want: "", wantErr: true},
 		{p: "./data/tests/test0.jsgf", t: "f", e: ".jsgf", want: "", wantErr: true},
 		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "d", e: ".jsgf", want: "", wantErr: true},

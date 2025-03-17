@@ -7,9 +7,11 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -112,6 +114,8 @@ func PeekGrammar(p string) (string, []string, map[string]string, error) {
 		name    string
 		imports []string
 		rules   map[string]string = make(map[string]string)
+		ext     string            = filepath.Ext(p)
+		scanner *bufio.Scanner
 	)
 
 	f, err := os.Open(p)
@@ -126,7 +130,20 @@ func PeekGrammar(p string) (string, []string, map[string]string, error) {
 		return "", []string{}, map[string]string{}, fmt.Errorf("in PeekGrammar(%v):\n%+w", p, errors.New("provided path is a directory"))
 	}
 
-	scanner := bufio.NewScanner(f)
+	switch ext {
+	case ".jsgf":
+		scanner = bufio.NewScanner(f)
+	case ".jjsgf":
+		var jj JJSGFGrammarJSON
+		err = json.NewDecoder(f).Decode(&jj)
+		if err != nil {
+			log.Fatal(err)
+		}
+		scanner = bufio.NewScanner(strings.NewReader(JJSGFToJSGF(jj)))
+	default:
+		return "", []string{}, map[string]string{}, fmt.Errorf("in PeekGrammar(%v):\n%+w", p, errors.New("unsupported extension, not one of .jsgf, .jjsgf"))
+	}
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		switch {

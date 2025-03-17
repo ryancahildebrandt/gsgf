@@ -850,7 +850,7 @@ func TestGetAllProductionsE2E(t *testing.T) {
 		grammar := NewGrammar()
 		f, err1 := os.Open(test.p)
 		scanner := bufio.NewScanner(f)
-		grammar, err2 := ImportLines(grammar, scanner, lexer)
+		grammar, err2 := FomJSGF(grammar, scanner, lexer)
 		namespace, err3 := CreateNameSpace(test.p, ".jsgf")
 		grammar = ImportNameSpace(grammar, namespace, lexer)
 		grammar, err4 := ResolveRules(grammar, lexer)

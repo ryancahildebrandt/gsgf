@@ -2,7 +2,9 @@
 
 grammar tea;
 
-public <main> = (<request>|<order>) <quant> <teatype> tea;
+import <tea_extras.*>;
+
+public <main> = (<request>|<order>) <quant> <teatype> tea[,] <with> <extras>;
 
 <request> = [(could|will|would) you] please <brew>;
 <order> = i'd like [to order|a|<quant>];
