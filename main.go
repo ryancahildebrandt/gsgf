@@ -70,7 +70,6 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-
 					productions = GetAllProductions(grammar)
 					productions = ApplyPostproc(productions, cmd)
 					if cmd.String("outFile") == "" {
@@ -121,6 +120,7 @@ func main() {
 						keys        []string
 						err         error
 					)
+
 					err = ValidateInFile(cmd.String("inFile"))
 					if err != nil {
 						log.Fatal(err)
@@ -134,7 +134,6 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-
 					for k, v := range grammar.Rules {
 						if v.IsPublic {
 							keys = append(keys, k)
@@ -151,7 +150,6 @@ func main() {
 						productions = append(productions, prod)
 					}
 					productions = ApplyPostproc(productions, cmd)
-
 					if cmd.String("outFile") == "" {
 						for _, prod := range productions {
 							fmt.Println(prod)
@@ -190,17 +188,12 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-					err = ValidateOutFile(cmd.String("outFile"))
-					if err != nil {
-						log.Fatal(err)
-					}
 
 					grammar, err = BuildGrammar(cmd)
 					if err != nil {
 						log.Fatal(err)
 					}
-
-					j, err = json.MarshalIndent(GrammarToJSON(grammar), "", "\t")
+					j, err = json.Marshal(GrammarToJSON(grammar))
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -216,10 +209,9 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-
 					for k, v := range grammar.Rules {
 						if v.IsPublic {
-							j, err := json.MarshalIndent(GraphToJSON(v.Graph), "", "\t")
+							j, err := json.Marshal(GraphToJSON(v.Graph))
 							if err != nil {
 								log.Fatal(err)
 							}
@@ -227,13 +219,11 @@ func main() {
 							if err != nil {
 								log.Fatal(err)
 							}
-
 							nodes, edges := GraphToTXT(v.Graph)
 							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_edges.txt"), []byte(edges), 0644)
 							if err != nil {
 								log.Fatal(err)
 							}
-
 							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_nodes.txt"), []byte(nodes), 0644)
 							if err != nil {
 								log.Fatal(err)
