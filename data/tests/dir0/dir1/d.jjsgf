@@ -1,0 +1,10 @@
+{
+	"type" : "JJSGF",
+	"grammar" : "d",
+	"imports" : [
+		"a.order",
+		"c.teatype"
+	],
+	"public" : {},
+	"rules" : {}
+}

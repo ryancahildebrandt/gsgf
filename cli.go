@@ -198,11 +198,14 @@ func BuildGrammar(cmd *cli.Command) (Grammar, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	namespace, err := CreateNameSpace(cmd.String("inFile"), cmd.String("ext"))
+	err = ValidateGrammarCompleteness(g)
 	if err != nil {
-		log.Fatal(err)
+		namespace, err := CreateNameSpace(cmd.String("inFile"), cmd.String("ext"))
+		if err != nil {
+			log.Fatal(err)
+		}
+		g = ImportNameSpace(g, namespace, lex)
 	}
-	g = ImportNameSpace(g, namespace, lex)
 
 	if cmd.Bool("minimize") {
 		for k, v := range g.Rules {

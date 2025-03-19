@@ -24,12 +24,15 @@ func main() {
 		Usage:                 "Generate natural language expressions from context free grammars",
 		UsageText:             "gsgf [COMMAND] [OPTIONS] example.jsgf",
 		EnableShellCompletion: true,
+		Suggest:               true,
 		Commands: []*cli.Command{
 			{
-				Name:      "generate",
-				UsageText: "gsgf generate [OPTIONS] example.jsgf",
-				Usage:     "Produce all expressions from a grammar file, disregarding token weights",
-				Before:    PrepareContext,
+				Name:                  "generate",
+				UsageText:             "gsgf generate [OPTIONS] example.jsgf",
+				Usage:                 "Produce all expressions from a grammar file, disregarding token weights",
+				EnableShellCompletion: true,
+				Suggest:               true,
+				Before:                PrepareContext,
 				Flags: []cli.Flag{
 					&inFile,
 					&ext,
@@ -89,10 +92,12 @@ func main() {
 			},
 
 			{
-				Name:      "sample",
-				UsageText: "gsgf sample [OPTIONS] example.jsgf",
-				Usage:     "Produce expressions from a grammar file, according to provided token weights",
-				Before:    PrepareContext,
+				Name:                  "sample",
+				UsageText:             "gsgf sample [OPTIONS] example.jsgf",
+				Usage:                 "Produce expressions from a grammar file, according to provided token weights",
+				EnableShellCompletion: true,
+				Suggest:               true,
+				Before:                PrepareContext,
 				Flags: []cli.Flag{
 					&inFile,
 					&ext,
@@ -166,10 +171,12 @@ func main() {
 				},
 			},
 			{
-				Name:      "export",
-				UsageText: "gsgf export [OPTIONS] example.jsgf",
-				Usage:     "Save graph and grammar representations to disk",
-				Before:    PrepareContext,
+				Name:                  "export",
+				UsageText:             "gsgf export [OPTIONS] example.jsgf",
+				Usage:                 "Save graph and grammar representations to disk",
+				EnableShellCompletion: true,
+				Suggest:               true,
+				Before:                PrepareContext,
 				Flags: []cli.Flag{
 					&inFile,
 					&ext,

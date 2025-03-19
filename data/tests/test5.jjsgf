@@ -1,0 +1,16 @@
+{
+	"type" : "JJSGF",
+	"grammar" : "test5",
+	"imports" : [
+		"b.request"
+	],
+	"public" : {
+		"main" : "(<request>|<order>) <quant> <teatype> tea"
+		},
+	"rules" : {
+		"order" : "i'd like [to order|a|<quant>]",
+		"quant" : "some|a (cup|glass) of",
+		"teatype" : "red|sweet|green|jasmine|milk",
+		"brew" : "(make|brew|whip up) <quant>"
+		}
+}

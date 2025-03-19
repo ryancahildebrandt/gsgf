@@ -11,7 +11,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -137,7 +136,7 @@ func PeekGrammar(p string) (string, []string, map[string]string, error) {
 		var jj JJSGFGrammarJSON
 		err = json.NewDecoder(f).Decode(&jj)
 		if err != nil {
-			log.Fatal(err)
+			return "", []string{}, map[string]string{}, fmt.Errorf("in PeekGrammar(%v):\n%+w", p, errors.New("error decoding json file"))
 		}
 		scanner = bufio.NewScanner(strings.NewReader(JJSGFToJSGF(jj)))
 	default:
@@ -217,7 +216,7 @@ func GetImportOrder(p string, e string) ([]string, error) {
 	)
 	_, imports, _, err := PeekGrammar(p)
 	if err != nil {
-		return imports, err
+		return imports, fmt.Errorf("in GetImportOrder(%v, %v):\n%+w", p, e, err)
 	}
 	for len(imports) > 0 {
 		imp, imports = imports[0], imports[1:]

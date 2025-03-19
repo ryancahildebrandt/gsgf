@@ -30,6 +30,17 @@ func TestCreateNameSpace(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			d: "data/tests/test0.jjsgf",
+			e: ".jjsgf",
+			r: map[string]string{
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<brew>":    "(make|brew|whip up) <quant>;",
+			},
+			wantErr: false,
+		},
+		{
 			d: "data/tests/test1.jsgf",
 			e: ".jsgf",
 			r: map[string]string{
@@ -61,6 +72,18 @@ func TestCreateNameSpace(t *testing.T) {
 		{
 			d: "data/tests/test4.jsgf",
 			e: ".jsgf",
+			r: map[string]string{
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<brew>":    "(make|brew|whip up) <quant>;",
+			},
+			wantErr: false,
+		},
+		{
+			d: "data/tests/test4.jjsgf",
+			e: ".jjsgf",
 			r: map[string]string{
 				"<order>":   "i'd like [to order|a|<quant>];",
 				"<quant>":   "some|a (cup|glass) of;",
@@ -117,8 +140,20 @@ func TestCreateNameSpace(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			d:       "data/tests/dir0/c.jjsgf",
+			e:       ".jjsgf",
+			r:       map[string]string{},
+			wantErr: false,
+		},
+		{
 			d:       "data/tests/dir0/dir1/d.jsgf",
 			e:       ".jsgf",
+			r:       map[string]string{},
+			wantErr: true,
+		},
+		{
+			d:       "data/tests/dir0/dir1/d.jjsgf",
+			e:       ".jjsgf",
 			r:       map[string]string{},
 			wantErr: true,
 		},
@@ -158,8 +193,10 @@ func TestFindGrammar(t *testing.T) {
 		wantErr bool
 	}{
 		{p: "./data/tests/.jsgf", t: "test0", e: ".jsgf", want: "data/tests/test0.jsgf", wantErr: false},
+		{p: "./data/tests/.jsgf", t: "test0", e: ".jjsgf", want: "data/tests/test0.jjsgf", wantErr: false},
 		{p: "./data/tests/test0.jsgf", t: "test0", e: ".jsgf", want: "data/tests/test0.jsgf", wantErr: false},
 		{p: "./data/tests/test0.jsgf", t: "a", e: ".jsgf", want: "data/tests/a.jsgf", wantErr: false},
+		{p: "./data/tests/test0.jsgf", t: "a", e: ".jjsgf", want: "data/tests/a.jjsgf", wantErr: false},
 		{p: "./data/tests/test0.jsgf", t: "e", e: ".jsgf", want: "data/tests/dir0/dir1/dir2/e.jsgf", wantErr: false},
 		{p: "./data/tests/a.jsgf", t: "a", e: ".jsgf", want: "data/tests/a.jsgf", wantErr: false},
 		{p: "./data/tests/dir0/dir1/c.jsgf", t: "d", e: ".jsgf", want: "data/tests/dir0/dir1/d.jsgf", wantErr: false},
@@ -167,6 +204,7 @@ func TestFindGrammar(t *testing.T) {
 		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "e", e: ".jsgf", want: "data/tests/dir0/dir1/dir2/e.jsgf", wantErr: false},
 		{p: "./data/tests", t: "test0", e: ".jsgf", want: "data/tests/test0.jsgf", wantErr: false},
 		{p: "./data/tests/dir0/dir1/c.jsgf", t: "b", e: ".jsgf", want: "", wantErr: true},
+		{p: "./data/tests/dir0/dir1/c.jsgf", t: "b", e: ".jjsgf", want: "", wantErr: true},
 		{p: "./data/tests/test0.jsgf", t: "f", e: ".jsgf", want: "", wantErr: true},
 		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "d", e: ".jsgf", want: "", wantErr: true},
 	}
@@ -190,16 +228,21 @@ func TestImportOrder(t *testing.T) {
 	}{
 		{p: "./data/tests", e: ".jsgf", want: []string{}, wantErr: true},
 		{p: "./data/tests/.jsgf", e: ".jsgf", want: []string{}, wantErr: true},
+		{p: "./data/tests/.jjsgf", e: ".jjsgf", want: []string{}, wantErr: true},
 		{p: "./data/tests/test0.jsgf", e: ".jsgf", want: []string{"import <a.*>;"}, wantErr: false},
 		{p: "./data/tests/test1.jsgf", e: ".jsgf", want: []string{"import <c.brew>;"}, wantErr: false},
+		{p: "./data/tests/test1.jjsgf", e: ".jjsgf", want: []string{"import <c.brew>;"}, wantErr: false},
 		{p: "./data/tests/test3.jsgf", e: ".jsgf", want: []string{"import <e.dne>;"}, wantErr: false},
+		{p: "./data/tests/test4.jsgf", e: ".jsgf", want: []string{"import <a.order>;", "import <c.teatype>;", "import <d.*>;"}, wantErr: false},
 		{p: "./data/tests/test4.jsgf", e: ".jsgf", want: []string{"import <a.order>;", "import <c.teatype>;", "import <d.*>;"}, wantErr: false},
 		{p: "./data/tests/test5.jsgf", e: ".jsgf", want: []string{"import <b.request>;", "import <c.brew>;"}, wantErr: false},
 		{p: "./data/tests/a.jsgf", e: ".jsgf", want: []string{}, wantErr: false},
 		{p: "./data/tests/b.jsgf", e: ".jsgf", want: []string{"import <c.brew>;"}, wantErr: false},
 		{p: "./data/tests/dir0/c.jsgf", e: ".jsgf", want: []string{}, wantErr: false},
+		{p: "./data/tests/dir0/c.jjsgf", e: ".jjsgf", want: []string{}, wantErr: false},
 		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", e: ".jsgf", want: []string{}, wantErr: false},
 		{p: "./data/tests/test2.jsgf", e: ".jsgf", want: []string{}, wantErr: true},
+		{p: "./data/tests/test2.jjsgf", e: ".jjsgf", want: []string{}, wantErr: true},
 		{p: "./data/tests/dir0/dir1/d.jsgf", e: ".jsgf", want: []string{}, wantErr: true},
 	}
 	for i, test := range table {
@@ -224,6 +267,17 @@ func TestPeekGrammar(t *testing.T) {
 	}{
 		{
 			p:       "data/tests/test0.jsgf",
+			n:       "test0",
+			imports: []string{"import <a.*>;"},
+			rules: map[string]string{
+				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<brew>":    "(make|brew|whip up) <quant>;",
+			},
+		},
+		{
+			p:       "data/tests/test0.jjsgf",
 			n:       "test0",
 			imports: []string{"import <a.*>;"},
 			rules: map[string]string{
@@ -300,6 +354,15 @@ func TestPeekGrammar(t *testing.T) {
 				"<quant>": "some|a (cup|glass) of;"},
 		},
 		{
+			p:       "data/tests/a.jjsgf",
+			n:       "a",
+			imports: []string{},
+			rules: map[string]string{"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>": "i'd like [to order|a|<quant>];",
+				"<brew>":  "(make|brew|whip up) <quant>;",
+				"<quant>": "some|a (cup|glass) of;"},
+		},
+		{
 			p:       "data/tests/b.jsgf",
 			n:       "b",
 			imports: []string{"import <c.brew>;"},
@@ -324,6 +387,19 @@ func TestPeekGrammar(t *testing.T) {
 		},
 		{
 			p:       "data/tests/dir0/dir1/dir2/e.jsgf",
+			n:       "e",
+			imports: []string{},
+			rules: map[string]string{
+				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<quant>":   "some|a (cup|glass) of;",
+				"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<brew>":    "(make|brew|whip up) <quant>;",
+			},
+		},
+		{
+			p:       "data/tests/dir0/dir1/dir2/e.jjsgf",
 			n:       "e",
 			imports: []string{},
 			rules: map[string]string{

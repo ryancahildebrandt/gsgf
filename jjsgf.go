@@ -7,6 +7,7 @@ package main
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 )
 
@@ -18,7 +19,11 @@ type JJSGFGrammarJSON struct {
 }
 
 func JJSGFToJSGF(j JJSGFGrammarJSON) string {
-	var b strings.Builder
+	var (
+		b       strings.Builder
+		entry   string
+		entries []string
+	)
 
 	b.WriteString("#JSGF V1.0 ISO8859-1 en;\n")
 	b.WriteString(fmt.Sprintf("grammar %s;\n", j.Name))
@@ -26,10 +31,21 @@ func JJSGFToJSGF(j JJSGFGrammarJSON) string {
 		b.WriteString(fmt.Sprintf("import <%s>;\n", i))
 	}
 	for k, v := range j.Public {
-		b.WriteString(fmt.Sprintf("public <%s> = %s;\n", k, v))
+		entry = fmt.Sprintf("public <%s> = %s;\n", k, v)
+		entries = append(entries, entry)
 	}
+	slices.Sort(entries)
+	for _, e := range entries {
+		b.WriteString(e)
+	}
+	entries = []string{}
 	for k, v := range j.Rules {
-		b.WriteString(fmt.Sprintf("<%s> = %s;\n", k, v))
+		entry = fmt.Sprintf("<%s> = %s;\n", k, v)
+		entries = append(entries, entry)
+	}
+	slices.Sort(entries)
+	for _, e := range entries {
+		b.WriteString(e)
 	}
 
 	return b.String()

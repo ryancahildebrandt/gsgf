@@ -1,0 +1,13 @@
+{
+	"type" : "JJSGF",
+	"grammar" : "b",
+	"imports" : [
+		"c.brew"
+	],
+	"public" : {},
+	"rules" : {
+		"request" : "[(could|will|would) you] please <brew>",
+		"order" : "i'd like [to order|a|<quant>]",
+		"quant" : "some|a (cup|glass) of"
+		}
+}

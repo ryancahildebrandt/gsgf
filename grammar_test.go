@@ -167,39 +167,48 @@ func TestGetAllProductions(t *testing.T) {
 		{
 			p:       []string{""},
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{";"},
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"", ""},
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{";", ";", ";"},
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc;"},
 			want:    []string{"abc"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"<b>;"},
 			want:    []string{"1", "2", "3"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"<g>;"},
 			want:    []string{"abc"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"<h>;"},
 			want:    []string{"123bc"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"<i>;"},
 			want:    []string{"a1c", "a2c", "a3c"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p: []string{"<j>;"},
 			want: []string{
@@ -220,19 +229,23 @@ func TestGetAllProductions(t *testing.T) {
 		{
 			p:       []string{"a{}b//c/0.1/;"},
 			want:    []string{"a{}b//c/0.1/"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"a{}/0.1/b/0.1/{}c;"},
 			want:    []string{"a{}/0.1/b/0.1/{}c"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc<a>;"},
 			want:    []string{"abc123"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc<l>;"},
 			want:    []string{"abc<l>"},
-			wantErr: true},
+			wantErr: true,
+		},
 		{
 			p:       []string{"abc<a><b><c>;"},
 			want:    []string{"abc1231123", "abc123113", "abc1232123", "abc123213", "abc1233123", "abc123313"},
@@ -241,19 +254,23 @@ func TestGetAllProductions(t *testing.T) {
 		{
 			p:       []string{"abc(<g>|<h>|<i>);"},
 			want:    []string{"abcabc", "abc123bc", "abca1c", "abca2c", "abca3c"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc<g><g><g>;"},
 			want:    []string{"abcabcabcabc"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc;", "def;", "ghi;"},
 			want:    []string{"abc", "def", "ghi"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc<a>;", "def<h>;", "<b>;"},
 			want:    []string{"abc123", "def123bc", "1", "2", "3"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p: []string{"abc<a><b><c>;", "def[<h>];", "g((hi)|(jk));"},
 			want: []string{
@@ -481,39 +498,48 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 		{
 			p:       []string{""},
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{";"},
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"", ""},
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{";", ";", ";"},
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc;"},
 			want:    []string{"abc"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"<b>;"},
 			want:    []string{"1", "2", "3"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"<g>;"},
 			want:    []string{"abc"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"<h>;"},
 			want:    []string{"123bc"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"<i>;"},
 			want:    []string{"a1c", "a2c", "a3c"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p: []string{"<j>;"},
 			want: []string{
@@ -534,19 +560,23 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 		{
 			p:       []string{"a{}b//c/0.1/;"},
 			want:    []string{"a{}b//c/0.1/"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"a{}/0.1/b/0.1/{}c;"},
 			want:    []string{"a{}/0.1/b/0.1/{}c"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc<a>;"},
 			want:    []string{"abc123"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc<l>;"},
 			want:    []string{"abc<l>"},
-			wantErr: true},
+			wantErr: true,
+		},
 		{
 			p:       []string{"abc<a><b><c>;"},
 			want:    []string{"abc1231123", "abc123113", "abc1232123", "abc123213", "abc1233123", "abc123313"},
@@ -555,19 +585,23 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 		{
 			p:       []string{"abc(<g>|<h>|<i>);"},
 			want:    []string{"abcabc", "abc123bc", "abca1c", "abca2c", "abca3c"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc<g><g><g>;"},
 			want:    []string{"abcabcabcabc"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc;", "def;", "ghi;"},
 			want:    []string{"abc", "def", "ghi"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       []string{"abc<a>;", "def<h>;", "<b>;"},
 			want:    []string{"abc123", "def123bc", "1", "2", "3"},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p: []string{"abc<a><b><c>;", "def[<h>];", "g((hi)|(jk));"},
 			want: []string{
@@ -784,7 +818,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 	}
 }
 
-func TestGetAllProductionsE2E(t *testing.T) {
+func TestGetAllProductionsJSGF(t *testing.T) {
 	lexer := NewJSGFLexer("\"")
 	var productions []string
 	f, err := os.Open("data/tests/productions.txt")
@@ -803,47 +837,63 @@ func TestGetAllProductionsE2E(t *testing.T) {
 		{
 			p:       "data/tests/test0.jsgf",
 			want:    productions,
-			wantErr: false},
+			wantErr: false,
+		},
+		{
+			p:       "data/tests/test0.jsgf",
+			want:    productions,
+			wantErr: false,
+		},
 		{
 			p:       "data/tests/test1.jsgf",
 			want:    productions,
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       "data/tests/test2.jsgf",
 			want:    productions,
-			wantErr: true}, // returns error but is still resolvable, figure out how to validate completness before imports
+			wantErr: true,
+		},
 		{
 			p:       "data/tests/test3.jsgf",
 			want:    productions,
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       "data/tests/test4.jsgf",
 			want:    productions,
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       "data/tests/test5.jsgf",
 			want:    productions,
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       "data/tests/a.jsgf",
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       "data/tests/b.jsgf",
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       "data/tests/dir0/c.jsgf",
 			want:    []string{},
-			wantErr: false},
+			wantErr: false,
+		},
 		{
 			p:       "data/tests/dir0/dir1/d.jsgf",
 			want:    []string{},
-			wantErr: true},
+			wantErr: true,
+		},
 		{
 			p:       "data/tests/dir0/dir1/dir2/e.jsgf",
 			want:    productions,
-			wantErr: false},
+			wantErr: false,
+		},
 	}
 	for i, test := range table {
 		var err error
@@ -852,6 +902,108 @@ func TestGetAllProductionsE2E(t *testing.T) {
 		scanner := bufio.NewScanner(f)
 		grammar, err2 := FomJSGF(grammar, scanner, lexer)
 		namespace, err3 := CreateNameSpace(test.p, ".jsgf")
+		grammar = ImportNameSpace(grammar, namespace, lexer)
+		grammar, err4 := ResolveRules(grammar, lexer)
+		got := GetAllProductions(grammar)
+		for _, e := range []error{err1, err2, err3, err4} {
+			if e != nil {
+				err = e
+			}
+		}
+		sort.Strings(test.want)
+		sort.Strings(got)
+		if !slices.Equal(got, test.want) {
+			t.Errorf("test %v: %v.Productions()\nGOT %v\nWANT %v", i, test.p, got, test.want)
+		}
+		if (err != nil) != test.wantErr {
+			t.Errorf("test %v: %v.Productions().err\nGOT %v\nWANT %v", i, test.p, err, test.wantErr)
+		}
+	}
+}
+
+func TestGetAllProductionsJJSGF(t *testing.T) {
+	lexer := NewJSGFLexer("\"")
+	var productions []string
+	f, err := os.Open("data/tests/productions.txt")
+	if err != nil {
+		t.Errorf("%s", err)
+	}
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		productions = append(productions, scanner.Text())
+	}
+	table := []struct {
+		p       string
+		want    []string
+		wantErr bool
+	}{
+		{
+			p:       "data/tests/test0.jjsgf",
+			want:    productions,
+			wantErr: false,
+		},
+		{
+			p:       "data/tests/test0.jjsgf",
+			want:    productions,
+			wantErr: false,
+		},
+		{
+			p:       "data/tests/test1.jjsgf",
+			want:    productions,
+			wantErr: false,
+		},
+		{
+			p:       "data/tests/test2.jjsgf",
+			want:    productions,
+			wantErr: true,
+		},
+		{
+			p:       "data/tests/test3.jjsgf",
+			want:    productions,
+			wantErr: false,
+		},
+		{
+			p:       "data/tests/test4.jjsgf",
+			want:    productions,
+			wantErr: false,
+		},
+		{
+			p:       "data/tests/test5.jjsgf",
+			want:    productions,
+			wantErr: false,
+		},
+		{
+			p:       "data/tests/a.jjsgf",
+			want:    []string{},
+			wantErr: false,
+		},
+		{
+			p:       "data/tests/b.jjsgf",
+			want:    []string{},
+			wantErr: false,
+		},
+		{
+			p:       "data/tests/dir0/c.jjsgf",
+			want:    []string{},
+			wantErr: false,
+		},
+		{
+			p:       "data/tests/dir0/dir1/d.jjsgf",
+			want:    []string{},
+			wantErr: true,
+		},
+		{
+			p:       "data/tests/dir0/dir1/dir2/e.jjsgf",
+			want:    productions,
+			wantErr: false,
+		},
+	}
+	for i, test := range table {
+		var err error
+		grammar := NewGrammar()
+		scanner, err1 := FileScanner(test.p)
+		grammar, err2 := FomJSGF(grammar, scanner, lexer)
+		namespace, err3 := CreateNameSpace(test.p, ".jjsgf")
 		grammar = ImportNameSpace(grammar, namespace, lexer)
 		grammar, err4 := ResolveRules(grammar, lexer)
 		got := GetAllProductions(grammar)

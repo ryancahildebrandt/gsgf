@@ -1,0 +1,11 @@
+{
+	"type" : "JJSGF",
+	"grammar" : "c",
+	"imports" : [],
+	"public" : {},
+	"rules" : {
+		"quant" : "some|a (cup|glass) of",
+		"teatype" : "red|sweet|green|jasmine|milk",
+		"brew" : "(make|brew|whip up) <quant>"
+		}
+}
