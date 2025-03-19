@@ -10,13 +10,15 @@ import (
 	"fmt"
 )
 
-type Stack []int
+type stack []int
 
-func (s Stack) Push(v int) Stack {
+// TODO: doc
+func (s stack) push(v int) stack {
 	return append(s, v)
 }
 
-func (s Stack) Top() (int, error) {
+// TODO: doc
+func (s stack) top() (int, error) {
 	var top int
 
 	if len(s) == 0 {
@@ -27,25 +29,27 @@ func (s Stack) Top() (int, error) {
 	return top, nil
 }
 
-func (s Stack) Pop() (int, Stack, error) {
+// TODO: doc
+func (s stack) pop() (int, stack, error) {
 	var top int
-	var bot Stack
+	var bot stack
 
-	top, err := s.Top()
+	top, err := s.top()
 	if err != nil {
-		return 0, Stack{}, fmt.Errorf("in Stack(%v).Pop():\n%+w", s, err)
+		return 0, stack{}, fmt.Errorf("in Stack(%v).Pop():\n%+w", s, err)
 	}
 	bot = s[:len(s)-1]
 
 	return top, bot, nil
 }
 
-func (s Stack) Drop(v int) Stack {
-	var s1 Stack
+// TODO: doc
+func (s stack) drop(v int) stack {
+	var s1 stack
 
 	for _, i := range s {
 		if i != v {
-			s1 = s1.Push(i)
+			s1 = s1.push(i)
 		}
 	}
 

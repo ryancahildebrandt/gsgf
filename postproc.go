@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// TODO: doc
 func RemoveEndSpaces(p []string) []string {
 	for i := range p {
 		p[i] = strings.Trim(p[i], "\t\r\n ")
@@ -19,6 +20,7 @@ func RemoveEndSpaces(p []string) []string {
 	return p
 }
 
+// TODO: doc
 func RemoveMultipleSpaces(p []string) []string {
 	// will eat \n\t etc and replace w " "
 	for i := range p {
@@ -28,6 +30,7 @@ func RemoveMultipleSpaces(p []string) []string {
 	return p
 }
 
+// TODO: doc
 func RenderTabs(p []string) []string {
 	for i := range p {
 		p[i] = strings.Replace(p[i], `\t`, "\t", -1)
@@ -36,6 +39,7 @@ func RenderTabs(p []string) []string {
 	return p
 }
 
+// TODO: doc
 func RenderNewLines(p []string) []string {
 	for i := range p {
 		p[i] = strings.Replace(p[i], `\n`, "\n", -1)
@@ -44,6 +48,7 @@ func RenderNewLines(p []string) []string {
 	return p
 }
 
+// TODO: doc
 func RemoveTags(p []string) []string {
 	for i := range p {
 		p[i] = regexp.MustCompile(`\{.*?\}`).ReplaceAllString(p[i], "")
@@ -52,6 +57,7 @@ func RemoveTags(p []string) []string {
 	return p
 }
 
+// TODO: doc
 func WrapTags(p []string, prefix string, suffix string) []string {
 	var seen map[string]struct{} = make(map[string]struct{})
 
@@ -69,6 +75,7 @@ func WrapTags(p []string, prefix string, suffix string) []string {
 	return p
 }
 
+// TODO: doc
 func CollectTags(p []string, c string) []string {
 	var b strings.Builder
 
@@ -89,6 +96,7 @@ func CollectTags(p []string, c string) []string {
 	return p
 }
 
+// TODO: doc
 func WrapProductions(p []string, prefix string, suffix string) []string {
 	for i := range p {
 		p[i] = fmt.Sprint(prefix, p[i], suffix)

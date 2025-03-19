@@ -103,7 +103,7 @@ func TestGetFrom(t *testing.T) {
 	for i, test := range table {
 		g := NewGraph(test.e,
 			[]Expression{})
-		got := g.GetFrom(test.n)
+		got := g.getFrom(test.n)
 		if !slices.Equal(got, test.want) {
 			t.Errorf("test %v: Graph(%v).GetFrom(%v)\nGOT  %v\nWANT %v", i, test.e, test.n, got, test.want)
 		}
@@ -121,8 +121,8 @@ func TestGetWeight(t *testing.T) {
 			g: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{},
-				Children: map[int][]int{},
-				Weights:  map[int]map[int]float64{},
+				children: map[int][]int{},
+				weights:  map[int]map[int]float64{},
 			},
 			f:    0,
 			t:    0,
@@ -132,8 +132,8 @@ func TestGetWeight(t *testing.T) {
 			g: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{},
-				Children: map[int][]int{},
-				Weights:  map[int]map[int]float64{},
+				children: map[int][]int{},
+				weights:  map[int]map[int]float64{},
 			},
 			f:    -1,
 			t:    0,
@@ -143,8 +143,8 @@ func TestGetWeight(t *testing.T) {
 			g: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{},
-				Children: map[int][]int{},
-				Weights:  map[int]map[int]float64{},
+				children: map[int][]int{},
+				weights:  map[int]map[int]float64{},
 			},
 			f:    0,
 			t:    -1,
@@ -154,8 +154,8 @@ func TestGetWeight(t *testing.T) {
 			g: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{},
-				Children: map[int][]int{},
-				Weights:  map[int]map[int]float64{},
+				children: map[int][]int{},
+				weights:  map[int]map[int]float64{},
 			},
 			f:    -1,
 			t:    -1,
@@ -165,8 +165,8 @@ func TestGetWeight(t *testing.T) {
 			g: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
-				Children: map[int][]int{0: {1}, 1: {2}},
-				Weights:  map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
+				children: map[int][]int{0: {1}, 1: {2}},
+				weights:  map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
 			},
 			f:    0,
 			t:    0,
@@ -183,8 +183,8 @@ func TestGetWeight(t *testing.T) {
 					{From: 3, To: 6, Weight: 99},
 					{From: 5, To: 6, Weight: 9},
 				},
-				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
-				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+				children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
 			},
 			f:    0,
 			t:    1,
@@ -201,8 +201,8 @@ func TestGetWeight(t *testing.T) {
 					{From: 3, To: 6, Weight: 99},
 					{From: 5, To: 6, Weight: 9},
 				},
-				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
-				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+				children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
 			},
 			f:    0,
 			t:    5,
@@ -219,8 +219,8 @@ func TestGetWeight(t *testing.T) {
 					{From: 3, To: 6, Weight: 99},
 					{From: 5, To: 6, Weight: 9},
 				},
-				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
-				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+				children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
 			},
 			f:    1,
 			t:    6,
@@ -237,8 +237,8 @@ func TestGetWeight(t *testing.T) {
 					{From: 3, To: 6, Weight: 99},
 					{From: 5, To: 6, Weight: 9},
 				},
-				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
-				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
+				children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}},
+				weights:  map[int]map[int]float64{0: {1: 1.0, 3: 0.99, 5: 0.0}, 1: {6: 100}, 3: {6: 99}, 5: {6: 9}},
 			},
 			f:    5,
 			t:    6,
@@ -246,7 +246,7 @@ func TestGetWeight(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		got := test.g.GetWeight(test.f, test.t)
+		got := test.g.getWeight(test.f, test.t)
 		if test.want != got {
 			t.Errorf("test %v: %v.GetWeight(%v, %v)\nGOT  %v\nWANT %v", i, test.g, test.f, test.t, got, test.want)
 		}
@@ -264,8 +264,8 @@ func TestAddEdge(t *testing.T) {
 			want: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{},
-				Children: map[int][]int{},
-				Weights:  map[int]map[int]float64{},
+				children: map[int][]int{},
+				weights:  map[int]map[int]float64{},
 			},
 		},
 		{
@@ -274,8 +274,8 @@ func TestAddEdge(t *testing.T) {
 			want: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{},
-				Children: map[int][]int{},
-				Weights:  map[int]map[int]float64{},
+				children: map[int][]int{},
+				weights:  map[int]map[int]float64{},
 			},
 		},
 		{
@@ -284,8 +284,8 @@ func TestAddEdge(t *testing.T) {
 			want: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{{From: 1, To: 10, Weight: 1.0}},
-				Children: map[int][]int{1: {10}},
-				Weights:  map[int]map[int]float64{1: {10: 1.0}},
+				children: map[int][]int{1: {10}},
+				weights:  map[int]map[int]float64{1: {10: 1.0}},
 			},
 		},
 		{
@@ -293,8 +293,8 @@ func TestAddEdge(t *testing.T) {
 			want: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{{From: 0, To: 1, Weight: 1.0}},
-				Children: map[int][]int{0: {1}},
-				Weights:  map[int]map[int]float64{0: {1: 1.0}},
+				children: map[int][]int{0: {1}},
+				weights:  map[int]map[int]float64{0: {1: 1.0}},
 			},
 		},
 		{
@@ -303,8 +303,8 @@ func TestAddEdge(t *testing.T) {
 			want: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
-				Children: map[int][]int{0: {1}, 1: {2, 2}},
-				Weights:  map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
+				children: map[int][]int{0: {1}, 1: {2, 2}},
+				weights:  map[int]map[int]float64{0: {1: 1.0}, 1: {2: 1.0}},
 			},
 		},
 		{
@@ -313,8 +313,8 @@ func TestAddEdge(t *testing.T) {
 			want: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
-				Children: map[int][]int{0: {1}, 1: {2, 2}},
-				Weights:  map[int]map[int]float64{0: {1: 0.99}, 1: {2: 1.0}},
+				children: map[int][]int{0: {1}, 1: {2, 2}},
+				weights:  map[int]map[int]float64{0: {1: 0.99}, 1: {2: 1.0}},
 			},
 		},
 		{
@@ -323,8 +323,8 @@ func TestAddEdge(t *testing.T) {
 			want: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 0.99}},
-				Children: map[int][]int{0: {1}, 1: {2, 2}},
-				Weights:  map[int]map[int]float64{0: {1: 1.0}, 1: {2: 0.99}},
+				children: map[int][]int{0: {1}, 1: {2, 2}},
+				weights:  map[int]map[int]float64{0: {1: 1.0}, 1: {2: 0.99}},
 			},
 		},
 		{
@@ -333,8 +333,8 @@ func TestAddEdge(t *testing.T) {
 			want: Graph{
 				Tokens:   []Expression{},
 				Edges:    EdgeList{{From: 0, To: 1, Weight: 0.99}, {From: 1, To: 2, Weight: 1.0}, {From: 1, To: 2, Weight: 0.99}},
-				Children: map[int][]int{0: {1}, 1: {2, 2}},
-				Weights:  map[int]map[int]float64{0: {1: 0.99}, 1: {2: 0.99}},
+				children: map[int][]int{0: {1}, 1: {2, 2}},
+				weights:  map[int]map[int]float64{0: {1: 0.99}, 1: {2: 0.99}},
 			},
 		},
 		{
@@ -358,8 +358,8 @@ func TestAddEdge(t *testing.T) {
 					{From: 5, To: 6, Weight: 1.0},
 					{From: 8, To: 9, Weight: 1.0},
 				},
-				Children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}, 8: {9}},
-				Weights:  map[int]map[int]float64{0: {1: 1.0, 3: 1.0, 5: 1.0}, 1: {6: 1.0}, 3: {6: 1.0}, 5: {6: 1.0}, 8: {9: 1.0}},
+				children: map[int][]int{0: {1, 3, 5}, 1: {6}, 3: {6}, 5: {6}, 8: {9}},
+				weights:  map[int]map[int]float64{0: {1: 1.0, 3: 1.0, 5: 1.0}, 1: {6: 1.0}, 3: {6: 1.0}, 5: {6: 1.0}, 8: {9: 1.0}},
 			},
 		},
 		{
@@ -391,29 +391,29 @@ func TestAddEdge(t *testing.T) {
 					{From: 7, To: 8, Weight: 1.0},
 					{From: 0, To: 2, Weight: 1.0},
 				},
-				Children: map[int][]int{0: {1, 2}, 1: {2}, 2: {3, 4}, 3: {4}, 4: {5}, 5: {6, 7}, 6: {7}, 7: {8}},
-				Weights:  map[int]map[int]float64{0: {1: 1.0, 2: 1.0}, 1: {2: 1.0}, 2: {3: 1.0, 4: 1.0}, 3: {4: 1.0}, 4: {5: 1.0}, 5: {6: 1.0, 7: 1.0}, 6: {7: 1.0}, 7: {8: 1.0}},
+				children: map[int][]int{0: {1, 2}, 1: {2}, 2: {3, 4}, 3: {4}, 4: {5}, 5: {6, 7}, 6: {7}, 7: {8}},
+				weights:  map[int]map[int]float64{0: {1: 1.0, 2: 1.0}, 1: {2: 1.0}, 2: {3: 1.0, 4: 1.0}, 3: {4: 1.0}, 4: {5: 1.0}, 5: {6: 1.0, 7: 1.0}, 6: {7: 1.0}, 7: {8: 1.0}},
 			},
 		},
 	}
 	for i, test := range table {
 		g := NewGraph(test.e,
 			[]Expression{})
-		got := g.AddEdge(test.edg)
+		got := g.addEdge(test.edg)
 		if !slices.Equal(got.Tokens, test.want.Tokens) {
 			t.Errorf("test %v: Graph(%v).AddEdge(%v).Nodes\nGOT  %v\nWANT %v", i, test.e, test.edg, got.Tokens, test.want.Tokens)
 		}
 		if !slices.Equal(Sort(got.Edges), Sort(test.want.Edges)) {
 			t.Errorf("test %v: Graph(%v).AddEdge(%v).Edges\nGOT  %v\nWANT %v", i, test.e, test.edg, got.Edges, test.want.Edges)
 		}
-		if !maps.EqualFunc(got.Children, test.want.Children, func(V1, V2 []int) bool { return slices.Equal(V1, V2) }) {
-			t.Errorf("test %v: Graph(%v).AddEdge(%v).Children\nGOT  %v\nWANT %v", i, test.e, test.edg, got.Children, test.want.Children)
+		if !maps.EqualFunc(got.children, test.want.children, func(V1, V2 []int) bool { return slices.Equal(V1, V2) }) {
+			t.Errorf("test %v: Graph(%v).AddEdge(%v).Children\nGOT  %v\nWANT %v", i, test.e, test.edg, got.children, test.want.children)
 		}
-		if len(got.Weights) != len(test.want.Weights) {
-			t.Errorf("test %v: Graph(%v).AddEdge(%v).Children\nGOT  %v\nWANT %v", i, test.e, test.edg, got.Weights, test.want.Weights)
+		if len(got.weights) != len(test.want.weights) {
+			t.Errorf("test %v: Graph(%v).AddEdge(%v).Children\nGOT  %v\nWANT %v", i, test.e, test.edg, got.weights, test.want.weights)
 		}
-		for k1, v1 := range got.Weights {
-			v2, ok := test.want.Weights[k1]
+		for k1, v1 := range got.weights {
+			v2, ok := test.want.weights[k1]
 			if !ok {
 				t.Errorf("test %v: Graph(%v).AddEdge(%v).Children\nGOT  %v\nWANT %v", i, test.e, test.edg, v1, v2)
 			}
@@ -511,7 +511,7 @@ func TestGetEndPoints(t *testing.T) {
 	for i, test := range table {
 		g := NewGraph(test.e,
 			[]Expression{})
-		initial, final := GetEndPoints(g)
+		initial, final := getEndPoints(g)
 		if initial != test.i {
 			t.Errorf("test %v: GetEndPoints(%v).initial\nGOT  %v\nWANT %v", i, test.e, initial, test.i)
 		}
@@ -952,7 +952,7 @@ func TestGetAllPaths(t *testing.T) {
 	for i, test := range table {
 		g := NewGraph(test.e,
 			[]Expression{})
-		got := GetAllPaths(g)
+		got := getAllPaths(g)
 		sort.Slice(got, func(i, j int) bool { return fmt.Sprint(got[i]) < fmt.Sprint(got[j]) })
 		sort.Slice(test.want, func(i, j int) bool { return fmt.Sprint(test.want[i]) < fmt.Sprint(test.want[j]) })
 		for n := range got {
@@ -1328,25 +1328,25 @@ func TestComposeGraphs(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		got, err := ComposeGraphs(test.g1, test.g2, test.i)
+		got, err := composeGraphs(test.g1, test.g2, test.i)
 		if !slices.Equal(got.Tokens, test.want.Tokens) {
 			t.Errorf("test %v: ComposeGraphs(%v, %v, %v)\nGOT  %v\nWANT %v", i, test.g1, test.g2, test.i, got.Tokens, test.want.Tokens)
 		}
 		if !slices.Equal(Sort(got.Edges), Sort(test.want.Edges)) {
 			t.Errorf("test %v: ComposeGraphs(%v, %v, %v)\nGOT  %v\nWANT %v", i, test.g1, test.g2, test.i, got.Edges, test.want.Edges)
 		}
-		if len(got.Children) != len(test.want.Children) {
-			t.Errorf("test %v: ComposeGraphs(%v, %v, %v)\nGOT  %v\nWANT %v", i, test.g1, test.g2, test.i, got.Children, test.want.Children)
+		if len(got.children) != len(test.want.children) {
+			t.Errorf("test %v: ComposeGraphs(%v, %v, %v)\nGOT  %v\nWANT %v", i, test.g1, test.g2, test.i, got.children, test.want.children)
 		}
-		for k1, v1 := range got.Children {
-			v2, ok := test.want.Children[k1]
+		for k1, v1 := range got.children {
+			v2, ok := test.want.children[k1]
 			if !ok {
-				t.Errorf("test %v: ComposeGraphs(%v, %v, %v)\nGOT  %v\nWANT %v", i, test.g1, test.g2, test.i, got.Children, test.want.Children)
+				t.Errorf("test %v: ComposeGraphs(%v, %v, %v)\nGOT  %v\nWANT %v", i, test.g1, test.g2, test.i, got.children, test.want.children)
 			}
 			sort.Ints(v1)
 			sort.Ints(v2)
 			if !slices.Equal(v1, v2) {
-				t.Errorf("test %v: ComposeGraphs(%v, %v, %v)\nGOT  %v\nWANT %v", i, test.g1, test.g2, test.i, got.Children, test.want.Children)
+				t.Errorf("test %v: ComposeGraphs(%v, %v, %v)\nGOT  %v\nWANT %v", i, test.g1, test.g2, test.i, got.children, test.want.children)
 			}
 		}
 		if (err != nil) != test.wantErr {
@@ -1383,7 +1383,7 @@ func TestGetRandomChoice(t *testing.T) {
 		if test.p {
 			choices := make(map[int]float64)
 			for range 1000 {
-				c, err = GetRandomChoice(test.c, test.w, s)
+				c, err = getRandomChoice(test.c, test.w, s)
 				choices[c]++
 			}
 			got = test.c[0]
@@ -1393,7 +1393,7 @@ func TestGetRandomChoice(t *testing.T) {
 				}
 			}
 		} else {
-			got, err = GetRandomChoice(test.c, test.w, s)
+			got, err = getRandomChoice(test.c, test.w, s)
 		}
 		if got != test.want {
 			t.Errorf("test %v: ChooseNext(%v, %v)\nGOT  %v\nWANT %v", i, test.c, test.w, got, test.want)
@@ -1862,7 +1862,7 @@ func TestGetRandomPath(t *testing.T) {
 	}
 	for i, test := range table {
 		g := NewGraph(test.e, []Expression{})
-		got, err := GetRandomPath(g)
+		got, err := getRandomPath(g)
 		found := false
 		for _, p := range test.want {
 			if slices.Equal(got, p) {
@@ -2109,7 +2109,7 @@ func TestGraphDropNode(t *testing.T) {
 	for i, test := range table {
 		g := NewGraph(test.e,
 			[]Expression{})
-		got := g.DropNode(test.i)
+		got := g.dropNode(test.i)
 		if !slices.Equal(Sort(got.Edges), Sort(test.want)) {
 			t.Errorf("test %v: (%v).DropNode(%v)\nGOT  %v\nWANT %v", i, test.e, test.i, Sort(got.Edges), Sort(test.want))
 		}
@@ -2296,7 +2296,7 @@ func TestGraphMinimize(t *testing.T) {
 	}
 	for i, test := range table {
 		g := NewGraph(test.e, test.n)
-		got := Minimize(g)
+		got := Minimize(g, jsgfFilter)
 		if !slices.Equal(Sort(got.Edges), Sort(test.want)) {
 			t.Errorf("test %v: (%v, %v).Minimize\nGOT  %v\nWANT %v", i, test.e, test.n, Sort(got.Edges), Sort(test.want))
 		}
@@ -2311,7 +2311,7 @@ func TestRuleWeightEdges(t *testing.T) {
 	}{
 		{
 			r: Rule{
-				Exp:      "/.//",
+				exp:      "/.//",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{},
@@ -2319,7 +2319,7 @@ func TestRuleWeightEdges(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "",
+				exp:      "",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{},
@@ -2330,7 +2330,7 @@ func TestRuleWeightEdges(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "",
+				exp:      "",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{},
@@ -2338,7 +2338,7 @@ func TestRuleWeightEdges(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "",
+				exp:      "",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{},
@@ -2349,7 +2349,7 @@ func TestRuleWeightEdges(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "/.99/;",
+				exp:      "/.99/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2359,7 +2359,7 @@ func TestRuleWeightEdges(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "/.99/;",
+				exp:      "/.99/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2372,7 +2372,7 @@ func TestRuleWeightEdges(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "123/.99/;",
+				exp:      "123/.99/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2384,7 +2384,7 @@ func TestRuleWeightEdges(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "123/.99/;",
+				exp:      "123/.99/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2397,7 +2397,7 @@ func TestRuleWeightEdges(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "<123>/.99/;",
+				exp:      "<123>/.99/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2409,7 +2409,7 @@ func TestRuleWeightEdges(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "<123>/.99/;",
+				exp:      "<123>/.99/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2424,7 +2424,7 @@ func TestRuleWeightEdges(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "1|2|3/0.1/;",
+				exp:      "1|2|3/0.1/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2440,7 +2440,7 @@ func TestRuleWeightEdges(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "1|2|3/0.1/;",
+				exp:      "1|2|3/0.1/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2459,7 +2459,7 @@ func TestRuleWeightEdges(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "1{}|2//|3/0.1/;",
+				exp:      "1{}|2//|3/0.1/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2475,7 +2475,7 @@ func TestRuleWeightEdges(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "1{}|2//|3/0.1/;",
+				exp:      "1{}|2//|3/0.1/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2494,7 +2494,7 @@ func TestRuleWeightEdges(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "1/0.1/[2]3;",
+				exp:      "1/0.1/[2]3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2511,7 +2511,7 @@ func TestRuleWeightEdges(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "1/0.1/[2]3;",
+				exp:      "1/0.1/[2]3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2531,7 +2531,7 @@ func TestRuleWeightEdges(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "1(2/1.01/)3;",
+				exp:      "1(2/1.01/)3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2547,7 +2547,7 @@ func TestRuleWeightEdges(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "1(2/1.01/)3;",
+				exp:      "1(2/1.01/)3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2566,7 +2566,7 @@ func TestRuleWeightEdges(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "1/1.01/(2[3]);",
+				exp:      "1/1.01/(2[3]);",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2585,7 +2585,7 @@ func TestRuleWeightEdges(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "1/1.01/(2[3]);",
+				exp:      "1/1.01/(2[3]);",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2607,12 +2607,12 @@ func TestRuleWeightEdges(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		got, err := WeightEdges(test.r)
+		got, err := weightEdges(test.r)
 		if test.want.IsPublic != got.IsPublic {
 			t.Errorf("test %v: %v.WeightEdges().Is_public\nGOT  %v\nWANT %v", i, test.r, got.IsPublic, test.want.IsPublic)
 		}
-		if !slices.Equal(GetReferences(got), GetReferences(test.want)) {
-			t.Errorf("test %v: %v.WeightEdges().References\nGOT  %v\nWANT %v", i, test.r, GetReferences(got), GetReferences(test.want))
+		if !slices.Equal(getReferences(got), getReferences(test.want)) {
+			t.Errorf("test %v: %v.WeightEdges().References\nGOT  %v\nWANT %v", i, test.r, getReferences(got), getReferences(test.want))
 		}
 		if !slices.Equal(Sort(test.want.Graph.Edges), Sort(got.Graph.Edges)) {
 			t.Errorf("test %v: %v.WeightEdges().edges\nGOT  %v\nWANT %v", i, test.r, Sort(got.Graph.Edges), Sort(test.want.Graph.Edges))
@@ -2636,7 +2636,7 @@ func TestGetProductions(t *testing.T) {
 	}{
 		{
 			r: Rule{
-				Exp:      "",
+				exp:      "",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{},
@@ -2647,7 +2647,7 @@ func TestGetProductions(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      ";",
+				exp:      ";",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2660,7 +2660,7 @@ func TestGetProductions(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "123;",
+				exp:      "123;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2673,7 +2673,7 @@ func TestGetProductions(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "1|2|3;",
+				exp:      "1|2|3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2692,7 +2692,7 @@ func TestGetProductions(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "1{}|2//|3/0.1/;",
+				exp:      "1{}|2//|3/0.1/;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2711,7 +2711,7 @@ func TestGetProductions(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "1[2]3;",
+				exp:      "1[2]3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2731,7 +2731,7 @@ func TestGetProductions(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "1(2)3;",
+				exp:      "1(2)3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2750,7 +2750,7 @@ func TestGetProductions(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp:      "1(2[3]);",
+				exp:      "1(2[3]);",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -2772,7 +2772,7 @@ func TestGetProductions(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		got := GetProductions(test.r)
+		got := getProductions(test.r)
 		sort.Strings(got)
 		sort.Strings(test.want)
 		if !slices.Equal(got, test.want) {
@@ -2944,7 +2944,7 @@ func TestFilterTokens(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		got := FilterTokens(test.e, test.f)
+		got := filterTokens(test.e, test.f)
 		if !slices.Equal(got, test.want) {
 			t.Errorf("test %v: FilterTerminals(%v, %v)\nGOT  %v\nWANT %v", i, test.e, test.f, got, test.want)
 		}

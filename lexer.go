@@ -14,6 +14,7 @@ import (
 	"github.com/bzick/tokenizer"
 )
 
+// TODO: doc
 const (
 	AngleOpen = iota + 1
 	AngleClose
@@ -36,6 +37,9 @@ const (
 	ForwardSlash
 )
 
+var jsgfFilter []string = []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}
+
+// TODO: doc
 func NewJSGFLexer(q string) *tokenizer.Tokenizer {
 	var lexer *tokenizer.Tokenizer = tokenizer.New()
 
@@ -66,7 +70,8 @@ func NewJSGFLexer(q string) *tokenizer.Tokenizer {
 	return lexer
 }
 
-func CaptureString(s *tokenizer.Stream, end string, includeEnd bool) (string, error) {
+// TODO: doc
+func captureString(s *tokenizer.Stream, end string, includeEnd bool) (string, error) {
 	var builder strings.Builder
 	var remainder string = s.GetSnippetAsString(0, 1000000, 0) // really high value here because s doesn't have a "show me whats left in the string" method
 	if !strings.Contains(remainder, end) {
@@ -91,6 +96,7 @@ func CaptureString(s *tokenizer.Stream, end string, includeEnd bool) (string, er
 	return builder.String(), nil
 }
 
+// TODO: doc
 func ValidateLexerString(s string) error {
 	// not empty
 	// not \x00

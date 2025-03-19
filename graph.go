@@ -16,27 +16,30 @@ import (
 	"gonum.org/v1/gonum/stat/sampleuv"
 )
 
+// TODO: doc
 type Graph struct {
 	Tokens   []Expression
 	Edges    EdgeList
-	Children map[int][]int
-	Weights  map[int]map[int]float64
+	children map[int][]int
+	weights  map[int]map[int]float64
 }
 
+// TODO: doc
 func NewGraph(e EdgeList, n []Expression) Graph {
 	graph := Graph{}
 	graph.Tokens = n
-	graph.Children = make(map[int][]int)
-	graph.Weights = make(map[int]map[int]float64)
+	graph.children = make(map[int][]int)
+	graph.weights = make(map[int]map[int]float64)
 	for _, edge := range e {
-		graph = graph.AddEdge(edge)
+		graph = graph.addEdge(edge)
 	}
 
 	return graph
 }
 
-func (g Graph) GetFrom(i int) []int {
-	children, ok := g.Children[i]
+// TODO: doc
+func (g Graph) getFrom(i int) []int {
+	children, ok := g.children[i]
 	if !ok {
 		return []int{}
 	}
@@ -44,8 +47,8 @@ func (g Graph) GetFrom(i int) []int {
 	return children
 }
 
-func (g Graph) GetWeight(f int, t int) float64 {
-	weight, ok := g.Weights[f][t]
+func (g Graph) getWeight(f int, t int) float64 {
+	weight, ok := g.weights[f][t]
 	if !ok {
 		return 1.0
 	}
@@ -53,28 +56,30 @@ func (g Graph) GetWeight(f int, t int) float64 {
 	return weight
 }
 
-func (g Graph) AddEdge(e Edge) Graph {
-	if e.IsEmpty() {
+// TODO: doc
+func (g Graph) addEdge(e Edge) Graph {
+	if e.isEmpty() {
 		return g
 	}
 
 	g.Edges = append(g.Edges, e)
-	g.Children[e.From] = append(g.Children[e.From], e.To)
-	_, ok := g.Weights[e.From]
+	g.children[e.From] = append(g.children[e.From], e.To)
+	_, ok := g.weights[e.From]
 	if !ok {
-		g.Weights[e.From] = make(map[int]float64)
+		g.weights[e.From] = make(map[int]float64)
 	}
-	g.Weights[e.From][e.To] = e.Weight
+	g.weights[e.From][e.To] = e.Weight
 
 	return g
 }
 
-func (g Graph) DropNode(i int) Graph {
+// TODO: doc
+func (g Graph) dropNode(i int) Graph {
 	var (
 		from       []int
 		to         []int
 		edges      EdgeList
-		start, end int = GetEndPoints(g)
+		start, end int = getEndPoints(g)
 	)
 
 	for _, edge := range g.Edges {
@@ -99,7 +104,8 @@ func (g Graph) DropNode(i int) Graph {
 	return NewGraph(Unique(edges), g.Tokens)
 }
 
-func GetEndPoints(g Graph) (int, int) {
+// TODO: doc
+func getEndPoints(g Graph) (int, int) {
 	var (
 		i         int
 		f         int
@@ -126,11 +132,13 @@ func GetEndPoints(g Graph) (int, int) {
 	return i, f
 }
 
+// TODO: doc
 type Path = []int
 
-func GetAllPaths(g Graph) []Path {
+// TODO: doc
+func getAllPaths(g Graph) []Path {
 	var (
-		from, to int    = GetEndPoints(g)
+		from, to int    = getEndPoints(g)
 		paths    []Path = []Path{{from}}
 		path     Path
 		res      []Path
@@ -146,7 +154,7 @@ func GetAllPaths(g Graph) []Path {
 
 			continue
 		}
-		for _, n := range g.GetFrom(node) {
+		for _, n := range g.getFrom(node) {
 			tmp = make(Path, len(path)+1)
 			copy(tmp, path)
 			tmp[len(path)] = n
@@ -157,18 +165,19 @@ func GetAllPaths(g Graph) []Path {
 	return res
 }
 
-func ComposeGraphs(g Graph, g1 Graph, i int) (Graph, error) {
+// TODO: doc
+func composeGraphs(g Graph, g1 Graph, i int) (Graph, error) {
 	switch {
-	case g.Edges.IsEmpty() || g1.Edges.IsEmpty():
+	case g.Edges.isEmpty() || g1.Edges.isEmpty():
 		return Graph{}, fmt.Errorf("error when calling ComposeGraphs(%v, %v, %v):\n%+w", g, g1, i, errors.New("one or more EdgeLists e and a are empty"))
 	case i < 0:
 		return Graph{}, fmt.Errorf("error when calling ComposeGraphs(%v, %v, %v):\n%+w", g, g1, i, errors.New("cannot insert EdgeList a at negative index"))
-	case i > g.Edges.Max():
+	case i > g.Edges.max():
 		return Graph{}, fmt.Errorf("error when calling ComposeGraphs(%v, %v, %v):\n%+w", g, g1, i, errors.New("cannot insert EdgeList g1 at index greater than EdgeList g.Max()"))
 	}
 
-	g1.Edges = Increment(g1.Edges, g.Edges.Max()+1)
-	g1From, g1To := GetEndPoints(g1)
+	g1.Edges = increment(g1.Edges, g.Edges.max()+1)
+	g1From, g1To := getEndPoints(g1)
 	exp := append(g.Tokens, g1.Tokens...)
 	edg := g1.Edges
 
@@ -186,7 +195,8 @@ func ComposeGraphs(g Graph, g1 Graph, i int) (Graph, error) {
 	return NewGraph(edg, exp), nil
 }
 
-func GetRandomChoice(c []int, w []float64, s xrand.Source) (int, error) {
+// TODO: doc
+func getRandomChoice(c []int, w []float64, s xrand.Source) (int, error) {
 	if len(c) == 0 || len(w) == 0 {
 		return -1, fmt.Errorf("error when calling GetRandomChoice(%v, %v):\n%+w", c, w, errors.New("length of choices c and/or weights w is 0"))
 	}
@@ -202,17 +212,18 @@ func GetRandomChoice(c []int, w []float64, s xrand.Source) (int, error) {
 	return c[choice], nil
 }
 
-func GetRandomPath(g Graph) (Path, error) {
+// TODO: doc
+func getRandomPath(g Graph) (Path, error) {
 	var (
 		source   xrand.Source = xrand.NewSource(mrand.Uint64())
-		from, to int          = GetEndPoints(g)
+		from, to int          = getEndPoints(g)
 		res      Path         = Path{from}
 		node     int          = from
 		choice   int
 	)
 
 	for node != to {
-		n := g.GetFrom(node)
+		n := g.getFrom(node)
 		switch len(n) {
 		case 0:
 			return Path{}, fmt.Errorf("error when calling GetRandomPath(%v), GetFrom(%v):\n%+w", g, n, errors.New("cannot proceed further down path, no nodes are reachable from n"))
@@ -223,10 +234,10 @@ func GetRandomPath(g Graph) (Path, error) {
 		default:
 			w := make([]float64, len(n))
 			for i, dest := range n {
-				w[i] = g.GetWeight(from, dest)
+				w[i] = g.getWeight(from, dest)
 			}
 
-			choice, err := GetRandomChoice(g.GetFrom(node), w, source)
+			choice, err := getRandomChoice(g.getFrom(node), w, source)
 			if err != nil {
 				return Path{}, fmt.Errorf("in GetRandomPath(%v):\n%+w", g, err)
 			}
@@ -238,22 +249,23 @@ func GetRandomPath(g Graph) (Path, error) {
 	return res, nil
 }
 
-func Minimize(g Graph) Graph {
+// TODO: doc
+func Minimize(g Graph, f []string) Graph {
 	var g1 Graph = g
-	var f []string = []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}
 
 	for i, t := range g1.Tokens {
 		if slices.Contains(f, t) {
-			g1 = g1.DropNode(i)
+			g1 = g1.dropNode(i)
 		}
 	}
 
 	return g1
 }
 
-func WeightEdges(r Rule) (Rule, error) {
+// TODO: doc
+func weightEdges(r Rule) (Rule, error) {
 	for i, t := range r.Tokens {
-		if IsWeighted(t) {
+		if isWeighted(t) {
 			exp, weight, err := ParseWeight(t)
 			if err != nil {
 				return r, fmt.Errorf("in WeightEdges(%v):\n%+w", r, err)
@@ -271,10 +283,11 @@ func WeightEdges(r Rule) (Rule, error) {
 	return r, nil
 }
 
-func GetProductions(r Rule) []string {
+// TODO: doc
+func getProductions(r Rule) []string {
 	var productions []string
-	for _, path := range GetAllPaths(r.Graph) {
-		prod := GetSingleProduction(path, FilterTokens(GetTokens(r), []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>"}))
+	for _, path := range getAllPaths(r.Graph) {
+		prod := getSingleProduction(path, filterTokens(getTokens(r), jsgfFilter))
 		if prod != "" {
 			productions = append(productions, prod)
 		}
@@ -283,7 +296,8 @@ func GetProductions(r Rule) []string {
 	return productions
 }
 
-func GetSingleProduction(p Path, a []Expression) string {
+// TODO: doc
+func getSingleProduction(p Path, a []Expression) string {
 	if len(p) == 0 || len(a) == 0 {
 		return ""
 	}
@@ -297,7 +311,8 @@ func GetSingleProduction(p Path, a []Expression) string {
 	return builder.String()
 }
 
-func FilterTokens(e []Expression, f []string) []Expression {
+// TODO: doc
+func filterTokens(e []Expression, f []string) []Expression {
 	var filter map[string]struct{} = make(map[string]struct{})
 	var e1 []Expression = make([]Expression, len(e))
 	copy(e1, e)

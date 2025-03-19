@@ -17,11 +17,13 @@ import (
 	"strings"
 )
 
-func WrapRule(s string) string {
+// TODO: doc
+func wrapRule(s string) string {
 	return fmt.Sprint("<", s, ">")
 }
 
-func UnwrapRule(s string) string {
+// TODO: doc
+func unwrapRule(s string) string {
 	s = strings.TrimSpace(s)
 	s = strings.TrimPrefix(s, "public")
 	s = strings.TrimSpace(s)
@@ -31,7 +33,8 @@ func UnwrapRule(s string) string {
 	return s
 }
 
-func CleanImportStatement(s string) string {
+// TODO: doc
+func cleanImportStatement(s string) string {
 	s = strings.TrimSpace(s)
 	s = strings.TrimPrefix(s, "import")
 	s = strings.TrimSuffix(s, ";")
@@ -42,7 +45,8 @@ func CleanImportStatement(s string) string {
 	return s
 }
 
-func CleanGrammarStatement(s string) string {
+// TODO: doc
+func cleanGrammarStatement(s string) string {
 	s = strings.TrimSpace(s)
 	s = strings.TrimPrefix(s, "grammar")
 	s = strings.TrimSpace(s)
@@ -51,6 +55,7 @@ func CleanGrammarStatement(s string) string {
 	return s
 }
 
+// TODO: doc
 func ValidateJSGFRule(s string) error {
 	// optional public declaration
 	// the name of the rule being defined, in <>
@@ -64,6 +69,7 @@ func ValidateJSGFRule(s string) error {
 	return nil
 }
 
+// TODO: doc
 func ValidateJSGFName(s string) error {
 	// grammar name;
 	if !regexp.MustCompile("^grammar .+?;$").MatchString(s) {
@@ -73,6 +79,7 @@ func ValidateJSGFName(s string) error {
 	return nil
 }
 
+// TODO: doc
 func ValidateJSGFImport(s string) error {
 	// import <gram.rule>;
 	if !regexp.MustCompile("^import <.+?>;$").MatchString(s) {
@@ -82,20 +89,21 @@ func ValidateJSGFImport(s string) error {
 	return nil
 }
 
+// TODO: doc
 func CreateNameSpace(p string, e string) (map[string]string, error) {
 	var res map[string]string = make(map[string]string)
 
-	imports, err := GetImportOrder(p, e)
+	imports, err := getImportOrder(p, e)
 	if err != nil {
 		return make(map[string]string), fmt.Errorf("in CreateNameSpace(%v, %v):\n%+w", p, e, err)
 	}
 	for _, imp := range imports {
-		gram, _, _ := strings.Cut(CleanImportStatement(imp), ".")
-		path, err := FindGrammar(p, gram, e)
+		gram, _, _ := strings.Cut(cleanImportStatement(imp), ".")
+		path, err := findGrammar(p, gram, e)
 		if err != nil {
 			return make(map[string]string), fmt.Errorf("in CreateNameSpace(%v, %v):\n%+w", p, e, err)
 		}
-		_, _, rules, err := PeekGrammar(path)
+		_, _, rules, err := peekGrammar(path)
 		if err != nil {
 			return make(map[string]string), fmt.Errorf("in CreateNameSpace(%v, %v):\n%+w", p, e, err)
 		}
@@ -107,7 +115,8 @@ func CreateNameSpace(p string, e string) (map[string]string, error) {
 	return res, nil
 }
 
-func PeekGrammar(p string) (string, []string, map[string]string, error) {
+// TODO: doc
+func peekGrammar(p string) (string, []string, map[string]string, error) {
 	var (
 		err     error
 		name    string
@@ -151,7 +160,7 @@ func PeekGrammar(p string) (string, []string, map[string]string, error) {
 			if err != nil {
 				return name, imports, rules, fmt.Errorf("in PeekGrammar(%v):\n%+w", p, err)
 			}
-			name = CleanGrammarStatement(line)
+			name = cleanGrammarStatement(line)
 		case strings.HasPrefix(line, "import <"):
 			err = ValidateJSGFImport(line)
 			if err != nil {
@@ -175,13 +184,14 @@ func PeekGrammar(p string) (string, []string, map[string]string, error) {
 	return name, imports, rules, nil
 }
 
-func FindGrammar(p string, t string, e string) (string, error) {
+// TODO: doc
+func findGrammar(p string, t string, e string) (string, error) {
 	var target string
 	var found bool
 
 	err := filepath.Walk(filepath.Dir(p), func(path string, info os.FileInfo, err error) error {
 		if filepath.Ext(path) == e {
-			name, _, _, err := PeekGrammar(path)
+			name, _, _, err := peekGrammar(path)
 			if err != nil {
 				return err
 			}
@@ -208,24 +218,25 @@ func FindGrammar(p string, t string, e string) (string, error) {
 	return target, nil
 }
 
-func GetImportOrder(p string, e string) ([]string, error) {
+// TODO: doc
+func getImportOrder(p string, e string) ([]string, error) {
 	var (
 		imports []string
 		imp     string
 		res     []string
 	)
-	_, imports, _, err := PeekGrammar(p)
+	_, imports, _, err := peekGrammar(p)
 	if err != nil {
 		return imports, fmt.Errorf("in GetImportOrder(%v, %v):\n%+w", p, e, err)
 	}
 	for len(imports) > 0 {
 		imp, imports = imports[0], imports[1:]
-		gram, _, _ := strings.Cut(CleanImportStatement(imp), ".")
-		path, err := FindGrammar(p, gram, e)
+		gram, _, _ := strings.Cut(cleanImportStatement(imp), ".")
+		path, err := findGrammar(p, gram, e)
 		if err != nil {
 			return []string{}, fmt.Errorf("in GetImportOrder(%v, %v):\n%+w", p, e, err)
 		}
-		_, imps, _, err := PeekGrammar(path)
+		_, imps, _, err := peekGrammar(path)
 		if err != nil {
 			return []string{}, fmt.Errorf("in GetImportOrder(%v, %v):\n%+w", p, e, err)
 		}

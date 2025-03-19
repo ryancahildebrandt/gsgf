@@ -209,7 +209,7 @@ func TestFindGrammar(t *testing.T) {
 		{p: "./data/tests/dir0/dir1/dir2/e.jsgf", t: "d", e: ".jsgf", want: "", wantErr: true},
 	}
 	for i, test := range table {
-		got, err := FindGrammar(test.p, test.t, test.e)
+		got, err := findGrammar(test.p, test.t, test.e)
 		if got != test.want {
 			t.Errorf("test %v: FindGrammar(%v, %v, %v)\nGOT %v\nWANT %v", i, test.p, test.t, test.e, got, test.want)
 		}
@@ -246,7 +246,7 @@ func TestImportOrder(t *testing.T) {
 		{p: "./data/tests/dir0/dir1/d.jsgf", e: ".jsgf", want: []string{}, wantErr: true},
 	}
 	for i, test := range table {
-		got, err := GetImportOrder(test.p, test.e)
+		got, err := getImportOrder(test.p, test.e)
 		sort.Strings(test.want)
 		sort.Strings(got)
 		if !slices.Equal(got, test.want) {
@@ -413,7 +413,7 @@ func TestPeekGrammar(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		name, imports, rules, err := PeekGrammar(test.p)
+		name, imports, rules, err := peekGrammar(test.p)
 		if err != nil {
 			t.Errorf("test %v: PeekGrammar(%v)\nGOT error %v", i, test.p, err)
 		}
@@ -453,7 +453,7 @@ func TestWrapRule(t *testing.T) {
 		{s: "abc def", want: "<abc def>"},
 	}
 	for i, test := range tests {
-		got := WrapRule(test.s)
+		got := wrapRule(test.s)
 		if got != test.want {
 			t.Errorf("test %v: WrapRule(%v)\nGOT %v\nWANT %v", i, test.s, got, test.want)
 		}
@@ -475,7 +475,7 @@ func TestUnwrapRule(t *testing.T) {
 		{s: "public <<def>>", want: "<def>"},
 	}
 	for i, test := range tests {
-		got := UnwrapRule(test.s)
+		got := unwrapRule(test.s)
 		if got != test.want {
 			t.Errorf("test %v: UnwrapRule(%v)\nGOT %v\nWANT %v", i, test.s, got, test.want)
 		}
@@ -497,7 +497,7 @@ func TestCleanImportStatement(t *testing.T) {
 		{s: "import <<.def.abc>>;", want: "<.def.abc>"},
 	}
 	for i, test := range tests {
-		got := CleanImportStatement(test.s)
+		got := cleanImportStatement(test.s)
 		if got != test.want {
 			t.Errorf("test %v: CleanImportStatement(%v)\nGOT %v\nWANT %v", i, test.s, got, test.want)
 		}
@@ -519,7 +519,7 @@ func TestCleanGrammarStatement(t *testing.T) {
 		{s: "grammar <<.def.abc>>;", want: "<<.def.abc>>"},
 	}
 	for i, test := range tests {
-		got := CleanGrammarStatement(test.s)
+		got := cleanGrammarStatement(test.s)
 		if got != test.want {
 			t.Errorf("test %v: CleanGrammarStatement(%v)\nGOT %v\nWANT %v", i, test.s, got, test.want)
 		}

@@ -12,18 +12,22 @@ import (
 	"sort"
 )
 
+// TODO: doc
 type Edge struct {
 	From   int
 	To     int
 	Weight float64
 }
 
-func (e Edge) IsEmpty() bool {
+// TODO: doc
+func (e Edge) isEmpty() bool {
 	return e.From == 0 && e.To == 0
 }
 
+// TODO: doc
 type EdgeList []Edge
 
+// TODO: doc
 func Sort(e EdgeList) EdgeList {
 	sort.Slice(e, func(i, j int) bool {
 		switch {
@@ -39,7 +43,8 @@ func Sort(e EdgeList) EdgeList {
 	return e
 }
 
-func Increment(e EdgeList, n int) EdgeList {
+// TODO: doc
+func increment(e EdgeList, n int) EdgeList {
 	var e1 EdgeList
 	e1 = append(e1, e...)
 
@@ -51,12 +56,14 @@ func Increment(e EdgeList, n int) EdgeList {
 	return e1
 }
 
-func (e EdgeList) IsEmpty() bool {
-	return len(e) == 0 || e[0].IsEmpty()
+// TODO: doc
+func (e EdgeList) isEmpty() bool {
+	return len(e) == 0 || e[0].isEmpty()
 }
 
-func (e EdgeList) Max() int {
-	if e.IsEmpty() {
+// TODO: doc
+func (e EdgeList) max() int {
+	if e.isEmpty() {
 		return 0
 	}
 
@@ -69,6 +76,7 @@ func (e EdgeList) Max() int {
 	return slices.Max(arr)
 }
 
+// TODO: doc
 func Unique(e EdgeList) EdgeList {
 	var out EdgeList
 	var seen map[string]int = make(map[string]int)
@@ -83,13 +91,14 @@ func Unique(e EdgeList) EdgeList {
 	return out
 }
 
+// TODO: doc
 func ToEdgeList(arr []Expression) EdgeList {
 	var (
 		edges      EdgeList
 		err        error
 		from       int
 		group      int
-		groupStack Stack
+		groupStack stack
 		groupMap   = make(map[int][]int)
 	)
 
@@ -99,7 +108,7 @@ func ToEdgeList(arr []Expression) EdgeList {
 			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
 		case "<SOS>":
 			from = i
-			groupStack = groupStack.Push(i)
+			groupStack = groupStack.push(i)
 			groupMap[i] = []int{}
 		case ";":
 			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
@@ -110,41 +119,41 @@ func ToEdgeList(arr []Expression) EdgeList {
 			}
 			from = i
 		case "(", "[":
-			groupStack = groupStack.Push(i)
+			groupStack = groupStack.push(i)
 			groupMap[i] = []int{}
 			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
 			from = i
 		case ")":
-			group, err = groupStack.Top()
+			group, err = groupStack.top()
 			if err != nil {
 				log.Fatal(err)
 			}
 			for _, v := range groupMap[group] {
 				edges = append(edges, Edge{From: v, To: i, Weight: 1.0})
 			}
-			groupStack = groupStack.Drop(group)
+			groupStack = groupStack.drop(group)
 			delete(groupMap, group)
 			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
 			from = i
 		case "]":
-			group, err := groupStack.Top()
+			group, err := groupStack.top()
 			if err != nil {
 				log.Fatal(err)
 			}
 			for _, v := range groupMap[group] {
 				edges = append(edges, Edge{From: v, To: i, Weight: 1.0})
 			}
-			groupStack = groupStack.Drop(group)
+			groupStack = groupStack.drop(group)
 			delete(groupMap, group)
 			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
 			edges = append(edges, Edge{From: group, To: i, Weight: 1.0})
 			from = i
 		case "|":
-			group, groupStack, err = groupStack.Pop()
+			group, groupStack, err = groupStack.pop()
 			if err != nil {
 				log.Fatal(err)
 			}
-			groupStack = groupStack.Push(group)
+			groupStack = groupStack.push(group)
 			groupMap[group] = append(groupMap[group], from)
 			from = group
 		default:

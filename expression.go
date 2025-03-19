@@ -15,8 +15,10 @@ import (
 	"github.com/bzick/tokenizer"
 )
 
+// TODO: doc
 type Expression = string
 
+// TODO: doc
 func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
 	if e == "" {
 		return []Expression{}
@@ -32,7 +34,7 @@ func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
 	for stream.IsValid() {
 		switch {
 		case stream.CurrentToken().Is(SquareOpen, SquareClose, ParenthesisOpen, ParenthesisClose, Alternate, Semicolon):
-			builder, out = FlushBuilder(builder, out)
+			builder, out = flushBuilder(builder, out)
 			res = stream.CurrentToken().ValueUnescapedString()
 			out = append(out, res)
 			stream.GoNext()
@@ -43,32 +45,33 @@ func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
 		case stream.CurrentToken().Is(ForwardSlash):
 			stream.GoNext()
 			builder.WriteString("/")
-			res, _ = CaptureString(stream, "/", true)
+			res, _ = captureString(stream, "/", true)
 			builder.WriteString(res)
-			builder, out = FlushBuilder(builder, out)
+			builder, out = flushBuilder(builder, out)
 			stream.GoNext()
 		case stream.CurrentToken().Is(AngleOpen):
-			builder, out = FlushBuilder(builder, out)
-			res, _ = CaptureString(stream, ">", true)
+			builder, out = flushBuilder(builder, out)
+			res, _ = captureString(stream, ">", true)
 			out = append(out, res)
 			stream.GoNext()
 		case stream.CurrentToken().Is(CurlyOpen):
-			res, _ = CaptureString(stream, "}", true)
+			res, _ = captureString(stream, "}", true)
 			builder.WriteString(res)
-			builder, out = FlushBuilder(builder, out)
+			builder, out = flushBuilder(builder, out)
 			stream.GoNext()
 		default:
 			builder.WriteString(stream.CurrentToken().ValueUnescapedString())
 			stream.GoNext()
 		}
 	}
-	builder, out = FlushBuilder(builder, out)
+	builder, out = flushBuilder(builder, out)
 	out = append(out, "<EOS>")
 
 	return out
 }
 
-func FlushBuilder(b strings.Builder, o []Expression) (strings.Builder, []Expression) {
+// TODO: doc
+func flushBuilder(b strings.Builder, o []Expression) (strings.Builder, []Expression) {
 	var str string = b.String()
 
 	b.Reset()
@@ -79,10 +82,12 @@ func FlushBuilder(b strings.Builder, o []Expression) (strings.Builder, []Express
 	return b, o
 }
 
-func IsWeighted(e Expression) bool {
+// TODO: doc
+func isWeighted(e Expression) bool {
 	return regexp.MustCompile(`/[0-9\.]+/`).MatchString(e)
 }
 
+// TODO: doc
 func ParseWeight(e Expression) (Expression, float64, error) {
 	split := strings.Split(e, "/")
 	if len(split) != 3 {

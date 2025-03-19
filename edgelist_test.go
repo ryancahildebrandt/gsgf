@@ -448,7 +448,7 @@ func TestToEdgeList(t *testing.T) {
 	}
 	for i, test := range table {
 		_, v, err := ParseRule(test.r, lexer)
-		got := ToEdgeList(ToTokens(v.Exp, lexer))
+		got := ToEdgeList(ToTokens(v.exp, lexer))
 		if !slices.Equal(Sort(got), Sort(test.want)) {
 			t.Errorf("test %v: %v.toArray(lexer)\nGOT %v\nWANT %v", i, test.r, got, test.want)
 		}
@@ -572,7 +572,7 @@ func TestEdgeListMax(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		got := test.e.Max()
+		got := test.e.max()
 		if got != test.want {
 			t.Errorf("test %v: %v.Max()\nGOT %v\nWANT %v", i, test.e, got, test.want)
 		}
@@ -640,7 +640,7 @@ func TestEdgeListIncrement(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		got := Increment(test.e, test.n)
+		got := increment(test.e, test.n)
 		if !slices.Equal(Sort(got), Sort(test.want)) {
 			t.Errorf("test %v: %v,Increment(%v)\nGOT %v\nWANT %v", i, test.e, test.n, got, test.want)
 		}

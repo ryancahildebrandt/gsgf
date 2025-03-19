@@ -92,6 +92,7 @@ var (
 	}
 )
 
+// TODO: doc
 func ValidateInFile(p string) error {
 	// exists, valid ext
 	_, err := os.Open(p)
@@ -106,6 +107,7 @@ func ValidateInFile(p string) error {
 	}
 }
 
+// TODO: doc
 func ValidateOutFile(p string) error {
 	// provided dir exists
 	_, err := os.Stat(filepath.Dir(p))
@@ -115,6 +117,7 @@ func ValidateOutFile(p string) error {
 	return nil
 }
 
+// TODO: doc
 func ValidateExportDir(p string) error {
 	// exists, is dir
 	info, err := os.Stat(p)
@@ -127,7 +130,8 @@ func ValidateExportDir(p string) error {
 	return nil
 }
 
-func FileScanner(p string) (*bufio.Scanner, error) {
+// TODO: doc
+func fileScanner(p string) (*bufio.Scanner, error) {
 	switch filepath.Ext(p) {
 	case ".jsgf":
 		f, err := os.Open(p)
@@ -151,7 +155,8 @@ func FileScanner(p string) (*bufio.Scanner, error) {
 	return &bufio.Scanner{}, fmt.Errorf("error when calling gsgf generate --inFile=%v:\n%+w", p, errors.New("invalid file extension, not one of .jsgf, .jjsgf"))
 }
 
-func ApplyPostproc(p []string, cmd *cli.Command) []string {
+// TODO: doc
+func applyPostproc(p []string, cmd *cli.Command) []string {
 	if cmd.Bool("shuffle") {
 		mrand.Shuffle(len(p), func(i, j int) { p[i], p[j] = p[j], p[i] })
 	}
@@ -182,14 +187,15 @@ func ApplyPostproc(p []string, cmd *cli.Command) []string {
 	return p
 }
 
-func BuildGrammar(cmd *cli.Command) (Grammar, error) {
+// TODO: doc
+func buildGrammar(cmd *cli.Command) (Grammar, error) {
 	var (
 		g   Grammar = NewGrammar()
 		s   *bufio.Scanner
 		err error
 	)
 
-	s, err = FileScanner(cmd.Args().First())
+	s, err = fileScanner(cmd.Args().First())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -209,7 +215,7 @@ func BuildGrammar(cmd *cli.Command) (Grammar, error) {
 
 	if cmd.Bool("minimize") {
 		for k, v := range g.Rules {
-			v.Graph = Minimize(v.Graph)
+			v.Graph = Minimize(v.Graph, jsgfFilter)
 			g.Rules[k] = v
 		}
 	}
@@ -222,7 +228,7 @@ func BuildGrammar(cmd *cli.Command) (Grammar, error) {
 	if cmd.Bool("minimize") {
 		for k, v := range g.Rules {
 			if v.IsPublic {
-				v.Graph = Minimize(v.Graph)
+				v.Graph = Minimize(v.Graph, jsgfFilter)
 				g.Rules[k] = v
 			}
 		}
@@ -230,7 +236,8 @@ func BuildGrammar(cmd *cli.Command) (Grammar, error) {
 	return g, nil
 }
 
-func PrepareContext(ctx context.Context, cmd *cli.Command) (context.Context, error) {
+// TODO: doc
+func prepareContext(ctx context.Context, cmd *cli.Command) (context.Context, error) {
 	if cmd.Args().Get(0) == "" {
 		cli.ShowSubcommandHelpAndExit(cmd, 0)
 	}

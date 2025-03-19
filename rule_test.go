@@ -15,7 +15,7 @@ func TestResolveReferences(t *testing.T) {
 	lexer := NewJSGFLexer("\"")
 	m := map[string]Rule{
 		"<a>": {
-			Exp:      "123;",
+			exp:      "123;",
 			IsPublic: false,
 			Graph: NewGraph(
 				EdgeList{
@@ -26,7 +26,7 @@ func TestResolveReferences(t *testing.T) {
 			),
 		},
 		"<b>": {
-			Exp:      "1|2|3;",
+			exp:      "1|2|3;",
 			IsPublic: false,
 			Graph: NewGraph(
 				EdgeList{
@@ -42,7 +42,7 @@ func TestResolveReferences(t *testing.T) {
 			),
 		},
 		"<c>": {
-			Exp:      "1[2]3;",
+			exp:      "1[2]3;",
 			IsPublic: false,
 			Graph: NewGraph(
 				EdgeList{
@@ -59,7 +59,7 @@ func TestResolveReferences(t *testing.T) {
 			),
 		},
 		"<d>": {
-			Exp:      "1(2)3;",
+			exp:      "1(2)3;",
 			IsPublic: false,
 			Graph: NewGraph(
 				EdgeList{
@@ -75,7 +75,7 @@ func TestResolveReferences(t *testing.T) {
 			),
 		},
 		"<e>": {
-			Exp:      "1(2[3]);",
+			exp:      "1(2[3]);",
 			IsPublic: false,
 			Graph: NewGraph(
 				EdgeList{
@@ -101,7 +101,7 @@ func TestResolveReferences(t *testing.T) {
 	}{
 		{
 			r: Rule{
-				Exp:      "",
+				exp:      "",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{},
@@ -109,7 +109,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp:      "",
+				exp:      "",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{},
@@ -120,13 +120,13 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "", IsPublic: true, Graph: NewGraph(
+				exp: "", IsPublic: true, Graph: NewGraph(
 					EdgeList{},
 					[]Expression{},
 				),
 			},
 			want: Rule{
-				Exp: "", IsPublic: true, Graph: NewGraph(
+				exp: "", IsPublic: true, Graph: NewGraph(
 					EdgeList{},
 					[]Expression{},
 				),
@@ -135,7 +135,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "<f>;", IsPublic: false,
+				exp: "<f>;", IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
@@ -144,7 +144,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "<f>;", IsPublic: false,
+				exp: "<f>;", IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
@@ -156,7 +156,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "<f>;", IsPublic: true,
+				exp: "<f>;", IsPublic: true,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
@@ -165,7 +165,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "<f>;", IsPublic: true,
+				exp: "<f>;", IsPublic: true,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
@@ -177,7 +177,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "abc;", IsPublic: false,
+				exp: "abc;", IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
@@ -186,7 +186,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "abc;", IsPublic: false,
+				exp: "abc;", IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
@@ -198,7 +198,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "abc;", IsPublic: true,
+				exp: "abc;", IsPublic: true,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
@@ -207,7 +207,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "abc;", IsPublic: true,
+				exp: "abc;", IsPublic: true,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
@@ -219,7 +219,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "<a>bc;", IsPublic: false,
+				exp: "<a>bc;", IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
@@ -228,7 +228,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "<a>bc;", IsPublic: false,
+				exp: "<a>bc;", IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 3, Weight: 1.0},
@@ -245,7 +245,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "<a>bc;", IsPublic: true,
+				exp: "<a>bc;", IsPublic: true,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0},
@@ -254,7 +254,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "<a>bc;", IsPublic: true,
+				exp: "<a>bc;", IsPublic: true,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 3, Weight: 1.0},
@@ -271,7 +271,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "a<b>c;", IsPublic: false,
+				exp: "a<b>c;", IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
@@ -285,7 +285,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "a<b>c;", IsPublic: false, Graph: NewGraph(
+				exp: "a<b>c;", IsPublic: false, Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
 						{From: 1, To: 5, Weight: 1.0},
@@ -308,7 +308,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "a<b>c;", IsPublic: true,
+				exp: "a<b>c;", IsPublic: true,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
@@ -322,7 +322,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "a<b>c;", IsPublic: true, Graph: NewGraph(
+				exp: "a<b>c;", IsPublic: true, Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
 						{From: 1, To: 5, Weight: 1.0},
@@ -345,7 +345,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "a<b><c><d><e>;", IsPublic: false,
+				exp: "a<b><c><d><e>;", IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
@@ -360,7 +360,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "a<b><c><d><e>;", IsPublic: false,
+				exp: "a<b><c><d><e>;", IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
@@ -414,7 +414,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "a<b><c><d><e>;", IsPublic: true,
+				exp: "a<b><c><d><e>;", IsPublic: true,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
@@ -429,7 +429,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "a<b><c><d><e>;", IsPublic: true,
+				exp: "a<b><c><d><e>;", IsPublic: true,
 				Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
@@ -483,7 +483,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "a<b><b><b>;", IsPublic: false, Graph: NewGraph(
+				exp: "a<b><b><b>;", IsPublic: false, Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
 						{From: 1, To: 2, Weight: 1.0},
@@ -496,7 +496,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "a<b><b><b>;", IsPublic: false, Graph: NewGraph(
+				exp: "a<b><b><b>;", IsPublic: false, Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
 						{From: 1, To: 7, Weight: 1.0},
@@ -536,7 +536,7 @@ func TestResolveReferences(t *testing.T) {
 		},
 		{
 			r: Rule{
-				Exp: "a<b><b><b>;", IsPublic: true, Graph: NewGraph(
+				exp: "a<b><b><b>;", IsPublic: true, Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
 						{From: 1, To: 2, Weight: 1.0},
@@ -549,7 +549,7 @@ func TestResolveReferences(t *testing.T) {
 				),
 			},
 			want: Rule{
-				Exp: "a<b><b><b>;", IsPublic: true, Graph: NewGraph(
+				exp: "a<b><b><b>;", IsPublic: true, Graph: NewGraph(
 					EdgeList{
 						{From: 0, To: 1, Weight: 1.0},
 						{From: 1, To: 7, Weight: 1.0},
@@ -593,8 +593,8 @@ func TestResolveReferences(t *testing.T) {
 		if test.want.IsPublic != got.IsPublic {
 			t.Errorf("test %v: ResolveReferences(%v).Is_public\nGOT %v\nWANT %v", i, test.r, got.IsPublic, test.want.IsPublic)
 		}
-		if !slices.Equal(GetReferences(got), GetReferences(test.want)) {
-			t.Errorf("test %v: ResolveReferences(%v).References\nGOT %v\nWANT %v", i, test.r, GetReferences(got), GetReferences(test.want))
+		if !slices.Equal(getReferences(got), getReferences(test.want)) {
+			t.Errorf("test %v: ResolveReferences(%v).References\nGOT %v\nWANT %v", i, test.r, getReferences(got), getReferences(test.want))
 		}
 		if !slices.Equal(Sort(test.want.Graph.Edges), Sort(got.Graph.Edges)) {
 			t.Errorf("test %v: ResolveReferences(%v).edges\nGOT %v\nWANT %v", i, test.r, Sort(got.Graph.Edges), Sort(test.want.Graph.Edges))
@@ -619,37 +619,37 @@ func TestParseRule(t *testing.T) {
 		r       Rule
 		wantErr bool
 	}{
-		{l: "", n: "", r: Rule{Exp: "", IsPublic: false}, wantErr: true},
-		{l: ";", n: "", r: Rule{Exp: "", IsPublic: false}, wantErr: true},
-		{l: " ", n: "", r: Rule{Exp: "", IsPublic: false}, wantErr: true},
-		{l: "<rule> =", n: "", r: Rule{Exp: "", IsPublic: false}, wantErr: true},
-		{l: "<rule> = ", n: "", r: Rule{Exp: "", IsPublic: false}, wantErr: true},
-		{l: "public <rule> =", n: "", r: Rule{Exp: "", IsPublic: false}, wantErr: true},
-		{l: "public <rule> = ", n: "", r: Rule{Exp: "", IsPublic: false}, wantErr: true},
-		{l: "<rule> =;", n: "<rule>", r: Rule{Exp: ";", IsPublic: false}, wantErr: false},
-		{l: "public <rule> =;", n: "<rule>", r: Rule{Exp: ";", IsPublic: true}, wantErr: false},
-		{l: "<rule> = test expression 123;", n: "<rule>", r: Rule{Exp: "test expression 123;", IsPublic: false}, wantErr: false},
-		{l: "<rule> = test \"expression\" 123;", n: "<rule>", r: Rule{Exp: "test \"expression\" 123;", IsPublic: false}, wantErr: false},
-		{l: "public <rule> = test expression 123;", n: "<rule>", r: Rule{Exp: "test expression 123;", IsPublic: true}, wantErr: false},
-		{l: "public <rule> = test \"expression\" 123;", n: "<rule>", r: Rule{Exp: "test \"expression\" 123;", IsPublic: true}, wantErr: false},
-		{l: "<rule> = test expression 123 <rule> (abc) [def];", n: "<rule>", r: Rule{Exp: "test expression 123 <rule> (abc) [def];", IsPublic: false}, wantErr: false},
-		{l: "public <rule> = test expression 123 <rule> (abc) [def];", n: "<rule>", r: Rule{Exp: "test expression 123 <rule> (abc) [def];", IsPublic: true}, wantErr: false},
-		{l: "<rule> = test expression 123 <rule1> <rule2> (abc) [def];", n: "<rule>", r: Rule{Exp: "test expression 123 <rule1> <rule2> (abc) [def];", IsPublic: false}, wantErr: false},
-		{l: "public <rule> = test expression 123 <rule1> <rule2> (abc) [def];", n: "<rule>", r: Rule{Exp: "test expression 123 <rule1> <rule2> (abc) [def];", IsPublic: true}, wantErr: false},
+		{l: "", n: "", r: Rule{exp: "", IsPublic: false}, wantErr: true},
+		{l: ";", n: "", r: Rule{exp: "", IsPublic: false}, wantErr: true},
+		{l: " ", n: "", r: Rule{exp: "", IsPublic: false}, wantErr: true},
+		{l: "<rule> =", n: "", r: Rule{exp: "", IsPublic: false}, wantErr: true},
+		{l: "<rule> = ", n: "", r: Rule{exp: "", IsPublic: false}, wantErr: true},
+		{l: "public <rule> =", n: "", r: Rule{exp: "", IsPublic: false}, wantErr: true},
+		{l: "public <rule> = ", n: "", r: Rule{exp: "", IsPublic: false}, wantErr: true},
+		{l: "<rule> =;", n: "<rule>", r: Rule{exp: ";", IsPublic: false}, wantErr: false},
+		{l: "public <rule> =;", n: "<rule>", r: Rule{exp: ";", IsPublic: true}, wantErr: false},
+		{l: "<rule> = test expression 123;", n: "<rule>", r: Rule{exp: "test expression 123;", IsPublic: false}, wantErr: false},
+		{l: "<rule> = test \"expression\" 123;", n: "<rule>", r: Rule{exp: "test \"expression\" 123;", IsPublic: false}, wantErr: false},
+		{l: "public <rule> = test expression 123;", n: "<rule>", r: Rule{exp: "test expression 123;", IsPublic: true}, wantErr: false},
+		{l: "public <rule> = test \"expression\" 123;", n: "<rule>", r: Rule{exp: "test \"expression\" 123;", IsPublic: true}, wantErr: false},
+		{l: "<rule> = test expression 123 <rule> (abc) [def];", n: "<rule>", r: Rule{exp: "test expression 123 <rule> (abc) [def];", IsPublic: false}, wantErr: false},
+		{l: "public <rule> = test expression 123 <rule> (abc) [def];", n: "<rule>", r: Rule{exp: "test expression 123 <rule> (abc) [def];", IsPublic: true}, wantErr: false},
+		{l: "<rule> = test expression 123 <rule1> <rule2> (abc) [def];", n: "<rule>", r: Rule{exp: "test expression 123 <rule1> <rule2> (abc) [def];", IsPublic: false}, wantErr: false},
+		{l: "public <rule> = test expression 123 <rule1> <rule2> (abc) [def];", n: "<rule>", r: Rule{exp: "test expression 123 <rule1> <rule2> (abc) [def];", IsPublic: true}, wantErr: false},
 	}
 	for i, test := range table {
 		n, r, err := ParseRule(test.l, lexer)
 		if n != test.n {
 			t.Errorf("test %v: ParseRule(%v, jsgfLexer)\nGOT %v\nWANT %v", i, test.l, n, test.n)
 		}
-		if r.Exp != test.r.Exp {
+		if r.exp != test.r.exp {
 			t.Errorf("test %v: ParseRule(%v, jsgfLexer)\nGOT %v\nWANT %v", i, test.l, r, test.r)
 		}
 		if r.IsPublic != test.r.IsPublic {
 			t.Errorf("test %v: ParseRule(%v, jsgfLexer).Is_public\nGOT %v\nWANT %v", i, test.l, r, test.r)
 		}
-		if !slices.Equal(GetReferences(r), GetReferences(test.r)) {
-			t.Errorf("test %v: ParseRule(%v, jsgfLexer).References\nGOT %v\nWANT %v", i, test.l, GetReferences(r), GetReferences(test.r))
+		if !slices.Equal(getReferences(r), getReferences(test.r)) {
+			t.Errorf("test %v: ParseRule(%v, jsgfLexer).References\nGOT %v\nWANT %v", i, test.l, getReferences(r), getReferences(test.r))
 		}
 		sort.Slice(r.Tokens, func(i, j int) bool { return r.Tokens[i] < r.Tokens[j] })
 		sort.Slice(test.r.Tokens, func(i, j int) bool { return r.Tokens[i] < r.Tokens[j] })
@@ -667,19 +667,19 @@ func TestGetReferences(t *testing.T) {
 		r    Rule
 		want []string
 	}{
-		{r: Rule{Exp: "", IsPublic: false}, want: []string{}},
-		{r: Rule{Exp: "", IsPublic: true}, want: []string{}},
-		{r: Rule{Exp: ";", IsPublic: false}, want: []string{}},
-		{r: Rule{Exp: ";", IsPublic: true}, want: []string{}},
-		{r: Rule{Exp: "test expression 123;", IsPublic: false}, want: []string{}},
-		{r: Rule{Exp: "test \"expression\" 123;", IsPublic: true}, want: []string{}},
-		{r: Rule{Exp: "test expression 123 <rule> (abc) [def];", IsPublic: false}, want: []string{"<rule>"}},
-		{r: Rule{Exp: "test expression 123 <rule> (abc) [def];", IsPublic: true}, want: []string{"<rule>"}},
-		{r: Rule{Exp: "test expression 123 <rule1> <rule2> (abc) [def];", IsPublic: false}, want: []string{"<rule1>", "<rule2>"}},
-		{r: Rule{Exp: "test expression 123 <rule1> <rule2> (abc) [def];", IsPublic: true}, want: []string{"<rule1>", "<rule2>"}},
+		{r: Rule{exp: "", IsPublic: false}, want: []string{}},
+		{r: Rule{exp: "", IsPublic: true}, want: []string{}},
+		{r: Rule{exp: ";", IsPublic: false}, want: []string{}},
+		{r: Rule{exp: ";", IsPublic: true}, want: []string{}},
+		{r: Rule{exp: "test expression 123;", IsPublic: false}, want: []string{}},
+		{r: Rule{exp: "test \"expression\" 123;", IsPublic: true}, want: []string{}},
+		{r: Rule{exp: "test expression 123 <rule> (abc) [def];", IsPublic: false}, want: []string{"<rule>"}},
+		{r: Rule{exp: "test expression 123 <rule> (abc) [def];", IsPublic: true}, want: []string{"<rule>"}},
+		{r: Rule{exp: "test expression 123 <rule1> <rule2> (abc) [def];", IsPublic: false}, want: []string{"<rule1>", "<rule2>"}},
+		{r: Rule{exp: "test expression 123 <rule1> <rule2> (abc) [def];", IsPublic: true}, want: []string{"<rule1>", "<rule2>"}},
 	}
 	for i, test := range tests {
-		got := GetReferences(test.r)
+		got := getReferences(test.r)
 		slices.Sort(got)
 		slices.Sort(test.want)
 		if !slices.Equal(got, test.want) {
@@ -691,7 +691,7 @@ func TestGetReferences(t *testing.T) {
 func TestValidateRuleRecursion(t *testing.T) {
 	m := map[string]Rule{
 		"<a>": {
-			Exp:      "123<b>;",
+			exp:      "123<b>;",
 			IsPublic: false,
 			Graph: NewGraph(
 				EdgeList{
@@ -702,7 +702,7 @@ func TestValidateRuleRecursion(t *testing.T) {
 			),
 		},
 		"<b>": {
-			Exp:      "1|2|3;",
+			exp:      "1|2|3;",
 			IsPublic: false,
 			Graph: NewGraph(
 				EdgeList{
@@ -718,7 +718,7 @@ func TestValidateRuleRecursion(t *testing.T) {
 			),
 		},
 		"<c>": {
-			Exp:      "1[2]3<d>;",
+			exp:      "1[2]3<d>;",
 			IsPublic: false,
 			Graph: NewGraph(
 				EdgeList{
@@ -735,7 +735,7 @@ func TestValidateRuleRecursion(t *testing.T) {
 			),
 		},
 		"<d>": {
-			Exp:      "1(2)3<e>;",
+			exp:      "1(2)3<e>;",
 			IsPublic: false,
 			Graph: NewGraph(
 				EdgeList{
@@ -751,7 +751,7 @@ func TestValidateRuleRecursion(t *testing.T) {
 			),
 		},
 		"<e>": {
-			Exp:      "1(2[3<a>]);",
+			exp:      "1(2[3<a>]);",
 			IsPublic: false,
 			Graph: NewGraph(
 				EdgeList{

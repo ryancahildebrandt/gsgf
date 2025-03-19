@@ -11,59 +11,68 @@ import (
 	"strings"
 )
 
-type GrammarJSON struct {
-	Rules   map[string]RuleJSON `json:"rules"`
+// TODO: doc
+type grammarJSON struct {
+	Rules   map[string]ruleJSON `json:"rules"`
 	Imports []string            `json:"imports"`
 }
 
-type GraphJSON struct {
+// TODO: doc
+type graphJSON struct {
 	Tokens []string   `json:"tokens"`
-	Edges  []EdgeJSON `json:"edges"`
+	Edges  []edgeJSON `json:"edges"`
 	Paths  [][]int    `json:"paths"`
 }
 
-type EdgeJSON struct {
+// TODO: doc
+type edgeJSON struct {
 	From   int     `json:"source"`
 	To     int     `json:"destination"`
 	Weight float64 `json:"weight"`
 }
 
-type RuleJSON struct {
+// TODO: doc
+type ruleJSON struct {
 	Expression string    `json:"expression"`
 	IsPublic   bool      `json:"is_public"`
-	Graph      GraphJSON `json:"graph"`
+	Graph      graphJSON `json:"graph"`
 }
 
-func RuleToJSON(r Rule) RuleJSON {
-	return RuleJSON{Expression: r.Exp, IsPublic: r.IsPublic, Graph: GraphToJSON(r.Graph)}
+// TODO: doc
+func ruleToJSON(r Rule) ruleJSON {
+	return ruleJSON{Expression: r.exp, IsPublic: r.IsPublic, Graph: graphToJSON(r.Graph)}
 }
 
-func EdgeToJSON(e Edge) EdgeJSON {
-	return EdgeJSON(e)
+// TODO: doc
+func edgeToJSON(e Edge) edgeJSON {
+	return edgeJSON(e)
 }
 
-func GraphToJSON(g Graph) GraphJSON {
-	var j GraphJSON
+// TODO: doc
+func graphToJSON(g Graph) graphJSON {
+	var j graphJSON
 
 	j.Tokens = append(j.Tokens, g.Tokens...)
-	j.Paths = append(j.Paths, GetAllPaths(g)...)
+	j.Paths = append(j.Paths, getAllPaths(g)...)
 	for _, i := range g.Edges {
-		j.Edges = append(j.Edges, EdgeToJSON(i))
+		j.Edges = append(j.Edges, edgeToJSON(i))
 	}
 
 	return j
 }
 
-func GrammarToJSON(g Grammar) GrammarJSON {
-	var rules map[string]RuleJSON = make(map[string]RuleJSON)
+// TODO: doc
+func grammarToJSON(g Grammar) grammarJSON {
+	var rules map[string]ruleJSON = make(map[string]ruleJSON)
 
 	for k, v := range g.Rules {
-		rules[k] = RuleToJSON(v)
+		rules[k] = ruleToJSON(v)
 	}
 
-	return GrammarJSON{Rules: rules, Imports: g.Imports}
+	return grammarJSON{Rules: rules, Imports: g.Imports}
 }
 
+// TODO: doc
 func GraphToTXT(g Graph) (string, string) {
 	var nodes []string
 	var edges []string
@@ -78,6 +87,7 @@ func GraphToTXT(g Graph) (string, string) {
 	return strings.Join(nodes, "\n"), strings.Join(edges, "\n")
 }
 
+// TODO: doc
 func GraphToDOT(g Graph) string {
 	var (
 		builder strings.Builder
@@ -110,6 +120,7 @@ func GraphToDOT(g Graph) string {
 	return builder.String()
 }
 
+// TODO: doc
 func ReferencesToDOT(g Grammar) string {
 	var (
 		builder strings.Builder
@@ -120,7 +131,7 @@ func ReferencesToDOT(g Grammar) string {
 	builder.WriteString("digraph {\n\n")
 	builder.WriteString("\trankdir = \"LR\"\n\n")
 	for k, v := range g.Rules {
-		for _, r := range GetReferences(v) {
+		for _, r := range getReferences(v) {
 			entry = fmt.Sprintf("\t%s -> %s;\n", r, k)
 			entries = append(entries, entry)
 		}
@@ -134,6 +145,7 @@ func ReferencesToDOT(g Grammar) string {
 	return builder.String()
 }
 
+// TODO: doc
 func GraphToD2(g Graph) string {
 	var (
 		builder strings.Builder
@@ -161,6 +173,7 @@ func GraphToD2(g Graph) string {
 	return builder.String()
 }
 
+// TODO: doc
 func ReferencesToD2(g Grammar) string {
 	var (
 		builder strings.Builder
@@ -170,7 +183,7 @@ func ReferencesToD2(g Grammar) string {
 
 	builder.WriteString("direction: right\n\n")
 	for k, v := range g.Rules {
-		for _, r := range GetReferences(v) {
+		for _, r := range getReferences(v) {
 			entry = fmt.Sprintf("\"%s\" -> \"%s\"\n", r, k)
 			entries = append(entries, entry)
 		}

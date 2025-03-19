@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// TODO: doc
 type JJSGFGrammarJSON struct {
 	Name    string            `json:"grammar"`
 	Imports []string          `json:"imports"`
@@ -18,6 +19,7 @@ type JJSGFGrammarJSON struct {
 	Rules   map[string]string `json:"rules"`
 }
 
+// TODO: doc
 func JJSGFToJSGF(j JJSGFGrammarJSON) string {
 	var (
 		b       strings.Builder

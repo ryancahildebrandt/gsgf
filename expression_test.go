@@ -201,7 +201,7 @@ func TestIsWeighted(t *testing.T) {
 		{e: "/0.0a/abc", want: false},
 	}
 	for i, test := range tests {
-		got := IsWeighted(test.e)
+		got := isWeighted(test.e)
 		if got != test.want {
 			t.Errorf("test %v: IsWeighted(%v)\nGOT %v\nWANT %v", i, test.e, got, test.want)
 		}

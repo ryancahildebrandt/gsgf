@@ -148,7 +148,7 @@ func TestGetCompositionOrder(t *testing.T) {
 		},
 	}
 	for i, test := range table {
-		got := GetCompositionOrder(test.g)
+		got := getCompositionOrder(test.g)
 		sort.Strings(got)
 		sort.Strings(test.want)
 		if !slices.Equal(got, test.want) {
@@ -305,7 +305,7 @@ func TestGetAllProductions(t *testing.T) {
 		g := NewGrammar()
 		g.Rules = map[string]Rule{
 			"<_>": {
-				Exp:      "",
+				exp:      "",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{},
@@ -313,7 +313,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<a>": {
-				Exp:      "123;",
+				exp:      "123;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -323,7 +323,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<b>": {
-				Exp:      "1|2|3;",
+				exp:      "1|2|3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -339,7 +339,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<c>": {
-				Exp:      "1[2]3;",
+				exp:      "1[2]3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -356,7 +356,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<d>": {
-				Exp:      "1(2)3;",
+				exp:      "1(2)3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -372,7 +372,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<e>": {
-				Exp:      "1(2[3]);",
+				exp:      "1(2[3]);",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -391,7 +391,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<f>": {
-				Exp:      "<l>;",
+				exp:      "<l>;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -401,7 +401,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<g>": {
-				Exp:      "abc;",
+				exp:      "abc;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -411,7 +411,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<h>": {
-				Exp:      "<a>bc;",
+				exp:      "<a>bc;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -424,7 +424,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<i>": {
-				Exp:      "a<b>c;",
+				exp:      "a<b>c;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -438,7 +438,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<j>": {
-				Exp:      "a<b><c><d><e>;",
+				exp:      "a<b><c><d><e>;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -454,7 +454,7 @@ func TestGetAllProductions(t *testing.T) {
 				),
 			},
 			"<k>": {
-				Exp:      "a<b><b><b>;",
+				exp:      "a<b><b><b>;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -471,7 +471,7 @@ func TestGetAllProductions(t *testing.T) {
 		}
 		for j, p := range test.p {
 			rule := NewRule(p, true)
-			rule.Tokens = ToTokens(rule.Exp, lexer)
+			rule.Tokens = ToTokens(rule.exp, lexer)
 			rule.Graph = NewGraph(ToEdgeList(rule.Tokens), rule.Tokens)
 			g.Rules[fmt.Sprintf("<pub_%v>", j)] = rule
 		}
@@ -636,7 +636,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 		g := NewGrammar()
 		g.Rules = map[string]Rule{
 			"<_>": {
-				Exp:      "",
+				exp:      "",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{},
@@ -644,7 +644,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<a>": {
-				Exp:      "123;",
+				exp:      "123;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -654,7 +654,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<b>": {
-				Exp:      "1|2|3;",
+				exp:      "1|2|3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -670,7 +670,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<c>": {
-				Exp:      "1[2]3;",
+				exp:      "1[2]3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -687,7 +687,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<d>": {
-				Exp:      "1(2)3;",
+				exp:      "1(2)3;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -703,7 +703,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<e>": {
-				Exp:      "1(2[3]);",
+				exp:      "1(2[3]);",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -722,7 +722,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<f>": {
-				Exp:      "<l>;",
+				exp:      "<l>;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -732,7 +732,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<g>": {
-				Exp:      "abc;",
+				exp:      "abc;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0}},
@@ -740,7 +740,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<h>": {
-				Exp:      "<a>bc;",
+				exp:      "<a>bc;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -753,7 +753,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<i>": {
-				Exp:      "a<b>c;",
+				exp:      "a<b>c;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -767,7 +767,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<j>": {
-				Exp:      "a<b><c><d><e>;",
+				exp:      "a<b><c><d><e>;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -783,7 +783,7 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 				),
 			},
 			"<k>": {
-				Exp:      "a<b><b><b>;",
+				exp:      "a<b><b><b>;",
 				IsPublic: false,
 				Graph: NewGraph(
 					EdgeList{
@@ -800,9 +800,9 @@ func TestGetAllProductionsMinimized(t *testing.T) {
 		}
 		for j, p := range test.p {
 			rule := NewRule(p, true)
-			rule.Tokens = ToTokens(rule.Exp, lexer)
+			rule.Tokens = ToTokens(rule.exp, lexer)
 			rule.Graph = NewGraph(ToEdgeList(rule.Tokens), rule.Tokens)
-			rule.Graph = Minimize(rule.Graph)
+			rule.Graph = Minimize(rule.Graph, jsgfFilter)
 			g.Rules[fmt.Sprintf("<pub_%v>", j)] = rule
 		}
 		g, err := ResolveRules(g, lexer)
@@ -1001,7 +1001,7 @@ func TestGetAllProductionsJJSGF(t *testing.T) {
 	for i, test := range table {
 		var err error
 		grammar := NewGrammar()
-		scanner, err1 := FileScanner(test.p)
+		scanner, err1 := fileScanner(test.p)
 		grammar, err2 := FomJSGF(grammar, scanner, lexer)
 		namespace, err3 := CreateNameSpace(test.p, ".jjsgf")
 		grammar = ImportNameSpace(grammar, namespace, lexer)

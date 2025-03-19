@@ -15,30 +15,34 @@ import (
 	"github.com/bzick/tokenizer"
 )
 
+// TODO: doc
 type Rule struct {
 	Graph
 
-	Exp      Expression
 	IsPublic bool
+	exp      Expression
 }
 
+// TODO: doc
 func NewRule(e Expression, isPublic bool) Rule {
 	r := Rule{}
-	r.Exp = e
+	r.exp = e
 	r.IsPublic = isPublic
 
 	return r
 }
 
-func GetTokens(r Rule) []Expression {
+// TODO: doc
+func getTokens(r Rule) []Expression {
 	return r.Graph.Tokens
 }
 
-func GetReferences(r Rule) []string {
+// TODO: doc
+func getReferences(r Rule) []string {
 	var refs []string
 	var seen map[string]struct{} = make(map[string]struct{})
 
-	for _, r := range regexp.MustCompile(`<.*?>`).FindAllString(r.Exp, -1) {
+	for _, r := range regexp.MustCompile(`<.*?>`).FindAllString(r.exp, -1) {
 		_, ok := seen[r]
 		if !ok {
 			seen[r] = struct{}{}
@@ -49,8 +53,9 @@ func GetReferences(r Rule) []string {
 	return refs
 }
 
+// TODO: doc
 func ResolveReferences(r Rule, m map[string]Rule, lex *tokenizer.Tokenizer) (Rule, error) {
-	if len(GetReferences(r)) == 0 {
+	if len(getReferences(r)) == 0 {
 		return r, nil
 	}
 
@@ -63,7 +68,7 @@ func ResolveReferences(r Rule, m map[string]Rule, lex *tokenizer.Tokenizer) (Rul
 	for k, v := range m {
 		rules[k] = v
 	}
-	for _, ref := range GetReferences(r) {
+	for _, ref := range getReferences(r) {
 		if ref == "" {
 			continue
 		}
@@ -71,7 +76,7 @@ func ResolveReferences(r Rule, m map[string]Rule, lex *tokenizer.Tokenizer) (Rul
 		if !ok {
 			return r, fmt.Errorf("error when calling ResolveReferences(%v, %v, %v), rule %v, ref %v:\n%+w", r, m, lex, rules, ref, errors.New("referenced rule does not exist in grammar"))
 		}
-		r1, err = SingleResolveReference(r1, ref, r2, lex)
+		r1, err = singleResolveReference(r1, ref, r2, lex)
 		if err != nil {
 			return r1, err
 		}
@@ -80,12 +85,13 @@ func ResolveReferences(r Rule, m map[string]Rule, lex *tokenizer.Tokenizer) (Rul
 	return r1, nil
 }
 
-func SingleResolveReference(r Rule, ref string, r1 Rule, lex *tokenizer.Tokenizer) (Rule, error) {
+// TODO: doc
+func singleResolveReference(r Rule, ref string, r1 Rule, lex *tokenizer.Tokenizer) (Rule, error) {
 	var r2 Rule = r
 
-	for i, t := range ToTokens(r2.Exp, lex) {
+	for i, t := range ToTokens(r2.exp, lex) {
 		if t == ref {
-			g, err := ComposeGraphs(r2.Graph, r1.Graph, i)
+			g, err := composeGraphs(r2.Graph, r1.Graph, i)
 			if err != nil {
 				return r, err
 			}
@@ -97,6 +103,7 @@ func SingleResolveReference(r Rule, ref string, r1 Rule, lex *tokenizer.Tokenize
 	return r2, nil
 }
 
+// TODO: doc
 func ParseRule(line string, lex *tokenizer.Tokenizer) (string, Rule, error) {
 	err := ValidateJSGFRule(line)
 	if err != nil {
@@ -117,8 +124,9 @@ func ParseRule(line string, lex *tokenizer.Tokenizer) (string, Rule, error) {
 	return name, NewRule(exp, strings.HasPrefix(line, "public")), nil
 }
 
+// TODO: doc
 func ValidateRuleRecursion(n string, r Rule, m map[string]Rule) error {
-	refs := GetReferences(r)
+	refs := getReferences(r)
 
 	if len(refs) == 0 {
 		return nil
@@ -127,7 +135,7 @@ func ValidateRuleRecursion(n string, r Rule, m map[string]Rule) error {
 		return fmt.Errorf("error when calling ValidateRuleRecursion(%v, %v, %v), references %v:\n%+w", n, r, m, refs, errors.New("rule references self directly"))
 	}
 	for _, v := range m {
-		if slices.Contains(GetReferences(v), n) {
+		if slices.Contains(getReferences(v), n) {
 			return fmt.Errorf("error when calling ValidateRuleRecursion(%v, %v, %v), references %v, rule %v:\n%+w", n, r, m, refs, v, errors.New("rule references self indirectly"))
 		}
 	}

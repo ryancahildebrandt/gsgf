@@ -32,7 +32,7 @@ func main() {
 				Usage:                 "Produce all expressions from a grammar file, disregarding token weights",
 				EnableShellCompletion: true,
 				Suggest:               true,
-				Before:                PrepareContext,
+				Before:                prepareContext,
 				Flags: []cli.Flag{
 					&inFile,
 					&ext,
@@ -69,12 +69,12 @@ func main() {
 						log.Fatal(err)
 					}
 
-					grammar, err = BuildGrammar(cmd)
+					grammar, err = buildGrammar(cmd)
 					if err != nil {
 						log.Fatal(err)
 					}
 					productions = GetAllProductions(grammar)
-					productions = ApplyPostproc(productions, cmd)
+					productions = applyPostproc(productions, cmd)
 					if cmd.String("outFile") == "" {
 						for _, prod := range productions {
 							fmt.Println(prod)
@@ -97,7 +97,7 @@ func main() {
 				Usage:                 "Produce expressions from a grammar file, according to provided token weights",
 				EnableShellCompletion: true,
 				Suggest:               true,
-				Before:                PrepareContext,
+				Before:                prepareContext,
 				Flags: []cli.Flag{
 					&inFile,
 					&ext,
@@ -135,7 +135,7 @@ func main() {
 						log.Fatal(err)
 					}
 
-					grammar, err = BuildGrammar(cmd)
+					grammar, err = buildGrammar(cmd)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -147,14 +147,14 @@ func main() {
 					for len(productions) < int(cmd.Int("nProductions")) {
 						key := keys[mrand.IntN(len(keys))]
 						graph := grammar.Rules[key].Graph
-						path, err := GetRandomPath(graph)
+						path, err := getRandomPath(graph)
 						if err != nil {
 							log.Fatal(err)
 						}
-						prod := GetSingleProduction(path, FilterTokens(graph.Tokens, []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}))
+						prod := getSingleProduction(path, filterTokens(graph.Tokens, jsgfFilter))
 						productions = append(productions, prod)
 					}
-					productions = ApplyPostproc(productions, cmd)
+					productions = applyPostproc(productions, cmd)
 					if cmd.String("outFile") == "" {
 						for _, prod := range productions {
 							fmt.Println(prod)
@@ -176,7 +176,7 @@ func main() {
 				Usage:                 "Save graph and grammar representations to disk",
 				EnableShellCompletion: true,
 				Suggest:               true,
-				Before:                PrepareContext,
+				Before:                prepareContext,
 				Flags: []cli.Flag{
 					&inFile,
 					&ext,
@@ -196,11 +196,11 @@ func main() {
 						log.Fatal(err)
 					}
 
-					grammar, err = BuildGrammar(cmd)
+					grammar, err = buildGrammar(cmd)
 					if err != nil {
 						log.Fatal(err)
 					}
-					j, err = json.Marshal(GrammarToJSON(grammar))
+					j, err = json.Marshal(grammarToJSON(grammar))
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -218,7 +218,7 @@ func main() {
 					}
 					for k, v := range grammar.Rules {
 						if v.IsPublic {
-							j, err := json.Marshal(GraphToJSON(v.Graph))
+							j, err := json.Marshal(graphToJSON(v.Graph))
 							if err != nil {
 								log.Fatal(err)
 							}

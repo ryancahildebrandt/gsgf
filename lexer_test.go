@@ -32,7 +32,7 @@ func TestCaptureString(t *testing.T) {
 	}
 	for i, test := range table {
 		stream := lexer.ParseString(test.s)
-		got, err := CaptureString(stream, test.e, test.i)
+		got, err := captureString(stream, test.e, test.i)
 		if got != test.want {
 			t.Errorf("test %v: captureString(%v, %v, %v)\nGOT %v\nWANT %v", i, test.s, test.e, test.i, got, test.want)
 		}
