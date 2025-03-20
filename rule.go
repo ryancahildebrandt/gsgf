@@ -15,7 +15,7 @@ import (
 	"github.com/bzick/tokenizer"
 )
 
-// TODO: doc
+// Contains information for a jsgf rule, including graph, public/private, and base expression
 type Rule struct {
 	Graph
 
@@ -23,7 +23,6 @@ type Rule struct {
 	exp      Expression
 }
 
-// TODO: doc
 func NewRule(e Expression, isPublic bool) Rule {
 	r := Rule{}
 	r.exp = e
@@ -32,12 +31,12 @@ func NewRule(e Expression, isPublic bool) Rule {
 	return r
 }
 
-// TODO: doc
+// Helper function to pull rule tokens from the nodes of the rule's graph
 func getTokens(r Rule) []Expression {
 	return r.Graph.Tokens
 }
 
-// TODO: doc
+// Returns any rules referenced in a rule definition
 func getReferences(r Rule) []string {
 	var refs []string
 	var seen map[string]struct{} = make(map[string]struct{})
@@ -53,7 +52,8 @@ func getReferences(r Rule) []string {
 	return refs
 }
 
-// TODO: doc
+// Composes graphs of rules referenced by main rule
+// Returns error if referenced rule is not availabe
 func ResolveReferences(r Rule, m map[string]Rule, lex *tokenizer.Tokenizer) (Rule, error) {
 	if len(getReferences(r)) == 0 {
 		return r, nil
@@ -85,7 +85,8 @@ func ResolveReferences(r Rule, m map[string]Rule, lex *tokenizer.Tokenizer) (Rul
 	return r1, nil
 }
 
-// TODO: doc
+// Composes a single referenced rule into its parent rule
+// Returns an error if graphs cannot be composed
 func singleResolveReference(r Rule, ref string, r1 Rule, lex *tokenizer.Tokenizer) (Rule, error) {
 	var r2 Rule = r
 
@@ -103,20 +104,20 @@ func singleResolveReference(r Rule, ref string, r1 Rule, lex *tokenizer.Tokenize
 	return r2, nil
 }
 
-// TODO: doc
+// Splits a jsgf rule statement into its constituent name and rule expression
+// Returns an error if the line is not a valid rule statement
 func ParseRule(line string, lex *tokenizer.Tokenizer) (string, Rule, error) {
-	err := ValidateJSGFRule(line)
+	var (
+		name string
+		exp  string
+		err  error
+	)
+
+	err = ValidateJSGFRule(line)
 	if err != nil {
 		return "", Rule{}, err
 	}
-
-	var name string
-	var exp string
-
-	name, exp, found := strings.Cut(line, "=")
-	if !found {
-		return "", Rule{}, fmt.Errorf("error when calling ParseRule(%s, %v), strings.Cut(%s, \"=\"):\n%+w", line, lex, line, errors.New("jsgf line does not contain required assignment ="))
-	}
+	name, exp, _ = strings.Cut(line, "=")
 	name = strings.TrimPrefix(name, "public ")
 	name = strings.TrimSpace(name)
 	exp = strings.TrimSpace(exp)
@@ -124,7 +125,7 @@ func ParseRule(line string, lex *tokenizer.Tokenizer) (string, Rule, error) {
 	return name, NewRule(exp, strings.HasPrefix(line, "public")), nil
 }
 
-// TODO: doc
+// Checks that a rule does not reference itself either directly or indirectly
 func ValidateRuleRecursion(n string, r Rule, m map[string]Rule) error {
 	refs := getReferences(r)
 

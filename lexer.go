@@ -14,7 +14,7 @@ import (
 	"github.com/bzick/tokenizer"
 )
 
-// TODO: doc
+// Token types significant for the jsgf specification and jsgfLexer implemented here
 const (
 	AngleOpen = iota + 1
 	AngleClose
@@ -28,7 +28,6 @@ const (
 	Comment
 	Assignment
 	Semicolon
-	Modifier
 	SequenceStart
 	SequenceEnd
 	DoubleQuote
@@ -37,9 +36,10 @@ const (
 	ForwardSlash
 )
 
+// Tokens that can be ignored during graph traversal and production collection
 var jsgfFilter []string = []string{"(", ")", "[", "]", "<SOS>", ";", "|", "<EOS>", ""}
 
-// TODO: doc
+// Returns a tokenizer for jsgf files with the specified quote token
 func NewJSGFLexer(q string) *tokenizer.Tokenizer {
 	var lexer *tokenizer.Tokenizer = tokenizer.New()
 
@@ -59,9 +59,8 @@ func NewJSGFLexer(q string) *tokenizer.Tokenizer {
 	lexer.DefineTokens(ParenthesisClose, []string{")"})
 	lexer.DefineTokens(Alternate, []string{"|"})
 	lexer.DefineTokens(Comment, []string{"//", "/*", "*/"})
-	lexer.DefineTokens(Semicolon, []string{";"}) //, " ;", "; ", " ; "})
+	lexer.DefineTokens(Semicolon, []string{";"})
 	lexer.DefineTokens(Assignment, []string{"="})
-	lexer.DefineTokens(Modifier, []string{"*", "+"})
 	lexer.DefineTokens(SequenceStart, []string{"<SOS>"})
 	lexer.DefineTokens(SequenceEnd, []string{"<EOS>"})
 	lexer.DefineTokens(BackSlash, []string{"\\"})
@@ -70,7 +69,7 @@ func NewJSGFLexer(q string) *tokenizer.Tokenizer {
 	return lexer
 }
 
-// TODO: doc
+// Returns a string beginning from s.CurrentToken and ending at the first occurrence of the ending string, optionally including the end token in the returned string
 func captureString(s *tokenizer.Stream, end string, includeEnd bool) (string, error) {
 	var builder strings.Builder
 	var remainder string = s.GetSnippetAsString(0, 1000000, 0) // really high value here because s doesn't have a "show me whats left in the string" method
@@ -96,10 +95,8 @@ func captureString(s *tokenizer.Stream, end string, includeEnd bool) (string, er
 	return builder.String(), nil
 }
 
-// TODO: doc
+// Checks that the provided string can be consumed by a tokenizer (is not empty and does not contain byte \x00)
 func ValidateLexerString(s string) error {
-	// not empty
-	// not \x00
 	if s == "" {
 		return fmt.Errorf("error when calling ValidateLexerString(%v):\n%+w", s, errors.New("cannot tokenize empty string"))
 	}

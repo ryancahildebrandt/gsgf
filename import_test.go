@@ -440,48 +440,6 @@ func TestPeekGrammar(t *testing.T) {
 	}
 }
 
-func TestWrapRule(t *testing.T) {
-	tests := []struct {
-		s    string
-		want string
-	}{
-		{s: "", want: "<>"},
-		{s: " ", want: "< >"},
-		{s: "<>", want: "<<>>"},
-		{s: "abc", want: "<abc>"},
-		{s: "<abc>", want: "<<abc>>"},
-		{s: "abc def", want: "<abc def>"},
-	}
-	for i, test := range tests {
-		got := wrapRule(test.s)
-		if got != test.want {
-			t.Errorf("test %v: WrapRule(%v)\nGOT %v\nWANT %v", i, test.s, got, test.want)
-		}
-	}
-}
-
-func TestUnwrapRule(t *testing.T) {
-	tests := []struct {
-		s    string
-		want string
-	}{
-		{s: "", want: ""},
-		{s: " ", want: ""},
-		{s: "public<>", want: ""},
-		{s: "public abc", want: "abc"},
-		{s: "<abc>", want: "abc"},
-		{s: "  <abc> ", want: "abc"},
-		{s: "public <def>", want: "def"},
-		{s: "public <<def>>", want: "<def>"},
-	}
-	for i, test := range tests {
-		got := unwrapRule(test.s)
-		if got != test.want {
-			t.Errorf("test %v: UnwrapRule(%v)\nGOT %v\nWANT %v", i, test.s, got, test.want)
-		}
-	}
-}
-
 func TestCleanImportStatement(t *testing.T) {
 	tests := []struct {
 		s    string

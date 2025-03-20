@@ -14,7 +14,7 @@ import (
 	"github.com/bzick/tokenizer"
 )
 
-// TODO: doc
+// Contains rules and import statements from grammar file
 type Grammar struct {
 	Rules   map[string]Rule
 	Imports []string
@@ -28,7 +28,7 @@ func NewGrammar() Grammar {
 	return grammar
 }
 
-// TODO: doc
+// Returns the rule dependency tree, starting with the public rules in the grammar
 func getCompositionOrder(g Grammar) []string {
 	var (
 		rules []string
@@ -50,7 +50,7 @@ func getCompositionOrder(g Grammar) []string {
 	return res
 }
 
-// TODO: doc
+// Collects productions for each public rule in the grammar
 func GetAllProductions(g Grammar) []string {
 	var productions []string
 
@@ -63,7 +63,7 @@ func GetAllProductions(g Grammar) []string {
 	return productions
 }
 
-// TODO: doc
+// Composes rule graphs into each other according to the composition order
 func ResolveRules(g Grammar, lex *tokenizer.Tokenizer) (Grammar, error) {
 	var order []string = getCompositionOrder(g)
 	var seen map[string]struct{} = make(map[string]struct{})
@@ -86,7 +86,7 @@ func ResolveRules(g Grammar, lex *tokenizer.Tokenizer) (Grammar, error) {
 	return g, nil
 }
 
-// TODO: doc
+// Loads jsgf lines into a grammar, populating import statements and rules
 func FomJSGF(g Grammar, s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar, error) {
 	for s.Scan() {
 		line := s.Text()
@@ -117,7 +117,7 @@ func FomJSGF(g Grammar, s *bufio.Scanner, lex *tokenizer.Tokenizer) (Grammar, er
 	return g, nil
 }
 
-// TODO: doc
+// Reads a namespace of available rules into a main grammar
 func ImportNameSpace(g Grammar, r map[string]string, lex *tokenizer.Tokenizer) Grammar {
 	for k, v := range r {
 		rule := NewRule(v, false)
@@ -132,7 +132,7 @@ func ImportNameSpace(g Grammar, r map[string]string, lex *tokenizer.Tokenizer) G
 	return g
 }
 
-// TODO: doc
+// Checks that a grammar does not reference rules outside of itself, regardless of import statements
 func ValidateGrammarCompleteness(g Grammar) error {
 	for _, v := range g.Rules {
 		for _, r := range getReferences(v) {

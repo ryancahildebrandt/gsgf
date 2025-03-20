@@ -20,10 +20,11 @@ var (
 	ext          cli.StringFlag = cli.StringFlag{Name: "ext", Hidden: true}
 	quoteChar    cli.StringFlag = cli.StringFlag{Name: "quoteChar", Value: "\"", Hidden: true}
 	nProductions cli.IntFlag    = cli.IntFlag{
-		Name:    "nProductions",
-		Aliases: []string{"n"},
-		Value:   -1,
-		Usage:   "Number of productions to take from the top of the productions list",
+		Name:        "nProductions",
+		Aliases:     []string{"n"},
+		Value:       -1,
+		HideDefault: true,
+		Usage:       "Number of productions to take from the top of the productions list",
 	}
 	minimize cli.BoolFlag = cli.BoolFlag{
 		Name:    "minimize",
@@ -92,9 +93,8 @@ var (
 	}
 )
 
-// TODO: doc
+// Checks that the provided path exists on disk and has extension .jsgf/.jjsgf
 func ValidateInFile(p string) error {
-	// exists, valid ext
 	_, err := os.Open(p)
 	if err != nil {
 		return fmt.Errorf("in ValidateInFile(%v):\n%+w", p, err)
@@ -107,9 +107,8 @@ func ValidateInFile(p string) error {
 	}
 }
 
-// TODO: doc
+// Checks that the directory (if present) in the provided path exists
 func ValidateOutFile(p string) error {
-	// provided dir exists
 	_, err := os.Stat(filepath.Dir(p))
 	if err != nil {
 		return fmt.Errorf("in ValidateOutFile(%v):\n%+w", p, err)
@@ -117,9 +116,8 @@ func ValidateOutFile(p string) error {
 	return nil
 }
 
-// TODO: doc
+// Checks that the provided path points to a directory that exists on disk
 func ValidateExportDir(p string) error {
-	// exists, is dir
 	info, err := os.Stat(p)
 	if err != nil {
 		return fmt.Errorf("in ValidateExportDir(%v):\n%+w", p, err)
@@ -130,7 +128,7 @@ func ValidateExportDir(p string) error {
 	return nil
 }
 
-// TODO: doc
+// Helper function for reading grammar files to scanner, converting jjsgf to jsgf as needed
 func fileScanner(p string) (*bufio.Scanner, error) {
 	switch filepath.Ext(p) {
 	case ".jsgf":
@@ -155,7 +153,7 @@ func fileScanner(p string) (*bufio.Scanner, error) {
 	return &bufio.Scanner{}, fmt.Errorf("error when calling gsgf generate --inFile=%v:\n%+w", p, errors.New("invalid file extension, not one of .jsgf, .jjsgf"))
 }
 
-// TODO: doc
+// Applies post processing options to productions based on flags in cli
 func applyPostproc(p []string, cmd *cli.Command) []string {
 	if cmd.Bool("shuffle") {
 		mrand.Shuffle(len(p), func(i, j int) { p[i], p[j] = p[j], p[i] })
@@ -187,7 +185,7 @@ func applyPostproc(p []string, cmd *cli.Command) []string {
 	return p
 }
 
-// TODO: doc
+// Helper function to construct, resolve, and minimize grammar/namespaces in cli
 func buildGrammar(cmd *cli.Command) (Grammar, error) {
 	var (
 		g   Grammar = NewGrammar()
@@ -236,7 +234,7 @@ func buildGrammar(cmd *cli.Command) (Grammar, error) {
 	return g, nil
 }
 
-// TODO: doc
+// Sets additional cli args before each gsgf command is run
 func prepareContext(ctx context.Context, cmd *cli.Command) (context.Context, error) {
 	if cmd.Args().Get(0) == "" {
 		cli.ShowSubcommandHelpAndExit(cmd, 0)

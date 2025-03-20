@@ -12,12 +12,10 @@ import (
 
 type stack []int
 
-// TODO: doc
 func (s stack) push(v int) stack {
 	return append(s, v)
 }
 
-// TODO: doc
 func (s stack) top() (int, error) {
 	var top int
 
@@ -29,7 +27,6 @@ func (s stack) top() (int, error) {
 	return top, nil
 }
 
-// TODO: doc
 func (s stack) pop() (int, stack, error) {
 	var top int
 	var bot stack
@@ -43,7 +40,7 @@ func (s stack) pop() (int, stack, error) {
 	return top, bot, nil
 }
 
-// TODO: doc
+// Returns stack with all instances of value v removed
 func (s stack) drop(v int) stack {
 	var s1 stack
 

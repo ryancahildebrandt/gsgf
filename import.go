@@ -17,23 +17,7 @@ import (
 	"strings"
 )
 
-// TODO: doc
-func wrapRule(s string) string {
-	return fmt.Sprint("<", s, ">")
-}
-
-// TODO: doc
-func unwrapRule(s string) string {
-	s = strings.TrimSpace(s)
-	s = strings.TrimPrefix(s, "public")
-	s = strings.TrimSpace(s)
-	s = strings.TrimPrefix(s, "<")
-	s = strings.TrimSuffix(s, ">")
-
-	return s
-}
-
-// TODO: doc
+// Returns the gram.rule portion of a jsgf import statement
 func cleanImportStatement(s string) string {
 	s = strings.TrimSpace(s)
 	s = strings.TrimPrefix(s, "import")
@@ -45,7 +29,7 @@ func cleanImportStatement(s string) string {
 	return s
 }
 
-// TODO: doc
+// Returns the grammar name from a jsgf grammar statement
 func cleanGrammarStatement(s string) string {
 	s = strings.TrimSpace(s)
 	s = strings.TrimPrefix(s, "grammar")
@@ -55,13 +39,13 @@ func cleanGrammarStatement(s string) string {
 	return s
 }
 
-// TODO: doc
+// Checks that the string is a valid jsgf rule containing:
+// - optional public declaration
+// - the name of the rule being defined, in <>
+// - an equals sign =
+// - the expansion of the rule
+// - a closing semi-colon ;
 func ValidateJSGFRule(s string) error {
-	// optional public declaration
-	// the name of the rule being defined, in <>
-	// an equals sign `='
-	// the expansion of the rule
-	// a closing semi-colon `;'.
 	if !regexp.MustCompile("^(public )?<.+?> ?= ?.*?;$").MatchString(s) {
 		return fmt.Errorf("error when calling ValidateJSGFRule(%v):\n%+w", s, errors.New("invalid jsgf line"))
 	}
@@ -69,9 +53,11 @@ func ValidateJSGFRule(s string) error {
 	return nil
 }
 
-// TODO: doc
+// Checks that the string is a valid jsgf grammar declaration, containing:
+// - grammar
+// - name
+// - a closing semicolon ;
 func ValidateJSGFName(s string) error {
-	// grammar name;
 	if !regexp.MustCompile("^grammar .+?;$").MatchString(s) {
 		return fmt.Errorf("error when calling ValidateJSGFName(%v):\n%+w", s, errors.New("invalid jsgf name declaration"))
 	}
@@ -79,9 +65,13 @@ func ValidateJSGFName(s string) error {
 	return nil
 }
 
-// TODO: doc
+// Checks that the string is a valid jsgf import statement, containing:
+// - import
+// - opening and closing angle brackets <>
+// - grammar name
+// - optional rule name or *
+// - a closing semicolon ;
 func ValidateJSGFImport(s string) error {
-	// import <gram.rule>;
 	if !regexp.MustCompile("^import <.+?>;$").MatchString(s) {
 		return fmt.Errorf("error when calling ValidateJSGFImport(%v):\n%+w", s, errors.New("invalid jsgf import"))
 	}
@@ -89,7 +79,10 @@ func ValidateJSGFImport(s string) error {
 	return nil
 }
 
-// TODO: doc
+// Collects all required rules from grammar files in subdirectories of the provided path
+// - Reads import order from the root grammar
+// - For each imported grammar, reads each import statement and rule
+// Returns an error if the required grammars cannot be found or opened
 func CreateNameSpace(p string, e string) (map[string]string, error) {
 	var res map[string]string = make(map[string]string)
 
@@ -115,7 +108,8 @@ func CreateNameSpace(p string, e string) (map[string]string, error) {
 	return res, nil
 }
 
-// TODO: doc
+// Checks the specified grammar file and returns the name, imports, and rules specified in the grammar
+// Returns an error if the specified file cannot be opened or converted to grammar
 func peekGrammar(p string) (string, []string, map[string]string, error) {
 	var (
 		err     error
@@ -184,7 +178,8 @@ func peekGrammar(p string) (string, []string, map[string]string, error) {
 	return name, imports, rules, nil
 }
 
-// TODO: doc
+// Returns the on-disk location of the specified grammar by checking each subdirectory of the specified path
+// Returns an error if the target grammar is not found in files with given extension
 func findGrammar(p string, t string, e string) (string, error) {
 	var target string
 	var found bool
@@ -218,7 +213,8 @@ func findGrammar(p string, t string, e string) (string, error) {
 	return target, nil
 }
 
-// TODO: doc
+// Returns the dependencies of the giben grammar file by traversing each listed grammar and its imports, in order
+// Returns an error if the file cannot be opened or located
 func getImportOrder(p string, e string) ([]string, error) {
 	var (
 		imports []string

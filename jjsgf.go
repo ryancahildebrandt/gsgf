@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// TODO: doc
+// Contains information from .jjsgf file
 type JJSGFGrammarJSON struct {
 	Name    string            `json:"grammar"`
 	Imports []string          `json:"imports"`
@@ -19,7 +19,7 @@ type JJSGFGrammarJSON struct {
 	Rules   map[string]string `json:"rules"`
 }
 
-// TODO: doc
+// Converts JJSGFGrammarJson to string representation of an equivalent jsgf grammar
 func JJSGFToJSGF(j JJSGFGrammarJSON) string {
 	var (
 		b       strings.Builder

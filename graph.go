@@ -16,7 +16,7 @@ import (
 	"gonum.org/v1/gonum/stat/sampleuv"
 )
 
-// TODO: doc
+// Graph stores a series of tokens and the possible transitions between them via Tokens and Edges
 type Graph struct {
 	Tokens   []Expression
 	Edges    EdgeList
@@ -24,7 +24,6 @@ type Graph struct {
 	weights  map[int]map[int]float64
 }
 
-// TODO: doc
 func NewGraph(e EdgeList, n []Expression) Graph {
 	graph := Graph{}
 	graph.Tokens = n
@@ -37,7 +36,7 @@ func NewGraph(e EdgeList, n []Expression) Graph {
 	return graph
 }
 
-// TODO: doc
+// Returns all children reachable from node i
 func (g Graph) getFrom(i int) []int {
 	children, ok := g.children[i]
 	if !ok {
@@ -47,6 +46,7 @@ func (g Graph) getFrom(i int) []int {
 	return children
 }
 
+// Returns the weight associated with the edge from node f to node t
 func (g Graph) getWeight(f int, t int) float64 {
 	weight, ok := g.weights[f][t]
 	if !ok {
@@ -56,7 +56,7 @@ func (g Graph) getWeight(f int, t int) float64 {
 	return weight
 }
 
-// TODO: doc
+// Adds an edge to a graph g, populating g.Edges, g.Children, and g.Weights as needed
 func (g Graph) addEdge(e Edge) Graph {
 	if e.isEmpty() {
 		return g
@@ -73,7 +73,9 @@ func (g Graph) addEdge(e Edge) Graph {
 	return g
 }
 
-// TODO: doc
+// Returns a graph with:
+// - Specified node i removed
+// - All children of node i connected directly to all parents of node i (if not graph endpoints)
 func (g Graph) dropNode(i int) Graph {
 	var (
 		from       []int
@@ -104,7 +106,9 @@ func (g Graph) dropNode(i int) Graph {
 	return NewGraph(Unique(edges), g.Tokens)
 }
 
-// TODO: doc
+// Returns the initial and final nodes of the graph, where:
+// - Initial node is not reachable by any node
+// - Final node does not lead to any node
 func getEndPoints(g Graph) (int, int) {
 	var (
 		i         int
@@ -132,10 +136,10 @@ func getEndPoints(g Graph) (int, int) {
 	return i, f
 }
 
-// TODO: doc
+// Convenience type alias for a single graph traversal path
 type Path = []int
 
-// TODO: doc
+// Returns all possible traversal paths between graph endpoints via depth first traversal
 func getAllPaths(g Graph) []Path {
 	var (
 		from, to int    = getEndPoints(g)
@@ -165,7 +169,11 @@ func getAllPaths(g Graph) []Path {
 	return res
 }
 
-// TODO: doc
+// Inserts graph g into graph g1 at node i
+// - Increments g1.Edges by g.Edges.Max+1
+// - Appends g.Tokens onto g1.Tokens
+// - Any edge in g with a From or To value matching i is replaced with the corresponding g1 end point
+// Returns an error if graphs are empty or i is not an available node
 func composeGraphs(g Graph, g1 Graph, i int) (Graph, error) {
 	switch {
 	case g.Edges.isEmpty() || g1.Edges.isEmpty():
@@ -195,7 +203,8 @@ func composeGraphs(g Graph, g1 Graph, i int) (Graph, error) {
 	return NewGraph(edg, exp), nil
 }
 
-// TODO: doc
+// Chooses random node according to provided weights
+// Returns an error if there are no available choices, choice and weight lengths are mismatched, or there is some error in sampling
 func getRandomChoice(c []int, w []float64, s xrand.Source) (int, error) {
 	if len(c) == 0 || len(w) == 0 {
 		return -1, fmt.Errorf("error when calling GetRandomChoice(%v, %v):\n%+w", c, w, errors.New("length of choices c and/or weights w is 0"))
@@ -212,7 +221,8 @@ func getRandomChoice(c []int, w []float64, s xrand.Source) (int, error) {
 	return c[choice], nil
 }
 
-// TODO: doc
+// Returns one traversal path between graph endpoints, choosing nodes according to provided or default weights
+// Returns an error if the target node is not reachable
 func getRandomPath(g Graph) (Path, error) {
 	var (
 		source   xrand.Source = xrand.NewSource(mrand.Uint64())
@@ -249,7 +259,7 @@ func getRandomPath(g Graph) (Path, error) {
 	return res, nil
 }
 
-// TODO: doc
+// Drops "" nodes from a graph, as they do not contribute anything to productions
 func Minimize(g Graph, f []string) Graph {
 	var g1 Graph = g
 
@@ -262,7 +272,7 @@ func Minimize(g Graph, f []string) Graph {
 	return g1
 }
 
-// TODO: doc
+// Applies expression weights to rule tokens if present
 func weightEdges(r Rule) (Rule, error) {
 	for i, t := range r.Tokens {
 		if isWeighted(t) {
@@ -283,7 +293,7 @@ func weightEdges(r Rule) (Rule, error) {
 	return r, nil
 }
 
-// TODO: doc
+// Collects productions from each path in r.Graph
 func getProductions(r Rule) []string {
 	var productions []string
 	for _, path := range getAllPaths(r.Graph) {
@@ -296,7 +306,7 @@ func getProductions(r Rule) []string {
 	return productions
 }
 
-// TODO: doc
+// Returns a production by mapping a graph traversal path to a slice of tokens
 func getSingleProduction(p Path, a []Expression) string {
 	if len(p) == 0 || len(a) == 0 {
 		return ""
@@ -311,7 +321,8 @@ func getSingleProduction(p Path, a []Expression) string {
 	return builder.String()
 }
 
-// TODO: doc
+// Returns a copy of e, with each token present in e and filter f replaced with ""
+// Used to prevent flow control tokens from showing up in productions
 func filterTokens(e []Expression, f []string) []Expression {
 	var filter map[string]struct{} = make(map[string]struct{})
 	var e1 []Expression = make([]Expression, len(e))

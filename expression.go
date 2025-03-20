@@ -15,10 +15,10 @@ import (
 	"github.com/bzick/tokenizer"
 )
 
-// TODO: doc
+// Type alias for rule definitions/tokens
 type Expression = string
 
-// TODO: doc
+// Splits an expression into a slice of expression/tokens using tokenizer
 func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
 	if e == "" {
 		return []Expression{}
@@ -70,7 +70,7 @@ func ToTokens(e Expression, lex *tokenizer.Tokenizer) []Expression {
 	return out
 }
 
-// TODO: doc
+// Helper function to get current contents of strings.Builder and reset
 func flushBuilder(b strings.Builder, o []Expression) (strings.Builder, []Expression) {
 	var str string = b.String()
 
@@ -82,12 +82,12 @@ func flushBuilder(b strings.Builder, o []Expression) (strings.Builder, []Express
 	return b, o
 }
 
-// TODO: doc
+// Check if an espression has a weight defined by /[0-9\.]+/
 func isWeighted(e Expression) bool {
 	return regexp.MustCompile(`/[0-9\.]+/`).MatchString(e)
 }
 
-// TODO: doc
+// Splits a weighted expression into the base expression and its weight value
 func ParseWeight(e Expression) (Expression, float64, error) {
 	split := strings.Split(e, "/")
 	if len(split) != 3 {

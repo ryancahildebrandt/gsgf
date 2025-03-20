@@ -11,44 +11,44 @@ import (
 	"strings"
 )
 
-// TODO: doc
+// JSON wrapper for grammar struct
 type grammarJSON struct {
 	Rules   map[string]ruleJSON `json:"rules"`
 	Imports []string            `json:"imports"`
 }
 
-// TODO: doc
+// JSON wrapper for graph struct
 type graphJSON struct {
 	Tokens []string   `json:"tokens"`
 	Edges  []edgeJSON `json:"edges"`
 	Paths  [][]int    `json:"paths"`
 }
 
-// TODO: doc
+// JSON wrapper for edge struct
 type edgeJSON struct {
 	From   int     `json:"source"`
 	To     int     `json:"destination"`
 	Weight float64 `json:"weight"`
 }
 
-// TODO: doc
+// JSON wrapper for rule struct
 type ruleJSON struct {
 	Expression string    `json:"expression"`
 	IsPublic   bool      `json:"is_public"`
 	Graph      graphJSON `json:"graph"`
 }
 
-// TODO: doc
+// Construct ruleJSON from rule
 func ruleToJSON(r Rule) ruleJSON {
 	return ruleJSON{Expression: r.exp, IsPublic: r.IsPublic, Graph: graphToJSON(r.Graph)}
 }
 
-// TODO: doc
+// Construct edgeJSON from edge
 func edgeToJSON(e Edge) edgeJSON {
 	return edgeJSON(e)
 }
 
-// TODO: doc
+// Construct graphJSON from graph
 func graphToJSON(g Graph) graphJSON {
 	var j graphJSON
 
@@ -61,7 +61,7 @@ func graphToJSON(g Graph) graphJSON {
 	return j
 }
 
-// TODO: doc
+// Construct grammarJSON from grammar
 func grammarToJSON(g Grammar) grammarJSON {
 	var rules map[string]ruleJSON = make(map[string]ruleJSON)
 
@@ -72,7 +72,7 @@ func grammarToJSON(g Grammar) grammarJSON {
 	return grammarJSON{Rules: rules, Imports: g.Imports}
 }
 
-// TODO: doc
+// Export graph to a slices of edges and a slice of nodes, each separated by newlines
 func GraphToTXT(g Graph) (string, string) {
 	var nodes []string
 	var edges []string
@@ -87,7 +87,7 @@ func GraphToTXT(g Graph) (string, string) {
 	return strings.Join(nodes, "\n"), strings.Join(edges, "\n")
 }
 
-// TODO: doc
+// Export graph to graphviz DOT format
 func GraphToDOT(g Graph) string {
 	var (
 		builder strings.Builder
@@ -120,7 +120,7 @@ func GraphToDOT(g Graph) string {
 	return builder.String()
 }
 
-// TODO: doc
+// Export rule reference tree to graphviz DOT format
 func ReferencesToDOT(g Grammar) string {
 	var (
 		builder strings.Builder
@@ -145,7 +145,7 @@ func ReferencesToDOT(g Grammar) string {
 	return builder.String()
 }
 
-// TODO: doc
+// Export graph to D2 diagram format
 func GraphToD2(g Graph) string {
 	var (
 		builder strings.Builder
@@ -173,7 +173,7 @@ func GraphToD2(g Graph) string {
 	return builder.String()
 }
 
-// TODO: doc
+// Export rule reference tree to D2 diagram format
 func ReferencesToD2(g Grammar) string {
 	var (
 		builder strings.Builder

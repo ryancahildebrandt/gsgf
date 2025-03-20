@@ -17,6 +17,70 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
+/*
+gsgf produces natural language expressions from context free grammars
+The main executable can handle jsgf and jjsgf formats and outputs productions to stdout or plain text
+
+Usage:
+
+	gsgf [command] [options] example.jsgf
+
+Options:
+
+	--nProductions, -n (int)
+		Number of productions to take from the top of the productions list
+
+	--outFile, -o (string)
+		Text file to write productions to.
+		If blank, productions are returned to stdout
+
+	--minimize, -m (bool)
+		Minimze graph before calculating paths and productions.
+		May boost performance on graphs with many flow control tokens ()[]|
+
+	--shuffle, -s (bool)
+		Shuffle production order before returning
+
+	--singleQuote (bool)
+		Changes lexer's default quote character from double quotes to single
+
+	--wrapProductionsPrefix (string)
+		Prefix applied to all productions
+
+	--wrapProductionsSuffix (string)
+		Suffix applied to all productions
+
+	--collectTagsChar (string)
+		Comment character to place between production and collected tags.
+		If empty, tags are moved to the end of the production line
+
+	--wrapTagsPrefix (string)
+		Prefix applied to all tags
+
+	--wrapTagsSuffix (string)
+		Suffix applied to all tags
+
+	--removeTags (bool)
+		Remove all tags from productions
+
+	--renderNewlines (bool)
+		Replace \n with new line in productions
+
+	--renderTabs (bool)
+		Replace \t with tab character in productions
+
+	--removeMultiSpaces (bool)
+		Replace multiple consecutive spaces with single space in productions
+
+	--removeEndSpaces (bool)
+		Removing trailing and leading spaces in productions
+
+	--exportDir, -e (string) (default: "./export")
+		Directory to write export results to
+
+	--help, -h
+		Show help
+*/
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	app := &cli.Command{

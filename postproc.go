@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// TODO: doc
+// Trim leading and trailing spaces from each production in p
 func RemoveEndSpaces(p []string) []string {
 	for i := range p {
 		p[i] = strings.Trim(p[i], "\t\r\n ")
@@ -20,9 +20,8 @@ func RemoveEndSpaces(p []string) []string {
 	return p
 }
 
-// TODO: doc
+// Remove consecutive whitespaces (including " ","\n","\t") from each production in p and replace with a single " "
 func RemoveMultipleSpaces(p []string) []string {
-	// will eat \n\t etc and replace w " "
 	for i := range p {
 		p[i] = strings.Join(strings.Fields(p[i]), " ")
 	}
@@ -30,7 +29,7 @@ func RemoveMultipleSpaces(p []string) []string {
 	return p
 }
 
-// TODO: doc
+// Replace \t with tab character in productions
 func RenderTabs(p []string) []string {
 	for i := range p {
 		p[i] = strings.Replace(p[i], `\t`, "\t", -1)
@@ -39,7 +38,7 @@ func RenderTabs(p []string) []string {
 	return p
 }
 
-// TODO: doc
+// Replace \n with newline character in productions
 func RenderNewLines(p []string) []string {
 	for i := range p {
 		p[i] = strings.Replace(p[i], `\n`, "\n", -1)
@@ -48,7 +47,7 @@ func RenderNewLines(p []string) []string {
 	return p
 }
 
-// TODO: doc
+// Remove all tags (surrounded by {}) from productions
 func RemoveTags(p []string) []string {
 	for i := range p {
 		p[i] = regexp.MustCompile(`\{.*?\}`).ReplaceAllString(p[i], "")
@@ -57,7 +56,7 @@ func RemoveTags(p []string) []string {
 	return p
 }
 
-// TODO: doc
+// Surround all tags (surrounded by {}) with prefix and suffix in productions
 func WrapTags(p []string, prefix string, suffix string) []string {
 	var seen map[string]struct{} = make(map[string]struct{})
 
@@ -75,7 +74,7 @@ func WrapTags(p []string, prefix string, suffix string) []string {
 	return p
 }
 
-// TODO: doc
+// Move all tags (surrounded by {}) in productions to the end of the line, with comment character between the production and tags
 func CollectTags(p []string, c string) []string {
 	var b strings.Builder
 
@@ -96,7 +95,7 @@ func CollectTags(p []string, c string) []string {
 	return p
 }
 
-// TODO: doc
+// Surround productions in p with prefix and suffix
 func WrapProductions(p []string, prefix string, suffix string) []string {
 	for i := range p {
 		p[i] = fmt.Sprint(prefix, p[i], suffix)

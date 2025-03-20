@@ -12,22 +12,22 @@ import (
 	"sort"
 )
 
-// TODO: doc
+// Contains weight information between 2 graph nodes
 type Edge struct {
 	From   int
 	To     int
 	Weight float64
 }
 
-// TODO: doc
+// Checks if both e.From and e.To are the default int value 0
 func (e Edge) isEmpty() bool {
 	return e.From == 0 && e.To == 0
 }
 
-// TODO: doc
+// Convenience type definition for a slice of edges, used to convert token sequences to graph
 type EdgeList []Edge
 
-// TODO: doc
+// Returns EdgeList e sorted by From and To values
 func Sort(e EdgeList) EdgeList {
 	sort.Slice(e, func(i, j int) bool {
 		switch {
@@ -43,7 +43,7 @@ func Sort(e EdgeList) EdgeList {
 	return e
 }
 
-// TODO: doc
+// Returns EdgeList with all From and To values increased by n. Used mainly in graph composition
 func increment(e EdgeList, n int) EdgeList {
 	var e1 EdgeList
 	e1 = append(e1, e...)
@@ -56,12 +56,12 @@ func increment(e EdgeList, n int) EdgeList {
 	return e1
 }
 
-// TODO: doc
+// Checks if first edge is empty or EdgeList has length 0
 func (e EdgeList) isEmpty() bool {
 	return len(e) == 0 || e[0].isEmpty()
 }
 
-// TODO: doc
+// Returns highest value from collected From and To values
 func (e EdgeList) max() int {
 	if e.isEmpty() {
 		return 0
@@ -76,7 +76,7 @@ func (e EdgeList) max() int {
 	return slices.Max(arr)
 }
 
-// TODO: doc
+// Returns a slice of all unique edges in EdgeList e
 func Unique(e EdgeList) EdgeList {
 	var out EdgeList
 	var seen map[string]int = make(map[string]int)
@@ -91,7 +91,8 @@ func Unique(e EdgeList) EdgeList {
 	return out
 }
 
-// TODO: doc
+// Converts a slice of tokens/Expressions to an EdgeList
+// Uses flow control tokens (), [], | to capture possible state transitions between tokens
 func ToEdgeList(arr []Expression) EdgeList {
 	var (
 		edges      EdgeList
