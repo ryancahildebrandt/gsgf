@@ -1,0 +1,99 @@
+vars: {
+  d2-config: {
+    theme-id: 102 # 300
+  }
+}
+title: abc {
+  shape: text
+  near: top-center
+  style: {font-size: 72}
+}
+main: {
+  grid-rows: 3
+  style: {opacity: 0}
+  step1: {
+    label: ""
+    grid-columns: 4
+    direction: right
+    exp: |md
+      ## Tokens
+      \> **(0, \<SOS\>)**\
+      (1, abc)\
+      (2, \<EOS\>)
+    |
+    values: ||md
+      | |Current|New|
+      |-|-|-|
+      |from| |0|
+      |group| | |
+      |groupStack|[]|[0]|
+      |groupMap|{}|{0:[]}|
+    ||
+    edges: ||md
+      ## Edges
+    ||
+    graph: {
+      style: {opacity: 0}
+      direction: right
+      0
+    }
+  }
+  step2: {
+    label: ""
+    grid-columns: 4
+    direction: right
+    exp: |md
+      ## Tokens
+      (0, \<SOS\>)\
+      \> **(1, abc)**\
+      (2, \<EOS\>)
+    |
+    values: ||md
+      | |Current|New|
+      |-|-|-|
+      |from|0|1|
+      |group| | |
+      |groupStack|[0]|[0]|
+      |groupMap|{0:[]}|{0:[]}|
+    ||
+    edges: ||md
+      ## Edges
+      **{0, 1}**
+    ||
+    graph: {
+      style: {opacity: 0}
+      direction: right
+      0 -> 1
+    }
+  }
+  step3: {
+    label: ""
+    grid-columns: 4
+    direction: right
+    exp: |md
+      ## Tokens
+      (0, \<SOS\>)\
+      (1, abc)\
+      \> **(2, \<EOS\>)**
+    |
+    values: ||md
+      | |Current|New|
+      |-|-|-|
+      |from|1|1|
+      |group| | |
+      |groupStack|[0]|[0]|
+      |groupMap|{0:[]}|{0:[]}|
+    ||
+    edges: ||md
+      ## Edges
+      {0, 1}\
+      **{1, 2}**
+    ||
+    graph: {
+      style: {opacity: 0}
+      direction: right
+      0 -> 1
+      1 -> 2
+    }
+  }
+}

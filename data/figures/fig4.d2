@@ -1,0 +1,273 @@
+vars: {
+  d2-config: {
+    theme-id: 102 # 300
+  }
+}
+title: a\[b\]c {
+  shape: text
+  near: top-center
+  style: {font-size: 72}
+}
+main: {
+  grid-rows: 7
+  style: {opacity: 0}
+  step1: {
+    label: ""
+    grid-columns: 4
+    direction: right
+    exp: |md
+      ## Tokens
+      \> **(0, \<SOS\>)**\
+      (1, a)\
+      (2, [)\
+      (3, b)\
+      (4, ])\
+      (5, c)\
+      (6, \<EOS\>)
+    |
+    values: ||md
+      | |Current|New|
+      |-|-|-|
+      |from| |0|
+      |group| | |
+      |groupStack|[]|[0]|
+      |groupMap|{}|{0:[]}|
+    ||
+    edges: ||md
+      ## Edges
+    ||
+    graph: {
+      style: {opacity: 0}
+      direction: right
+      0
+    }
+  }
+  step2: {
+    label: ""
+    grid-columns: 4
+    direction: right
+    exp: |md
+      ## Tokens
+      (0, \<SOS\>)\
+      \> **(1, a)**\
+      (2, [)\
+      (3, b)\
+      (4, ])\
+      (5, c)\
+      (6, \<EOS\>)
+    |
+    values: ||md
+      | |Current|New|
+      |-|-|-|
+      |from|0|1|
+      |group| | |
+      |groupStack|[0]|[0]|
+      |groupMap|{0:[]}|{0:[]}|
+    ||
+    edges: ||md
+      ## Edges
+      **{0, 1}**
+    ||
+    graph: {
+      style: {opacity: 0}
+      direction: right
+      0 -> 1
+    }
+  }
+step3: {
+    label: ""
+    grid-columns: 4
+    direction: right
+    exp: |md
+      ## Tokens
+      (0, \<SOS\>)\
+      (1, a)\
+      \> **(2, [)**\
+      (3, b)\
+      (4, ])\
+      (5, c)\
+      (6, \<EOS\>)
+    |
+    values: ||md
+      | |Current|New|
+      |-|-|-|
+      |from|1|2|
+      |group| | |
+      |groupStack|[0]|[0,2]|
+      |groupMap|{0:[]}|{0:[],2:[]}|
+    ||
+    edges: ||md
+      ## Edges
+      {0, 1}\
+      **{1, 2}**
+    ||
+    graph: {
+      style: {opacity: 0}
+      direction: right
+      0 -> 1
+      1 -> 2
+    }
+  }
+step4: {
+    label: ""
+    grid-columns: 4
+    direction: right
+    exp: |md
+      ## Tokens
+      (0, \<SOS\>)\
+      (1, a)\
+      (2, [)\
+      \> **(3, b)**\
+      (4, ])\
+      (5, c)\
+      (6, \<EOS\>)
+    |
+    values: ||md
+      | |Current|New|
+      |-|-|-|
+      |from|2|3|
+      |group| | |
+      |groupStack|[0,2]|[0,2]|
+      |groupMap|{0:[],2:[]}|{0:[],2:[]}|
+    ||
+    edges: ||md
+      ## Edges
+      {0, 1}\
+      {1, 2}\
+      **{2, 3}**
+    ||
+    graph: {
+      style: {opacity: 0}
+      direction: right
+      0 -> 1
+      1 -> 2
+      2 -> 3
+    }
+  }
+  step5: {
+    label: ""
+    grid-columns: 4
+    direction: right
+    exp: |md
+      ## Tokens
+      (0, \<SOS\>)\
+      (1, a)\
+      (2, [)\
+      (3, b)\
+      \> **(4, ])**\
+      (5, c)\
+      (6, \<EOS\>)
+    |
+    values: ||md
+      | |Current|New|
+      |-|-|-|
+      |from|3|4|
+      |group| |2|
+      |groupStack|[0,2]|[0]|
+      |groupMap|{0:[],2:[]}|{0:[]}|
+    ||
+    edges: ||md
+      ## Edges
+      {0, 1}\
+      {1, 2}\
+      {2, 3}\
+      **{3, 4}**\
+      **{2, 4}**
+    ||
+    graph: {
+      style: {opacity: 0}
+      direction: right
+      0 -> 1
+      1 -> 2
+      2 -> 3
+      3 -> 4
+      2 -> 4
+    }
+  }
+  step6: {
+    label: ""
+    grid-columns: 4
+    direction: right
+    exp: |md
+      ## Tokens
+      (0, \<SOS\>)\
+      (1, a)\
+      (2, [)\
+      (3, b)\
+      (4, ])\
+      \> **(5, c)**\
+      (6, \<EOS\>)
+    |
+    values: ||md
+      | |Current|New|
+      |-|-|-|
+      |from|4|4|
+      |group|2|2|
+      |groupStack|[0]|[0]|
+      |groupMap|{0:[]}|{0:[]}|
+    ||
+    edges: ||md
+      ## Edges
+      {0, 1}\
+      {1, 2}\
+      {2, 3}\
+      {3, 4}\
+      {2, 4}\
+      **{4, 5}**
+    ||
+    graph: {
+      style: {opacity: 0}
+      direction: right
+      0 -> 1
+      1 -> 2
+      2 -> 3
+      3 -> 4
+      2 -> 4
+      4 -> 5
+    }
+  }
+  step7: {
+    label: ""
+    grid-columns: 4
+    direction: right
+    exp: |md
+      ## Tokens
+      (0, \<SOS\>)\
+      (1, a)\
+      (2, [)\
+      (3, b)\
+      (4, ])\
+      (5, c)\
+      \> **(6, \<EOS\>)**
+    |
+    values: ||md
+      | |Current|New|
+      |-|-|-|
+      |from|4|4|
+      |group|2|2|
+      |groupStack|[0]|[0]|
+      |groupMap|{0:[]}|{0:[]}|
+    ||
+    edges: ||md
+      ## Edges
+      {0, 1}\
+      {1, 2}\
+      {2, 3}\
+      {3, 4}\
+      {2, 4}\
+      {4, 5}\
+      **{5, 6}**
+    ||
+    graph: {
+      style: {opacity: 0}
+      direction: right
+      0 -> 1
+      1 -> 2
+      2 -> 3
+      3 -> 4
+      2 -> 4
+      4 -> 5
+      5 -> 6
+    }
+  }
+  }

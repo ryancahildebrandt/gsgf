@@ -109,6 +109,7 @@ func (g Graph) dropNode(i int) Graph {
 // Returns the initial and final nodes of the graph, where:
 // - Initial node is not reachable by any node
 // - Final node does not lead to any node
+// Every edgelist is constructed such that it has exactly one start and end node
 func getEndPoints(g Graph) (int, int) {
 	var (
 		i         int

@@ -7,7 +7,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"slices"
 	"sort"
 )
@@ -93,13 +92,13 @@ func Unique(e EdgeList) EdgeList {
 
 // Converts a slice of tokens/Expressions to an EdgeList
 // Uses flow control tokens (), [], | to capture possible state transitions between tokens
+// Every edgelist is constructed such that it has exactly one start and end node
 func ToEdgeList(arr []Expression) EdgeList {
 	var (
 		edges      EdgeList
-		err        error
 		from       int
 		group      int
-		groupStack stack
+		groupStack []int
 		groupMap   = make(map[int][]int)
 	)
 
@@ -109,7 +108,7 @@ func ToEdgeList(arr []Expression) EdgeList {
 			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
 		case "<SOS>":
 			from = i
-			groupStack = groupStack.push(i)
+			groupStack = append(groupStack, i)
 			groupMap[i] = []int{}
 		case ";":
 			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
@@ -120,41 +119,31 @@ func ToEdgeList(arr []Expression) EdgeList {
 			}
 			from = i
 		case "(", "[":
-			groupStack = groupStack.push(i)
+			groupStack = append(groupStack, i)
 			groupMap[i] = []int{}
 			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
 			from = i
 		case ")":
-			group, err = groupStack.top()
-			if err != nil {
-				log.Fatal(err)
-			}
+			group = groupStack[len(groupStack)-1]
 			for _, v := range groupMap[group] {
 				edges = append(edges, Edge{From: v, To: i, Weight: 1.0})
 			}
-			groupStack = groupStack.drop(group)
+			groupStack = groupStack[:len(groupStack)-1]
 			delete(groupMap, group)
 			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
 			from = i
 		case "]":
-			group, err := groupStack.top()
-			if err != nil {
-				log.Fatal(err)
-			}
+			group = groupStack[len(groupStack)-1]
 			for _, v := range groupMap[group] {
 				edges = append(edges, Edge{From: v, To: i, Weight: 1.0})
 			}
-			groupStack = groupStack.drop(group)
+			groupStack = groupStack[:len(groupStack)-1]
 			delete(groupMap, group)
 			edges = append(edges, Edge{From: from, To: i, Weight: 1.0})
 			edges = append(edges, Edge{From: group, To: i, Weight: 1.0})
 			from = i
 		case "|":
-			group, groupStack, err = groupStack.pop()
-			if err != nil {
-				log.Fatal(err)
-			}
-			groupStack = groupStack.push(group)
+			group = groupStack[len(groupStack)-1]
 			groupMap[group] = append(groupMap[group], from)
 			from = group
 		default:
