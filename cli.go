@@ -245,9 +245,6 @@ func prepareContext(ctx context.Context, cmd *cli.Command) (context.Context, err
 	if cmd.Bool("singleQuote") {
 		cmd.Set("quoteChar", "'")
 	}
-	if cmd.Int("nProductions") == -1 {
-		cmd.Set("nProductions", "1")
-	}
 
 	return ctx, nil
 }

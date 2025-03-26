@@ -139,6 +139,9 @@ func main() {
 					}
 					productions = GetAllProductions(grammar)
 					productions = applyPostproc(productions, cmd)
+					if cmd.Int("nProductions") != -1 {
+						productions = productions[:cmd.Int("nProductions")]
+					}
 					if cmd.String("outFile") == "" {
 						for _, prod := range productions {
 							fmt.Println(prod)
@@ -199,6 +202,9 @@ func main() {
 						log.Fatal(err)
 					}
 
+					if cmd.Int("nProductions") == -1 {
+						cmd.Set("nProductions", "1")
+					}
 					grammar, err = buildGrammar(cmd)
 					if err != nil {
 						log.Fatal(err)
