@@ -14,7 +14,7 @@ This project provides utilities for working with JSGF and JJSGF context free gra
 
 ## Background
 
-Building something like this from scratch was admittedly outside my wheelhouse, and it required picking up a lot of techniques from other fields. Even with the multitude of learning resources available on the internet, this was the most challenging project I've done and I learned quite a lot by doing it. Throughout the process, I found no shortage of helpful resources explaining individual pieces needed for this project, but putting those pieces together was a huge challenge. I've collected the most helpful information to provide an overview of the moving parts of the project and how they fit together.
+Building something like this from scratch was admittedly outside my wheelhouse, and it required picking up a lot of techniques from other fields. Even with the multitude of learning resources available on the internet, this was the most challenging project I've done and I learned quite a lot by doing it. Throughout the process, I found no shortage of helpful resources explaining individual pieces needed for this project (especially from Kay Lack [@neoeno](https://github.com/neoeno) and her [Youtube Channel](https://www.youtube.com/neoeno4242)), but putting those pieces together was a huge challenge. I've collected the most helpful information to provide an overview of the moving parts of the project and how they fit together.
 
 At a high level, the program:
 
