@@ -25,7 +25,8 @@ func TestGetFrom(t *testing.T) {
 		{
 			e:    EdgeList{},
 			n:    -1,
-			want: []int{}},
+			want: []int{},
+		},
 		{
 			e:    EdgeList{},
 			n:    0,
@@ -528,10 +529,12 @@ func TestGetAllPaths(t *testing.T) {
 	}{
 		{
 			e:    EdgeList{{From: 0, To: 1, Weight: 1.0}},
-			want: []Path{{0, 1}}},
+			want: []Path{{0, 1}},
+		},
 		{
 			e:    EdgeList{{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}},
-			want: []Path{{0, 1, 2}}},
+			want: []Path{{0, 1, 2}},
+		},
 		{
 			e: EdgeList{
 				{From: 0, To: 1, Weight: 1.0},
@@ -2670,6 +2673,19 @@ func TestGetProductions(t *testing.T) {
 				),
 			},
 			want: []string{"123"},
+		},
+		{
+			r: Rule{
+				exp:      "1,2.3;",
+				IsPublic: false,
+				Graph: NewGraph(
+					EdgeList{
+						{From: 0, To: 1, Weight: 1.0}, {From: 1, To: 2, Weight: 1.0}, {From: 2, To: 3, Weight: 1.0},
+					},
+					[]Expression{"<SOS>", "1,2.3", ";", "<EOS>"},
+				),
+			},
+			want: []string{"1,2.3"},
 		},
 		{
 			r: Rule{

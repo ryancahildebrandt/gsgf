@@ -18,19 +18,28 @@ func TestToTokens(t *testing.T) {
 	}{
 		{
 			e:    "",
-			want: []Expression{}},
+			want: []Expression{},
+		},
 		{
 			e:    ";",
-			want: []Expression{"<SOS>", ";", "<EOS>"}},
+			want: []Expression{"<SOS>", ";", "<EOS>"},
+		},
 		{
 			e:    " ",
-			want: []Expression{"<SOS>", " ", "<EOS>"}},
+			want: []Expression{"<SOS>", " ", "<EOS>"},
+		},
 		{
 			e:    "test expression 123",
-			want: []Expression{"<SOS>", "test expression 123", "<EOS>"}},
+			want: []Expression{"<SOS>", "test expression 123", "<EOS>"},
+		},
 		{
 			e:    "test expression 123;",
-			want: []Expression{"<SOS>", "test expression 123", ";", "<EOS>"}},
+			want: []Expression{"<SOS>", "test expression 123", ";", "<EOS>"},
+		},
+		{
+			e:    "test expression 1,2.3;",
+			want: []Expression{"<SOS>", "test expression 1,2.3", ";", "<EOS>"},
+		},
 		{
 			e:    "test expression 123 (abc);",
 			want: []Expression{"<SOS>", "test expression 123 ", "(", "abc", ")", ";", "<EOS>"},

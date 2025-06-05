@@ -139,6 +139,9 @@ func main() {
 					}
 					productions = GetAllProductions(grammar)
 					productions = applyPostproc(productions, cmd)
+					if cmd.Int("nProductions") > int64(len(productions)) {
+						log.Fatal(fmt.Errorf("error when applying cli flag nProductions, value %v is larger than the number of productions produced by the grammar %v", cmd.Int("nProductions"), len(productions)))
+					}
 					if cmd.Int("nProductions") != -1 {
 						productions = productions[:cmd.Int("nProductions")]
 					}
