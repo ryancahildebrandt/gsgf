@@ -152,7 +152,7 @@ func main() {
 
 						return nil
 					}
-					err = os.WriteFile(cmd.String("outFile"), []byte(strings.Join(productions, "\n")), 0644)
+					err = os.WriteFile(cmd.String("outFile"), []byte(strings.Join(productions, "\n")), 0o644)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -160,7 +160,6 @@ func main() {
 					return nil
 				},
 			},
-
 			{
 				Name:                  "sample",
 				UsageText:             "gsgf sample [OPTIONS] example.jsgf",
@@ -235,7 +234,7 @@ func main() {
 
 						return nil
 					}
-					err = os.WriteFile(cmd.String("outFile"), []byte(strings.Join(productions, "\n")), 0644)
+					err = os.WriteFile(cmd.String("outFile"), []byte(strings.Join(productions, "\n")), 0o644)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -277,15 +276,15 @@ func main() {
 					if err != nil {
 						log.Fatal(err)
 					}
-					err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/grammar.json"), j, 0644)
+					err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/grammar.json"), j, 0o644)
 					if err != nil {
 						log.Fatal(err)
 					}
-					err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/references.d2"), []byte(ReferencesToD2(grammar)), 0644)
+					err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/references.d2"), []byte(ReferencesToD2(grammar)), 0o644)
 					if err != nil {
 						log.Fatal(err)
 					}
-					err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/references.dot"), []byte(ReferencesToDOT(grammar)), 0644)
+					err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/references.dot"), []byte(ReferencesToDOT(grammar)), 0o644)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -295,24 +294,24 @@ func main() {
 							if err != nil {
 								log.Fatal(err)
 							}
-							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_graph.json"), j, 0644)
+							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_graph.json"), j, 0o644)
 							if err != nil {
 								log.Fatal(err)
 							}
 							nodes, edges := GraphToTXT(v.Graph)
-							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_edges.txt"), []byte(edges), 0644)
+							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_edges.txt"), []byte(edges), 0o644)
 							if err != nil {
 								log.Fatal(err)
 							}
-							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_nodes.txt"), []byte(nodes), 0644)
+							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_nodes.txt"), []byte(nodes), 0o644)
 							if err != nil {
 								log.Fatal(err)
 							}
-							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_graph.d2"), []byte(GraphToD2(v.Graph)), 0644)
+							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_graph.d2"), []byte(GraphToD2(v.Graph)), 0o644)
 							if err != nil {
 								log.Fatal(err)
 							}
-							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_graph.dot"), []byte(GraphToDOT(v.Graph)), 0644)
+							err = os.WriteFile(fmt.Sprint(cmd.String("exportDir"), "/", k, "_graph.dot"), []byte(GraphToDOT(v.Graph)), 0o644)
 							if err != nil {
 								log.Fatal(err)
 							}

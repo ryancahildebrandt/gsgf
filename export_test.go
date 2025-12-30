@@ -160,8 +160,10 @@ func TestReferencesToDOT(t *testing.T) {
 			want: "digraph {\n\n\trankdir = \"LR\"\n\n\t<b> -> <a>;\n\t<c> -> <a>;\n\n}",
 		},
 		{
-			g: Grammar{Rules: map[string]Rule{"<a>": NewRule("<b>", true),
-				"<c>": NewRule("", false)}, Imports: []string{}},
+			g: Grammar{Rules: map[string]Rule{
+				"<a>": NewRule("<b>", true),
+				"<c>": NewRule("", false),
+			}, Imports: []string{}},
 			want: "digraph {\n\n\trankdir = \"LR\"\n\n\t<b> -> <a>;\n\n}",
 		},
 		{
@@ -171,7 +173,8 @@ func TestReferencesToDOT(t *testing.T) {
 					"<b>": NewRule("<c>", true),
 					"<c>": NewRule("<d>", true),
 					"<d>": NewRule("", true),
-				}, Imports: []string{}},
+				}, Imports: []string{},
+			},
 			want: "digraph {\n\n\trankdir = \"LR\"\n\n\t<c> -> <a>;\n\t<c> -> <b>;\n\t<d> -> <c>;\n\n}",
 		},
 		{
@@ -181,7 +184,8 @@ func TestReferencesToDOT(t *testing.T) {
 					"<b>": NewRule("<c>", true),
 					"<c>": NewRule("<d>", true),
 					"<d>": NewRule("", false),
-				}, Imports: []string{}},
+				}, Imports: []string{},
+			},
 			want: "digraph {\n\n\trankdir = \"LR\"\n\n\t<c> -> <a>;\n\t<c> -> <b>;\n\t<d> -> <c>;\n\n}",
 		},
 	}
@@ -275,8 +279,10 @@ func TestReferencesToD2(t *testing.T) {
 			want: "direction: right\n\n\"<b>\" -> \"<a>\"\n\"<c>\" -> \"<a>\"\n",
 		},
 		{
-			g: Grammar{Rules: map[string]Rule{"<a>": NewRule("<b>", true),
-				"<c>": NewRule("", false)}, Imports: []string{}},
+			g: Grammar{Rules: map[string]Rule{
+				"<a>": NewRule("<b>", true),
+				"<c>": NewRule("", false),
+			}, Imports: []string{}},
 			want: "direction: right\n\n\"<b>\" -> \"<a>\"\n",
 		},
 		{
@@ -286,7 +292,8 @@ func TestReferencesToD2(t *testing.T) {
 					"<b>": NewRule("<c>", true),
 					"<c>": NewRule("<d>", true),
 					"<d>": NewRule("", true),
-				}, Imports: []string{}},
+				}, Imports: []string{},
+			},
 			want: "direction: right\n\n\"<c>\" -> \"<a>\"\n\"<c>\" -> \"<b>\"\n\"<d>\" -> \"<c>\"\n",
 		},
 		{
@@ -296,7 +303,8 @@ func TestReferencesToD2(t *testing.T) {
 					"<b>": NewRule("<c>", true),
 					"<c>": NewRule("<d>", true),
 					"<d>": NewRule("", false),
-				}, Imports: []string{}},
+				}, Imports: []string{},
+			},
 			want: "direction: right\n\n\"<c>\" -> \"<a>\"\n\"<c>\" -> \"<b>\"\n\"<d>\" -> \"<c>\"\n",
 		},
 	}

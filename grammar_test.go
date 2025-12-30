@@ -56,32 +56,40 @@ func TestGetCompositionOrder(t *testing.T) {
 		},
 		{
 			g: Grammar{
-				Rules: map[string]Rule{"<a>": NewRule("", true),
-					"<b>": NewRule("", true)},
+				Rules: map[string]Rule{
+					"<a>": NewRule("", true),
+					"<b>": NewRule("", true),
+				},
 				Imports: []string{},
 			},
 			want: []string{"<a>", "<b>"},
 		},
 		{
 			g: Grammar{
-				Rules: map[string]Rule{"<a>": NewRule("", true),
-					"<b>": NewRule("", false)},
+				Rules: map[string]Rule{
+					"<a>": NewRule("", true),
+					"<b>": NewRule("", false),
+				},
 				Imports: []string{},
 			},
 			want: []string{"<a>"},
 		},
 		{
 			g: Grammar{
-				Rules: map[string]Rule{"<a>": NewRule("<b>", true),
-					"<c>": NewRule("", true)},
+				Rules: map[string]Rule{
+					"<a>": NewRule("<b>", true),
+					"<c>": NewRule("", true),
+				},
 				Imports: []string{},
 			},
 			want: []string{"<a>", "<b>", "<c>"},
 		},
 		{
 			g: Grammar{
-				Rules: map[string]Rule{"<a>": NewRule("<b>", true),
-					"<c>": NewRule("", false)},
+				Rules: map[string]Rule{
+					"<a>": NewRule("<b>", true),
+					"<c>": NewRule("", false),
+				},
 				Imports: []string{},
 			},
 			want: []string{"<a>", "<b>"},
@@ -1065,32 +1073,40 @@ func TestValidateGrammarCompleteness(t *testing.T) {
 		},
 		{
 			g: Grammar{
-				Rules: map[string]Rule{"<a>": NewRule("", true),
-					"<b>": NewRule("", true)},
+				Rules: map[string]Rule{
+					"<a>": NewRule("", true),
+					"<b>": NewRule("", true),
+				},
 				Imports: []string{},
 			},
 			wantErr: false,
 		},
 		{
 			g: Grammar{
-				Rules: map[string]Rule{"<a>": NewRule("", true),
-					"<b>": NewRule("", false)},
+				Rules: map[string]Rule{
+					"<a>": NewRule("", true),
+					"<b>": NewRule("", false),
+				},
 				Imports: []string{},
 			},
 			wantErr: false,
 		},
 		{
 			g: Grammar{
-				Rules: map[string]Rule{"<a>": NewRule("<b>", true),
-					"<c>": NewRule("", true)},
+				Rules: map[string]Rule{
+					"<a>": NewRule("<b>", true),
+					"<c>": NewRule("", true),
+				},
 				Imports: []string{},
 			},
 			wantErr: true,
 		},
 		{
 			g: Grammar{
-				Rules: map[string]Rule{"<a>": NewRule("<b>", true),
-					"<c>": NewRule("", false)},
+				Rules: map[string]Rule{
+					"<a>": NewRule("<b>", true),
+					"<c>": NewRule("", false),
+				},
 				Imports: []string{},
 			},
 			wantErr: true,

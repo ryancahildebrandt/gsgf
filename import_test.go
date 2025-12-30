@@ -329,60 +329,74 @@ func TestPeekGrammar(t *testing.T) {
 			p:       "data/tests/test4.jsgf",
 			n:       "test4",
 			imports: []string{"import <d.*>;"},
-			rules: map[string]string{"<main>": "(<request>|<order>) <quant> <teatype> tea;",
+			rules: map[string]string{
+				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
 				"<request>": "[(could|will|would) you] please <brew>;",
 				"<quant>":   "some|a (cup|glass) of;",
-				"<brew>":    "(make|brew|whip up) <quant>;"},
+				"<brew>":    "(make|brew|whip up) <quant>;",
+			},
 		},
 		{
 			p:       "data/tests/test5.jsgf",
 			n:       "test5",
 			imports: []string{"import <b.request>;"},
-			rules: map[string]string{"<main>": "(<request>|<order>) <quant> <teatype> tea;",
+			rules: map[string]string{
+				"<main>":    "(<request>|<order>) <quant> <teatype> tea;",
 				"<order>":   "i'd like [to order|a|<quant>];",
 				"<quant>":   "some|a (cup|glass) of;",
 				"<teatype>": "red|sweet|green|jasmine|milk;",
-				"<brew>":    "(make|brew|whip up) <quant>;"},
+				"<brew>":    "(make|brew|whip up) <quant>;",
+			},
 		},
 		{
 			p:       "data/tests/a.jsgf",
 			n:       "a",
 			imports: []string{},
-			rules: map[string]string{"<request>": "[(could|will|would) you] please <brew>;",
-				"<order>": "i'd like [to order|a|<quant>];",
-				"<brew>":  "(make|brew|whip up) <quant>;",
-				"<quant>": "some|a (cup|glass) of;"},
+			rules: map[string]string{
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<brew>":    "(make|brew|whip up) <quant>;",
+				"<quant>":   "some|a (cup|glass) of;",
+			},
 		},
 		{
 			p:       "data/tests/a.jjsgf",
 			n:       "a",
 			imports: []string{},
-			rules: map[string]string{"<request>": "[(could|will|would) you] please <brew>;",
-				"<order>": "i'd like [to order|a|<quant>];",
-				"<brew>":  "(make|brew|whip up) <quant>;",
-				"<quant>": "some|a (cup|glass) of;"},
+			rules: map[string]string{
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<brew>":    "(make|brew|whip up) <quant>;",
+				"<quant>":   "some|a (cup|glass) of;",
+			},
 		},
 		{
 			p:       "data/tests/b.jsgf",
 			n:       "b",
 			imports: []string{"import <c.brew>;"},
-			rules: map[string]string{"<request>": "[(could|will|would) you] please <brew>;",
-				"<order>": "i'd like [to order|a|<quant>];",
-				"<quant>": "some|a (cup|glass) of;"},
+			rules: map[string]string{
+				"<request>": "[(could|will|would) you] please <brew>;",
+				"<order>":   "i'd like [to order|a|<quant>];",
+				"<quant>":   "some|a (cup|glass) of;",
+			},
 		},
 		{
 			p:       "data/tests/dir0/c.jsgf",
 			n:       "c",
 			imports: []string{},
-			rules: map[string]string{"<teatype>": "red|sweet|green|jasmine|milk;",
-				"<brew>":  "(make|brew|whip up) <quant>;",
-				"<quant>": "some|a (cup|glass) of;"},
+			rules: map[string]string{
+				"<teatype>": "red|sweet|green|jasmine|milk;",
+				"<brew>":    "(make|brew|whip up) <quant>;",
+				"<quant>":   "some|a (cup|glass) of;",
+			},
 		},
 		{
 			p: "data/tests/dir0/dir1/d.jsgf",
 			n: "d",
-			imports: []string{"import <c.teatype>;",
-				"import <a.order>;"},
+			imports: []string{
+				"import <c.teatype>;",
+				"import <a.order>;",
+			},
 			rules: map[string]string{},
 		},
 		{
@@ -527,6 +541,7 @@ func TestValidateJSGFImport(t *testing.T) {
 		}
 	}
 }
+
 func TestValidateJSGFRule(t *testing.T) {
 	table := []struct {
 		l       string

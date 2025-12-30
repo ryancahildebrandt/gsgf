@@ -110,10 +110,12 @@ func TestJJSGFToJSGF(t *testing.T) {
 		{
 			j: JJSGFGrammarJSON{
 				Name: "name",
-				Public: map[string]string{"<a>": "<c>",
+				Public: map[string]string{
+					"<a>": "<c>",
 					"<b>": "<c>",
 					"<c>": "<d>",
-					"<d>": ""},
+					"<d>": "",
+				},
 				Rules:   map[string]string{},
 				Imports: []string{"name"},
 			},
@@ -126,7 +128,8 @@ func TestJJSGFToJSGF(t *testing.T) {
 					"<a>": "<c>",
 					"<b>": "<c>",
 					"<c>": "<d>",
-					"<d>": ""},
+					"<d>": "",
+				},
 				Rules: map[string]string{
 					"<a>": "<c>",
 					"<b>": "<c>",
